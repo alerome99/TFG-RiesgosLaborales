@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "227260103782",
+    "firebase_url": "https://tfg-riesgos-laborales-f85a8-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tfg-riesgos-laborales-f85a8",
+    "storage_bucket": "tfg-riesgos-laborales-f85a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227260103782:android:4d2eea3dfc4b2445e781a7",
+        "android_client_info": {
+          "package_name": "com.example.tfg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227260103782-6mst32tgqp7u3lr46nfnuot3vi486hhk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaGfXgJe0jLlQ6na8XrLRMCLmJJNBsFQ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227260103782-6mst32tgqp7u3lr46nfnuot3vi486hhk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
