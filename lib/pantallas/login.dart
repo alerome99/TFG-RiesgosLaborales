@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'principal.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -8,11 +12,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   BoxDecoration myBoxDecoration() {
-    //Color(0xFF9999D9),
-    //Color(0xA992A5F9),
-    //Color(0xFf73aef5),
-    //Color(0xFF42A5F9),
     return BoxDecoration(
       boxShadow: [
         BoxShadow(
@@ -32,7 +46,9 @@ class _LoginState extends State<Login> {
   }
 
   Widget buildEmail() {
-    return Column(
+    return Form(
+      key: _formKey1,
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
@@ -49,7 +65,8 @@ class _LoginState extends State<Login> {
           alignment: Alignment.centerLeft,
           decoration: myBoxDecoration(),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
@@ -61,9 +78,66 @@ class _LoginState extends State<Login> {
               ),
               hintText: 'Enter your Email',
             ),
+            /*
+            validator: (value) {
+              if (value.isEmpty) return 'Please enter some text';
+              return null;
+            },*/
           ),
         ),
       ],
+    ),
+    );
+  }
+
+    Widget buildPass() {
+    return Form(
+      key: _formKey2,
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Password',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Recursive',
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: myBoxDecoration(),
+          height: 60.0,
+          child: TextFormField(
+            obscureText: true,
+            controller: _passwordController,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                
+                Icons.lock,
+                color: Colors.white,
+                //size: 16
+              ),/*
+              prefixIconConstraints: BoxConstraints(
+                minWidth: 50,
+                minHeight: 200,
+              ),*/
+              hintText: 'Enter your Password',
+            ),
+            /*
+            validator: (value) {
+              if (value.isEmpty) return 'Please enter some text';
+              return null;
+            },*/
+          ),
+        ),
+      ],
+      ),
     );
   }
 
@@ -72,7 +146,11 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
-          onPressed: () => print('ir a registro'),
+          onPressed: () async {
+            if (_formKey1.currentState.validate() && _formKey2.currentState.validate()) {
+            _signInWithEmailAndPassword();
+            }
+          },
           elevation: 5.0,
           padding: EdgeInsets.all(15.0),
           shape: RoundedRectangleBorder(
@@ -91,75 +169,32 @@ class _LoginState extends State<Login> {
   }
 
   Widget buildSignUp() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          'Don\'t have an Account? ',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-            fontWeight: FontWeight.w400,
-      ),
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Text(
+        'Don\'t have an Account? ',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+          fontWeight: FontWeight.w400,
         ),
-        InkWell(
+      ),
+      InkWell(
           onTap: () {
             Navigator.of(context).pushNamed("registro");
           },
-          child: Text(
-            'Sign Up',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-            )
-          )
-        )
-      ]
-    );
-  }
-
-
-
-  Widget buildPass() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Password',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Recursive',
-            fontSize: 17.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
-          height: 60.0,
-          child: TextField(
-            obscureText: true,
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.lock,
+          child: Text('Sign Up',
+              style: TextStyle(
                 color: Colors.white,
-              ),
-              hintText: 'Enter your Password',
-            ),
-          ),
-        ),
-      ],
-    );
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )))
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -174,10 +209,7 @@ class _LoginState extends State<Login> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      //Color(0xFF9999D9),
                       Color(0xF992A5F9),
-                      //Color(0xFF42A5F9),
-                      //Color(0xFf73aef5),
                       Color(0xC142A5F9),
                       Colors.blue,
                     ],
@@ -222,5 +254,37 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void _signInWithEmailAndPassword() async {
+    try {
+      final User user = (await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      ))
+          .user;
+      if (!user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
+        return MainPage(
+          user: user,
+        );
+      }));
+    } catch (e) {
+      if(_emailController.text=="" || _passwordController.text==""){
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("You must fill all the fields"),
+      ));
+      }else{
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Wrong email or password"),
+      ));
+      }
+      /*
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Wrong email or password"),
+      ));*/
+    }
   }
 }

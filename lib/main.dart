@@ -4,20 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'pantallas/login.dart';
+import 'pantallas/principal.dart';
 import 'pantallas/registro.dart';
 
 
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+  }
  
 class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
 
+    /*
     SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle.light.copyWith(
       statusBarColor: Colors.transparent
-    ));
+    ));*/
 
 
       return MaterialApp(
@@ -27,6 +33,7 @@ class MyApp extends StatelessWidget {
         routes: {
           'login' : ( BuildContext context ) => Login(),
           'registro' : ( BuildContext context ) => Registro(),
+          'principal' : ( BuildContext context ) => MainPage(),
         },
         theme: ThemeData(primaryColor: Colors.purple),
       );
