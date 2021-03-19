@@ -1,17 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Usuario with ChangeNotifier{
-  String id;
-  String name;
+class Usuario {
   String email;
+  //String name;
+  String pass;
 
-  Usuario({
-    this.id,
-    this.name,
-    this.email,
-  });
+  Usuario(String email, String pass){
+    this.email = email;
+    //this.name,
+    this.pass = pass;
+  }
 
+  String getEmail(){
+    return email;
+  }
+
+  String getPassword(){
+    return pass;
+  }
+
+  /*
   factory Usuario.fromFirestore(DocumentSnapshot userDoc){
     Map userData = userDoc.data as Map;
     return Usuario(
@@ -27,5 +36,5 @@ class Usuario with ChangeNotifier{
     this.name = userData['name'];
     this.email = userData['email'];
     notifyListeners();
-  }
+  }*/
 }

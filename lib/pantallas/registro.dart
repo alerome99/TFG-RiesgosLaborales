@@ -12,6 +12,7 @@ class Registro extends StatefulWidget {
 }
 
 class _RegisterState extends State<Registro> {
+  //String _prueba; -> Funciona
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -187,6 +188,7 @@ class _RegisterState extends State<Registro> {
       children: <Widget>[
         Text(
           'Confirm Password',
+          //prueba, -> Funciona
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -256,6 +258,7 @@ class _RegisterState extends State<Registro> {
 
   @override
   Widget build(BuildContext context) {
+    //_prueba = "hola"; -> Funciona
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,

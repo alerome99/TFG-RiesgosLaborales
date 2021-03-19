@@ -6,24 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'user.dart';
 
-enum AuthStatus{
-  Unizitialized,
-  Authenticated,
-  Authenticating,
-  Unauthenticated,
-}
+class Db {
 
-class Db with ChangeNotifier  {
+    FirebaseAuth _auth;// = FirebaseAuth.instance;
+    FirebaseFirestore _db;// = FirebaseFirestore.instance;
 
-    //final FirebaseAuth _auth;//= FirebaseAuth.instance;
-    GoogleSignInAccount _googleUser;
-    Usuario _user = new Usuario();
-
-    final FirebaseFirestore _db = FirebaseFirestore.instance;
-    AuthStatus _status = AuthStatus.Unizitialized;
-
-    final GoogleSignIn _googleSignIn = GoogleSignIn();
-
+  Db (){
+    _auth = FirebaseAuth.instance;
+    _db = FirebaseFirestore.instance;
+  }
 
   /*
     Db (){
@@ -32,8 +23,15 @@ class Db with ChangeNotifier  {
       db = FirebaseFirestore.instance;
     }*/
 
-    void iniciarSesion(String e, String p){
-      //_auth.signInWithEmailAndPassword(email: e, password: p);
+    Future<void> iniciarSesion(Usuario u)  async {
+      await _auth.signInWithEmailAndPassword(
+              email: u.getEmail(),
+              password: u.getPassword(),
+            );
+    }
+
+    User getCurrentUser(){
+      return _auth.currentUser;
     }
      /*
     String getEmailCurrentUser(){

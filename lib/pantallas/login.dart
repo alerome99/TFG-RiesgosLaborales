@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../db.dart';
+import '../user.dart';
 import 'principal.dart';
 
 class Login extends StatefulWidget {
@@ -18,6 +20,7 @@ class _LoginState extends State<Login> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  //final Db database = new Db();
 
   @override
   void dispose() {
@@ -257,18 +260,18 @@ class _LoginState extends State<Login> {
   }
 
   void _signInWithEmailAndPassword() async {
+    Usuario u = new Usuario(_emailController.text, _passwordController.text); //RELLENAR
+    Db database = new Db();
     try {
-      final User user = (await _auth.signInWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      ))
-          .user;
+
+      await database.iniciarSesion(u) as User;
+          /*
       if (!user.emailVerified) {
         await user.sendEmailVerification();
-      }
+      }*/
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
         return MainPage(
-          user: user,
+          user: database.getCurrentUser(),
         );
       }));
     } catch (e) {
