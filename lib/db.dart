@@ -30,6 +30,21 @@ class Db {
             );
     }
 
+    Future<void> registrarUsuario(Usuario u)  async {
+      await _auth.createUserWithEmailAndPassword(
+              email: u.getEmail(),
+              password: u.getPassword(),
+            );
+      Map<String, dynamic> demoData = { "email" : u.getEmail(),
+      "numero" : u.getPhone(),
+      "dni" : u.getDni(),
+      "nombre" : u.getNombre()};
+      //AÑADE A LA COLECCION data UNA NUEVA INSTANCIA CON DOS DATOS UNO name Y OTRO moto CUYOS VALORES ESTAN DEFINIDOS ENCIMA
+      //ESTO SE PODRIA METER EN UNA FUNCION PARA EL LOGIN POR EJEMPLO
+      CollectionReference collectionReference = FirebaseFirestore.instance.collection('usuario');
+      collectionReference.add(demoData);
+    }
+
     User getCurrentUser(){
       return _auth.currentUser;
     }

@@ -5,10 +5,16 @@ class Usuario {
   String email;
   //String name;
   String pass;
+  String phone;
+  String dni;
+  String nombreCompleto;
 
-  Usuario(String email, String pass){
+  Usuario(String email, String pass, String phone, String dni, String nombreCompleto){
     this.email = email;
+    this.nombreCompleto = nombreCompleto;
     //this.name,
+    this.phone = phone;
+    this.dni = dni;
     this.pass = pass;
   }
 
@@ -16,8 +22,20 @@ class Usuario {
     return email;
   }
 
+  String getNombre(){
+    return nombreCompleto;
+  }
+
   String getPassword(){
     return pass;
+  }
+
+  String getPhone(){
+    return phone;
+  }
+
+  String getDni(){
+    return dni;
   }
 
   /*

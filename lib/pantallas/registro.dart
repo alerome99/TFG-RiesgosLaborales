@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../db.dart';
+import '../user.dart';
 import 'principal.dart';
 
 class Registro extends StatefulWidget {
@@ -13,12 +15,14 @@ class Registro extends StatefulWidget {
 
 class _RegisterState extends State<Registro> {
   //String _prueba; -> Funciona
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  bool _isSuccess;
-  String _userEmail;
+  final TextEditingController _passwordRepeatController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  
   @override
   void dispose() {
     _emailController.dispose();
@@ -93,7 +97,6 @@ class _RegisterState extends State<Registro> {
   }
 
   Widget buildButton() {
-    Firebase.initializeApp();
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -163,11 +166,11 @@ class _RegisterState extends State<Registro> {
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.lock,
-                color: Colors.white,
-              ),
+              contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
+              //prefixIcon: Icon(
+                //Icons.lock,
+                //color: Colors.white,
+              //),
               hintText: 'Enter your Password',
             ),
             validator: (String value) {
@@ -201,7 +204,8 @@ class _RegisterState extends State<Registro> {
           alignment: Alignment.centerLeft,
           decoration: myBoxDecoration(),
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
+            controller: _passwordRepeatController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
@@ -220,12 +224,12 @@ class _RegisterState extends State<Registro> {
     );
   }
 
-  Widget buildTlefono() {
+    Widget buildTlefono() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Confirm Password',
+          'Phone number',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -238,18 +242,111 @@ class _RegisterState extends State<Registro> {
           alignment: Alignment.centerLeft,
           decoration: myBoxDecoration(),
           height: 60.0,
-          child: TextField(
-            obscureText: true,
+          child: TextFormField(
+            controller: _phoneController,
+            keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.confirmation_number,
-                color: Colors.white,
-              ),
-              hintText: 'Repeat your Password',
+              contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
+              //prefixIcon: Icon(
+              //Icons.email,
+              //color: Colors.white,
+              //),
+              hintText: 'Enter your phone number',
             ),
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildDni() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'DNI/NIF',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Recursive',
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: myBoxDecoration(),
+          height: 60.0,
+          child: TextFormField(
+            controller: _dniController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
+              //prefixIcon: Icon(
+              //Icons.email,
+              //color: Colors.white,
+              //),
+              hintText: 'Enter your DNI/NIF',
+            ),
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildName() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Full name',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Recursive',
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: myBoxDecoration(),
+          height: 60.0,
+          child: TextFormField(
+            controller: _nameController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
+              //prefixIcon: Icon(
+              //Icons.email,
+              //color: Colors.white,
+              //),
+              hintText: 'Enter your full name',
+            ),
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
           ),
         ),
       ],
@@ -260,6 +357,7 @@ class _RegisterState extends State<Registro> {
   Widget build(BuildContext context) {
     //_prueba = "hola"; -> Funciona
     return Scaffold(
+      key: _scaffoldKey,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -313,6 +411,10 @@ class _RegisterState extends State<Registro> {
                       buildPassRepeat(),
                       SizedBox(height: 20.0),
                       buildTlefono(),
+                      SizedBox(height: 20.0),
+                      buildDni(),
+                      SizedBox(height: 20.0),
+                      buildName(),
                       SizedBox(height: 30.0),
                       buildButton(),
                       SizedBox(height: 100.0),
@@ -329,25 +431,34 @@ class _RegisterState extends State<Registro> {
   }
 
   void _registerAccount() async {
-    final User user = (await _auth.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    ))
-        .user;
-
-    if (user != null) {
-      if (!user.emailVerified) {
-        await user.sendEmailVerification();
+    if(_emailController.text=="" || _passwordController.text==""  || _passwordRepeatController.text=="" || _phoneController.text=="" || _dniController.text=="" || _nameController.text==""){
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("You must fill all the fields"),
+      ));
+      } else {
+        if (_passwordController.text == _passwordRepeatController.text){
+      Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text);
+      Db database = new Db(); 
+      await database.registrarUsuario(u);
+      User user = database.getCurrentUser();
+      if (user != null) {
+        /*
+        if (!user.emailVerified) {
+          await user.sendEmailVerification();
+        }*/
+        //await user.updateProfile();
+        //final user1 = _auth.currentUser;
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => MainPage(
+                  user: user,
+                  //user: user1,
+                )));
       }
-      //await user.updateProfile();
-      //final user1 = _auth.currentUser;
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => MainPage(
-                user: user,
-                //user: user1,
-              )));
     } else {
-      _isSuccess = false;
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Password and repeat password must have the same content"),
+      ));
     }
-  }
+      }  
+}
 }

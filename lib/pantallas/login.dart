@@ -260,7 +260,7 @@ class _LoginState extends State<Login> {
   }
 
   void _signInWithEmailAndPassword() async {
-    Usuario u = new Usuario(_emailController.text, _passwordController.text); //RELLENAR
+    Usuario u = new Usuario(_emailController.text, _passwordController.text, null, null, null); 
     Db database = new Db();
     try {
 
