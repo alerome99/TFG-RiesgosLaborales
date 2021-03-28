@@ -64,12 +64,15 @@ class _MainPageState extends State<MainPage> {
                           child: FlatButton(
                             padding: EdgeInsets.all(8.0),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                             color: Color(0xFFF5F6F9),
                             onPressed: () {},
-                            child: Image.asset('assets/images/camara.png',
-                            width: 60,
-                            height: 60,),
+                            child: Image.asset(
+                              'assets/images/camara.png',
+                              width: 60,
+                              height: 60,
+                            ),
                           ),
                         ),
                       ),
@@ -132,13 +135,62 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+      ),
       drawer: Menu(),
-      body: Stack(
+      body: Column(
         children: <Widget>[
-          //IconButton(icon: Icon(Icons.menu), onPressed: null),
-          Container(
-            child: parteSuperior(),
+          parteSuperior(),
+          SizedBox(height: 50.0),
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+                height: 200,
+                width: 188,
+                child: Card(
+                  color: Colors.grey,
+                  child: InkWell(
+                      onTap: () {},
+                      splashColor: Colors.blue,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.analytics, size: 70.0),
+                            Text('Stadistics',
+                                style: new TextStyle(fontSize: 17.0)),
+                          ],
+                        ),
+                      )),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+                height: 200,
+                width: 188,
+                child: Card(
+                  color: Colors.grey,
+                  child: InkWell(
+                      onTap: () {},
+                      splashColor: Colors.blue,
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(Icons.add_circle_rounded, size: 70.0),
+                            Text('Add Inspection',
+                                style: new TextStyle(fontSize: 17.0)),
+                          ],
+                        ),
+                      )),
+                ),
+              ),
+            ],
           ),
+
+          //IconButton(icon: Icon(Icons.menu), onPressed: null),
         ],
       ),
     );
