@@ -26,6 +26,22 @@ class Db {
             );
     }
 
+    Future<Usuario> getUsuarioPorEmail(String email) async{
+      Usuario usuario;
+      FirebaseFirestore.instance
+    .collection('usuario')
+    .where('email', isEqualTo: email)
+    .get()
+    .then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+            print(doc['dni']);
+          usuario = new Usuario(doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
+          print(usuario.getPhone());
+          return usuario;
+        }); 
+    });
+    }
+
     Future<void> registrarUsuario(Usuario u)  async {
       await _auth.createUserWithEmailAndPassword(
               email: u.getEmail(),

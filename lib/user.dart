@@ -38,6 +38,14 @@ class Usuario {
     return dni;
   }
 
+  void setNombre(String nombre) {
+    nombreCompleto = nombre;
+  }
+
+  void setEmail(String em) {
+    email = em;
+  }
+
   /*
   factory Usuario.fromFirestore(DocumentSnapshot userDoc){
     Map userData = userDoc.data as Map;

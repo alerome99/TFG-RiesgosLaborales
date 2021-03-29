@@ -139,7 +139,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.blue,
       ),
       drawer: Menu(),
-      body: Column(
+      body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
         children: <Widget>[
           parteSuperior(),
           SizedBox(height: 50.0),
@@ -189,9 +191,9 @@ class _MainPageState extends State<MainPage> {
               ),
             ],
           ),
-
           //IconButton(icon: Icon(Icons.menu), onPressed: null),
         ],
+        ),
       ),
     );
     /*

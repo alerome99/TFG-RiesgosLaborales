@@ -1,9 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tfg/pantallas/perfil.dart';
+import 'package:tfg/pantallas/principal.dart';
 
-class Menu extends StatelessWidget {
-  const Menu({
-    Key key,
-  }) : super(key: key);
+import '../db.dart';
+import '../user.dart';
+class Menu extends StatefulWidget {
+  @override
+  _MenuState createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context){
@@ -46,14 +53,25 @@ class Menu extends StatelessWidget {
                     ],
                   ),
                 )),
-            CustomList(Icons.person, 'Profile', () => {}),
+            CustomList(Icons.person, 'Profile', () => {irAPerfil(),}),
             CustomList(Icons.add_circle_rounded, 'Add Inspection', () => {}), 
             CustomList(Icons.analytics, 'Past Inpections', () => {}),
             CustomList(Icons.lock, 'Log Out', () => {}),
           ],
         ),
     );
-}
+  }
+  void irAPerfil() async {
+    //Db database = new Db();
+    //database.getUsuarioPorEmail("a@gmail.com");
+    {Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Perfil()));
+      /*
+        return Perfil(
+          user: database.getCurrentUser(),
+        );*/
+  }
+  }
 }
 
 class CustomList extends StatelessWidget {
