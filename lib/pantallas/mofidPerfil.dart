@@ -47,30 +47,18 @@ class _ModifPerfilState extends State<ModifPerfil> {
     UserNotifier userNotifier =
         Provider.of<UserNotifier>(context, listen: false);
     id = userNotifier.currentUsuario.getId();
-    if(_emailController.text=="" && _numeroController.text=="" && _nombreController.text==""){
-      print("holaaaaaaaaaaaaaaaaaaaaaaaa");
-    }else{
+    if(_emailController.text==""){
+      _emailController.text = userNotifier.currentUsuario.email;
+    }
+    if(_numeroController.text==""){
+      _numeroController.text = userNotifier.currentUsuario.phone;
+    }
+    if(_nombreController.text==""){
+      _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
+    }
       //REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO
       //AL GUARDAR SE GUARDA EN FIRESTORE PERO NO RECARGA BIEN LA PAGINA (POSIBLE SOLUCIONAR REDIRECCIONAR A LA PAGINA DE PERFIL)
-      if(_emailController.text=="" && _numeroController.text==""){
-        await modificarUsuario(userNotifier.currentUsuario.email, userNotifier.currentUsuario.phone, _nombreController.text, id);
-      }
-      if(_emailController.text==""){
-        await modificarUsuario(userNotifier.currentUsuario.email, _numeroController.text, _nombreController.text, id);
-      }
-      if(_emailController.text=="" && _nombreController.text==""){
-        await modificarUsuario(userNotifier.currentUsuario.email, _numeroController.text, userNotifier.currentUsuario.nombreCompleto, id);
-      }
-      if(_numeroController.text=="" && _nombreController.text==""){
-        await modificarUsuario(_emailController.text, userNotifier.currentUsuario.phone, userNotifier.currentUsuario.nombreCompleto, id);
-      }
-      if(_numeroController.text==""){
-        await modificarUsuario(_emailController.text, userNotifier.currentUsuario.phone, _nombreController.text, id);
-      }
-      if(_nombreController.text==""){
-        await modificarUsuario(_emailController.text, _numeroController.text, userNotifier.currentUsuario.nombreCompleto, id);
-      }
-    }
+    await modificarUsuario(_emailController.text, _numeroController.text, _nombreController.text, id);
     Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Perfil()));
     
