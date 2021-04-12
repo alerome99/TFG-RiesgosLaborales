@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:tfg/notifier/user_notifier.dart';
 import 'package:tfg/pantallas/perfil.dart';
 
 import '../db.dart';
-import '../user.dart';
+import '../modelo/user.dart';
 
 class ModifPerfil extends StatefulWidget {
   //final User user;
 
-  
-  
   /*
   const ModifPerfil({Key key, this.user}) : super(key: key);
   */
@@ -19,38 +20,43 @@ class ModifPerfil extends StatefulWidget {
 }
 
 class _ModifPerfilState extends State<ModifPerfil> {
-    bool showPassword = false;
-    Db database = new Db();
-    String email;
-    Usuario usuario;
+  bool showPassword = false;
+  //Db database = new Db();
+  String email;
+  Usuario usuario;
   @override
   Widget build(BuildContext context) {
+
+    UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     cargarUsuario();
-        //print(usuario.getPhone());
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            elevation: 1,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.green,
-              ),
-              onPressed: () {Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => Perfil()));},
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.green,
-                ),
-                onPressed: () {
-                },
-              ),
-            ],
+    //print(usuario.getPhone());
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 1,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.green,
           ),
-          body: Container(
+          onPressed: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (BuildContext context) => Perfil()));
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              color: Colors.green,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          Container(
             padding: EdgeInsets.only(left: 16, top: 25, right: 16),
             child: GestureDetector(
               onTap: () {
@@ -74,7 +80,8 @@ class _ModifPerfilState extends State<ModifPerfil> {
                           decoration: BoxDecoration(
                               border: Border.all(
                                   width: 4,
-                                  color: Theme.of(context).scaffoldBackgroundColor),
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor),
                               boxShadow: [
                                 BoxShadow(
                                     spreadRadius: 2,
@@ -99,7 +106,8 @@ class _ModifPerfilState extends State<ModifPerfil> {
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   width: 4,
-                                  color: Theme.of(context).scaffoldBackgroundColor,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                 ),
                                 color: Colors.green,
                               ),
@@ -114,10 +122,16 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   SizedBox(
                     height: 35,
                   ),
-                  buildTextField("Full Name", "Dor Alex", false),
-                  buildTextField("E-mail", "alexd@gmail.com", false),
-                  buildTextField("Password", "********", true),
-                  buildTextField("Location", "TLV, Israel", false),
+                  StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("usuario")
+                          .where('email', isEqualTo: email)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return LinearProgressIndicator();
+                        return Expanded(child: _buildList(snapshot.data));
+                      }),
+                  buildTextField("Nombre Completo", email, false),
                   SizedBox(
                     height: 35,
                   ),
@@ -156,44 +170,92 @@ class _ModifPerfilState extends State<ModifPerfil> {
               ),
             ),
           ),
-        );
-      }
-    
-      Widget buildTextField(
-          String labelText, String placeholder, bool isPasswordTextField) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 35.0),
-          child: TextField(
-            obscureText: isPasswordTextField ? showPassword : false,
-            decoration: InputDecoration(
-                suffixIcon: isPasswordTextField
-                    ? IconButton(
-                        onPressed: () {
-                          setState(() {
-                            showPassword = !showPassword;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.remove_red_eye,
-                          color: Colors.grey,
-                        ),
-                      )
-                    : null,
-                contentPadding: EdgeInsets.only(bottom: 3),
-                labelText: labelText,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                hintText: placeholder,
-                hintStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                )),
-          ),
-        );
-      }
-    
-      Future<void> cargarUsuario() async {
-        /*
+
+          /*
+          Scaffold(
+              body: StreamBuilder(
+                // <2> Pass `Future<QuerySnapshot>` to future
+                stream: FirebaseFirestore.instance
+                    .collection('usuario')
+                    .where('email', isEqualTo: email)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final List<DocumentSnapshot> documents = snapshot.data.docs;
+
+                    return Stack(
+                      children: <Widget>[
+                        buildTextField("Nombre Completo", email, false),
+                        /*
+                              buildTextField("Nombre Completo", documents[0]['nombre'], false),
+                              buildTextField("Email", documents[0]['email'], false),
+                              buildTextField("Telefono", documents[0]['numero'], false),
+                              buildTextField("Location", "TLV, Israel", false),
+                              */
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("It Error!");
+                  }
+                },
+              ),
+            /*StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('usuario')
+                      .where('email', isEqualTo: email)
+                    .snapshots(),
+                ),*/
+          ),*/
+        ],
+      ),
+    );
+  }
+
+  Widget _buildList(QuerySnapshot snapshot) {
+    return ListView.builder(
+        itemCount: snapshot.docs.length,
+        itemBuilder: (context, index) {
+          final doc = snapshot.docs[index];
+
+          return ListTile(title: Text("hahaha"));
+        });
+  }
+
+  Widget buildTextField(
+      String labelText, String placeholder, bool isPasswordTextField) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 35.0),
+      child: TextField(
+        obscureText: isPasswordTextField ? showPassword : false,
+        decoration: InputDecoration(
+            suffixIcon: isPasswordTextField
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        showPassword = !showPassword;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.remove_red_eye,
+                      color: Colors.grey,
+                    ),
+                  )
+                : null,
+            contentPadding: EdgeInsets.only(bottom: 3),
+            labelText: labelText,
+            floatingLabelBehavior: FloatingLabelBehavior.always,
+            hintText: placeholder,
+            hintStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            )),
+      ),
+    );
+  }
+
+  Future<void> cargarUsuario() async {
+    /*
         email = database.getCurrentUser().email;
         Usuario usuario =  database.getUsuarioPorEmail(email) as Usuario;
         //type 'Future<Usuario>' is not a subtype of type 'Usuario' in type cast
@@ -202,17 +264,18 @@ class _ModifPerfilState extends State<ModifPerfil> {
         print("holaaaaaaaaaaa $email");
         print("holaaaaaaa2 $prueba");
         */
-        email = database.getCurrentUser().email;
-        Usuario usuario;
-      FirebaseFirestore.instance
-    .collection('usuario')
-    .where('email', isEqualTo: email)
-    .get()
-    .then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-            print(doc['dni']);
-          usuario = new Usuario(doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
-        }); 
+    //email = database.getCurrentUser().email;
+    Usuario usuario;
+    FirebaseFirestore.instance
+        .collection('usuario')
+        .where('email', isEqualTo: email)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        print(doc['dni']);
+        usuario = new Usuario(
+            doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
+      });
     });
-      }
+  }
 }

@@ -3,9 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:tfg/notifier/auth_notifier.dart';
 
 import '../db.dart';
-import '../user.dart';
+import '../modelo/user.dart';
 import 'principal.dart';
 
 class Registro extends StatefulWidget {
@@ -23,6 +25,13 @@ class _RegisterState extends State<Registro> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   
+  @override
+  void initState() {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    initializeCurrentUser(authNotifier);
+    super.initState();
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -438,6 +447,9 @@ class _RegisterState extends State<Registro> {
       } else {
         if (_passwordController.text == _passwordRepeatController.text){
       Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text);
+      AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+      registrarUsuario(u, authNotifier);
+      /*
       Db database = new Db(); 
       await database.registrarUsuario(u);
       User user = database.getCurrentUser();
@@ -453,7 +465,7 @@ class _RegisterState extends State<Registro> {
                   user: user,
                   //user: user1,
                 )));
-      }
+      }*/
     } else {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Password and repeat password must have the same content"),

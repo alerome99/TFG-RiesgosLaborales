@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 class Usuario {
   String email;
   //String name;
-  String pass;
+  String password;
   String phone;
   String dni;
   String nombreCompleto;
 
-  Usuario(String email, String pass, String phone, String dni, String nombreCompleto){
+  Usuario(String email, String password, String phone, String dni, String nombreCompleto){
     this.email = email;
     this.nombreCompleto = nombreCompleto;
     //this.name,
     this.phone = phone;
     this.dni = dni;
-    this.pass = pass;
+    this.password = password;
   }
 
   String getEmail(){
@@ -27,7 +27,7 @@ class Usuario {
   }
 
   String getPassword(){
-    return pass;
+    return password;
   }
 
   String getPhone(){

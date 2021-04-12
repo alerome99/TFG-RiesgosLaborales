@@ -2,41 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
+import 'notifier/auth_notifier.dart';
 import 'pantallas/login.dart';
 import 'pantallas/principal.dart';
 import 'pantallas/registro.dart';
 
-
-
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
-  }
- 
-class MyApp extends StatelessWidget {
+  Firebase.initializeApp();
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => AuthNotifier(),
+        ),
+      ],
+      child: MyApp(),
+    ));
+}
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    /*
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent
-    ));*/
-
-
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Prevención Riesgos Laborales',
-        initialRoute: 'login',
-        routes: {
-          'login' : ( BuildContext context ) => Login(),
-          'registro' : ( BuildContext context ) => Registro(),
-          'principal' : ( BuildContext context ) => MainPage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Prevención Riesgos Laborales',
+      theme: ThemeData(primaryColor: Colors.purple),
+      home: Consumer<AuthNotifier>(
+        builder: (context, notifier, child) {
+          return notifier.user !=null ? MainPage() : Login();
         },
-        theme: ThemeData(primaryColor: Colors.purple),
-      );
+      ),
+    );
   }
 }
 /*

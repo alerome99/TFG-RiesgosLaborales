@@ -4,9 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+import 'package:tfg/notifier/auth_notifier.dart';
 import 'package:tfg/widgets/menu.dart';
 
 import '../custromClipper.dart';
+import '../db.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -134,9 +137,20 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
+        actions: <Widget>[
+          // action button
+          FlatButton(
+            onPressed: () => signout(authNotifier),
+            child: Text(
+              "Logout",
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+          ),
+        ],
       ),
       drawer: Menu(),
       body: SingleChildScrollView(

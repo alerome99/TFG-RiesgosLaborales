@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:tfg/notifier/auth_notifier.dart';
 
 import '../db.dart';
-import '../user.dart';
+import '../modelo/user.dart';
 import 'principal.dart';
 
 class Login extends StatefulWidget {
@@ -20,6 +22,13 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   //final Db database = new Db();
+
+  @override
+  void initState() {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    initializeCurrentUser(authNotifier);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -259,7 +268,10 @@ class _LoginState extends State<Login> {
   }
 
   void _signInWithEmailAndPassword() async {
-    Usuario u = new Usuario(_emailController.text, _passwordController.text, null, null, null); 
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    Usuario u = new Usuario(_emailController.text, _passwordController.text, null, null, null);
+    login(u, authNotifier);
+    /* 
     Db database = new Db();
     try {
 
@@ -268,6 +280,7 @@ class _LoginState extends State<Login> {
       if (!user.emailVerified) {
         await user.sendEmailVerification();
       }*/
+      
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
         return MainPage(
           user: database.getCurrentUser(),
@@ -287,6 +300,6 @@ class _LoginState extends State<Login> {
       Scaffold.of(context).showSnackBar(SnackBar(
         content: Text("Wrong email or password"),
       ));*/
-    }
+    }*/
   }
 }
