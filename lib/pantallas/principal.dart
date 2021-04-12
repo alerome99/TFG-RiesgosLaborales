@@ -1,14 +1,21 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/notifier/user_notifier.dart';
 import 'package:tfg/widgets/menu.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
 
-import '../custromClipper.dart';
+import '../customClipper.dart';
 import '../db.dart';
 
 class MainPage extends StatefulWidget {
@@ -21,8 +28,127 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   FirebaseAuth _auth = FirebaseAuth.instance;
+  PickedFile _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    getUser(userNotifier);
+    super.initState();
+  }
+
+  Widget foto() {
+    return Container(
+      width: 110,
+      height: 110,
+      child: Stack(
+        fit: StackFit.expand,
+        overflow: Overflow.visible,
+        children: [
+          CircleAvatar(
+            backgroundImage: _imageFile == null
+                ? AssetImage('assets/images/usuario.png')
+                : FileImage(File(_imageFile.path)),
+          ),
+          Positioned(
+            right: -6,
+            bottom: 0,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FlatButton(
+                padding: EdgeInsets.all(8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                color: Color(0xFFF5F6F9),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => imageModal()),
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/camara.png',
+                  width: 60,
+                  height: 60,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget imageModal() {
+    return Container(
+        height: 100.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "Choose Profile photo",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera),
+                    label: Text("Camera")),
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.image),
+                    label: Text("Gallery"))
+              ],
+            )
+          ],
+        ));
+  }
+
+  void takePhoto(ImageSource source) async {
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    final pickedFile = await _picker.getImage(
+      source: source,
+    );
+    setState(() {
+      _imageFile = pickedFile;
+    });
+    if (pickedFile != null) {
+      String fileName = Path.basename(_imageFile.path);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child(fileName);
+      var imageFile = File(_imageFile.path);
+      UploadTask uploadTask = ref.putFile(imageFile);
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      uploadTask.then((res) {
+      });
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection('usuario');
+      collectionReference
+          .doc(userNotifier.currentUsuario.getId())
+          .update({'url': imageUrl.toString()});
+    }
+  }
 
   Widget parteSuperior() {
     return Container(
@@ -47,71 +173,7 @@ class _MainPageState extends State<MainPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Container(
-                  width: 110,
-                  height: 110,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    overflow: Overflow.visible,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/usuario.png'),
-                      ),
-                      Positioned(
-                        right: -6,
-                        bottom: 0,
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: FlatButton(
-                            padding: EdgeInsets.all(8.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            color: Color(0xFFF5F6F9),
-                            onPressed: () {},
-                            child: Image.asset(
-                              'assets/images/camara.png',
-                              width: 60,
-                              height: 60,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                /*
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 4,
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        color: Colors.white,
-                      ),
-                    ],
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1200px-User_icon_2.svg.png'),
-                    ),
-                  ),
-                ),*/
-
-                /*
-                      Positioned(
-                          child: CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.white,
-                        backgroundImage: NetworkImage(
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/1200px-User_icon_2.svg.png'),
-                      )),*/
+                foto(),
                 SizedBox(height: 4.0),
                 Text(
                   "Cargar nombre usuario",
@@ -156,57 +218,57 @@ class _MainPageState extends State<MainPage> {
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         child: Column(
-        children: <Widget>[
-          parteSuperior(),
-          SizedBox(height: 50.0),
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
-                height: 200,
-                width: 188,
-                child: Card(
-                  color: Colors.grey,
-                  child: InkWell(
-                      onTap: () {},
-                      splashColor: Colors.blue,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(Icons.analytics, size: 70.0),
-                            Text('Stadistics',
-                                style: new TextStyle(fontSize: 17.0)),
-                          ],
-                        ),
-                      )),
+          children: <Widget>[
+            parteSuperior(),
+            SizedBox(height: 50.0),
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+                  height: 200,
+                  width: 188,
+                  child: Card(
+                    color: Colors.grey,
+                    child: InkWell(
+                        onTap: () {},
+                        splashColor: Colors.blue,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(Icons.analytics, size: 70.0),
+                              Text('Stadistics',
+                                  style: new TextStyle(fontSize: 17.0)),
+                            ],
+                          ),
+                        )),
+                  ),
                 ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
-                height: 200,
-                width: 188,
-                child: Card(
-                  color: Colors.grey,
-                  child: InkWell(
-                      onTap: () {},
-                      splashColor: Colors.blue,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(Icons.add_circle_rounded, size: 70.0),
-                            Text('Add Inspection',
-                                style: new TextStyle(fontSize: 17.0)),
-                          ],
-                        ),
-                      )),
+                Container(
+                  padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+                  height: 200,
+                  width: 188,
+                  child: Card(
+                    color: Colors.grey,
+                    child: InkWell(
+                        onTap: () {},
+                        splashColor: Colors.blue,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(Icons.add_circle_rounded, size: 70.0),
+                              Text('Add Inspection',
+                                  style: new TextStyle(fontSize: 17.0)),
+                            ],
+                          ),
+                        )),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          //IconButton(icon: Icon(Icons.menu), onPressed: null),
-        ],
+              ],
+            ),
+            //IconButton(icon: Icon(Icons.menu), onPressed: null),
+          ],
         ),
       ),
     );

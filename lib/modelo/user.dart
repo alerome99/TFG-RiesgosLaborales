@@ -8,6 +8,7 @@ class Usuario {
   String phone;
   String dni;
   String nombreCompleto;
+  String id;
 
   Usuario(String email, String password, String phone, String dni, String nombreCompleto){
     this.email = email;
@@ -18,8 +19,19 @@ class Usuario {
     this.password = password;
   }
 
+  Usuario.fromMap(Map<String, dynamic> data) {
+    email = data['email'];
+    phone = data['numero'];
+    dni = data['dni'];
+    nombreCompleto = data['nombre'];
+  }
+
   String getEmail(){
     return email;
+  }
+
+  String getId(){
+    return id;
   }
 
   String getNombre(){
@@ -44,6 +56,10 @@ class Usuario {
 
   void setEmail(String em) {
     email = em;
+  }
+
+  void setId(String i) {
+    id = i;
   }
 
   /*

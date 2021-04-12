@@ -269,7 +269,7 @@ class _LoginState extends State<Login> {
 
   void _signInWithEmailAndPassword() async {
     AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
-    Usuario u = new Usuario(_emailController.text, _passwordController.text, null, null, null);
+    Usuario u = Usuario(_emailController.text, _passwordController.text, null, null, null);
     login(u, authNotifier);
     /* 
     Db database = new Db();

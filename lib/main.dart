@@ -3,19 +3,23 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/notifier/user_notifier.dart';
 
 import 'notifier/auth_notifier.dart';
 import 'pantallas/login.dart';
 import 'pantallas/principal.dart';
 import 'pantallas/registro.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => AuthNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserNotifier(),
         ),
       ],
       child: MyApp(),

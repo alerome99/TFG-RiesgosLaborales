@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +25,70 @@ class _ModifPerfilState extends State<ModifPerfil> {
   bool showPassword = false;
   //Db database = new Db();
   String email;
+  File _imageFile;
   Usuario usuario;
+  String id;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _numeroController = TextEditingController();
+  
+
+
+  @override
+  void initState() {
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    Usuario u = new Usuario("", "", "", "", "");
+    setUserInic(u, userNotifier);
+    super.initState();
+  }
+
+  void actualizarDatos() async{
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    id = userNotifier.currentUsuario.getId();
+    if(_emailController.text=="" && _numeroController.text=="" && _nombreController.text==""){
+      print("holaaaaaaaaaaaaaaaaaaaaaaaa");
+    }else{
+      //REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO
+      //AL GUARDAR SE GUARDA EN FIRESTORE PERO NO RECARGA BIEN LA PAGINA (POSIBLE SOLUCIONAR REDIRECCIONAR A LA PAGINA DE PERFIL)
+      if(_emailController.text=="" && _numeroController.text==""){
+        await modificarUsuario(userNotifier.currentUsuario.email, userNotifier.currentUsuario.phone, _nombreController.text, id);
+      }
+      if(_emailController.text==""){
+        await modificarUsuario(userNotifier.currentUsuario.email, _numeroController.text, _nombreController.text, id);
+      }
+      if(_emailController.text=="" && _nombreController.text==""){
+        await modificarUsuario(userNotifier.currentUsuario.email, _numeroController.text, userNotifier.currentUsuario.nombreCompleto, id);
+      }
+      if(_numeroController.text=="" && _nombreController.text==""){
+        await modificarUsuario(_emailController.text, userNotifier.currentUsuario.phone, userNotifier.currentUsuario.nombreCompleto, id);
+      }
+      if(_numeroController.text==""){
+        await modificarUsuario(_emailController.text, userNotifier.currentUsuario.phone, _nombreController.text, id);
+      }
+      if(_nombreController.text==""){
+        await modificarUsuario(_emailController.text, _numeroController.text, userNotifier.currentUsuario.nombreCompleto, id);
+      }
+    }
+    Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Perfil()));
+    
+    /*
+      CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('usuario');
+  collectionReference
+      .doc(userNotifier.currentUsuario.getId())
+      .update({'email': _emailController.toString(), 'numero': _numeroController.toString(), 'nombre': _nombreController.toString()});
+      */
+  }
+
   @override
   Widget build(BuildContext context) {
-
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
-    cargarUsuario();
+
+    getUser(userNotifier);
+    //cargarUsuario();
     //print(usuario.getPhone());
     return Scaffold(
       appBar: AppBar(
@@ -122,16 +182,60 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   SizedBox(
                     height: 35,
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection("usuario")
-                          .where('email', isEqualTo: email)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return LinearProgressIndicator();
-                        return Expanded(child: _buildList(snapshot.data));
-                      }),
-                  buildTextField("Nombre Completo", email, false),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 35.0),
+                    child: TextFormField(
+                      controller: _nombreController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(bottom: 3),
+                          labelText: "Nombre Completo",
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: userNotifier.currentUsuario.nombreCompleto,
+                          hintStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          )),
+                    ),
+                  ),
+                  //buildTextField("Nombre Completo", userNotifier.currentUsuario.nombreCompleto !=null ? userNotifier.currentUsuario.nombreCompleto : "", false),
+                  //buildTextField(
+                      //"Email", FirebaseAuth.instance.currentUser.email, false),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 35.0),
+                    child: TextFormField(
+                      controller: _emailController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(bottom: 3),
+                          labelText: "Email",
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: userNotifier.currentUsuario.email,
+                          hintStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          )),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 35.0),
+                    child: TextFormField(
+                      controller: _numeroController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(bottom: 3),
+                          labelText: "Telefono",
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          hintText: userNotifier.currentUsuario.phone,
+                          hintStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          )),
+                    ),
+                  ),
                   SizedBox(
                     height: 35,
                   ),
@@ -150,7 +254,9 @@ class _ModifPerfilState extends State<ModifPerfil> {
                                 color: Colors.black)),
                       ),
                       RaisedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          actualizarDatos();
+                        },
                         color: Colors.green,
                         padding: EdgeInsets.symmetric(horizontal: 50),
                         elevation: 2,
@@ -253,7 +359,10 @@ class _ModifPerfilState extends State<ModifPerfil> {
       ),
     );
   }
+  
 
+
+/*
   Future<void> cargarUsuario() async {
     /*
         email = database.getCurrentUser().email;
@@ -277,5 +386,5 @@ class _ModifPerfilState extends State<ModifPerfil> {
             doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
       });
     });
-  }
+  }*/
 }
