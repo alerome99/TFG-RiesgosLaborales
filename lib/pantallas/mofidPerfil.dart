@@ -56,8 +56,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
     if(_nombreController.text==""){
       _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
     }
-      //REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO REVISAR ESTO
-      //AL GUARDAR SE GUARDA EN FIRESTORE PERO NO RECARGA BIEN LA PAGINA (POSIBLE SOLUCIONAR REDIRECCIONAR A LA PAGINA DE PERFIL)
     await modificarUsuario(_emailController.text, _numeroController.text, _nombreController.text, id);
     Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Perfil()));
