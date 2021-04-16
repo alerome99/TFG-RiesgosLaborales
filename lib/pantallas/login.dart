@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/pantallas/registro.dart';
 
 import '../db.dart';
 import '../modelo/user.dart';
@@ -100,7 +101,49 @@ class _LoginState extends State<Login> {
     ),
     );
   }
-
+  Widget buildEmail2() {
+    return Form(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Email',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Recursive',
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: myBoxDecoration(),
+          height: 60.0,
+          child: TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.email,
+                color: Colors.white,
+              ),
+              hintText: 'Enter your Email',
+            ),
+            /*
+            validator: (value) {
+              if (value.isEmpty) return 'Please enter some text';
+              return null;
+            },*/
+          ),
+        ),
+      ],
+    ),
+    );
+  }
     Widget buildPass() {
     return Form(
       key: _formKey2,
@@ -179,6 +222,31 @@ class _LoginState extends State<Login> {
     );
   }
 
+  Widget buildButtonEnviar() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: RaisedButton(
+          onPressed: () async {
+            //AQUI IRA EL BACKEND DE RECUPERAR PASS (BUSCAR COMO HACER)
+          },
+          elevation: 5.0,
+          padding: EdgeInsets.all(15.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0),
+          ),
+          color: Colors.white,
+          child: Text('ENVIAR',
+              style: TextStyle(
+                color: Color(0xFF526AAA),
+                letterSpacing: 1.8,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
+                fontFamily: 'Open',
+              ))),
+    );
+  }  
+
   Widget buildSignUp() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
@@ -191,8 +259,8 @@ class _LoginState extends State<Login> {
       ),
       InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed("registro");
-          },
+            Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Registro()));},
           child: Text('Sign Up',
               style: TextStyle(
                 color: Colors.white,
@@ -202,6 +270,59 @@ class _LoginState extends State<Login> {
     ]);
   }
 
+  Widget buildPassRec() {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      Text(
+        'You lost your password? ',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
+      InkWell(
+          onTap: () {
+            showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => recuperarPassModal()),
+                  );
+          },
+          child: Text('Recover it',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )))
+    ]);
+  }
+
+  
+  Widget recuperarPassModal() {
+    return Container(
+        height: 300.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "Introduce your email:",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            buildEmail2(),
+            SizedBox(height: 40.0),
+            buildButtonEnviar(),
+          ],
+        ));
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -254,8 +375,10 @@ class _LoginState extends State<Login> {
                       buildPass(),
                       SizedBox(height: 30.0),
                       buildButton(),
-                      SizedBox(height: 100.0),
+                      SizedBox(height: 60.0),
                       buildSignUp(),
+                      SizedBox(height: 10.0),
+                      buildPassRec(),
                     ],
                   ),
                 ),

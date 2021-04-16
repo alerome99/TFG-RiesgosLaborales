@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/pantallas/login.dart';
 
 import '../db.dart';
 import '../modelo/user.dart';
@@ -140,7 +141,8 @@ class _RegisterState extends State<Registro> {
       ),
       InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed("login");
+            Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Login()));
           },
           child: Text('Sign In',
               style: TextStyle(
@@ -424,9 +426,9 @@ class _RegisterState extends State<Registro> {
                       buildDni(),
                       SizedBox(height: 20.0),
                       buildName(),
-                      SizedBox(height: 30.0),
+                      SizedBox(height: 25.0),
                       buildButton(),
-                      SizedBox(height: 100.0),
+                      SizedBox(height: 10.0),
                       buildSignUp(),
                     ],
                   ),

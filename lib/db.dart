@@ -6,8 +6,10 @@ import 'modelo/user.dart';
 import 'notifier/auth_notifier.dart';
 
 FirebaseAuth _auth; // = FirebaseAuth.instance;
-FirebaseFirestore _db; // = FirebaseFirestore.instance;
 QuerySnapshot response;
+
+/*
+FirebaseFirestore _db; // = FirebaseFirestore.instance;
 
 Db() {
   _auth = FirebaseAuth.instance;
@@ -29,7 +31,7 @@ Future<Usuario> getUsuarioPorEmail(String email) async {
       return usuario;
     });
   });
-}
+}*/
 
 login(Usuario user, AuthNotifier authNotifier) async {
   UserCredential authResult = await FirebaseAuth.instance
