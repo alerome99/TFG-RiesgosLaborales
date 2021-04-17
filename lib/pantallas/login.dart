@@ -295,7 +295,6 @@ class _LoginState extends State<Login> {
               )))
     ]);
   }
-
   
   Widget recuperarPassModal() {
     return Container(
@@ -393,23 +392,10 @@ class _LoginState extends State<Login> {
   void _signInWithEmailAndPassword() async {
     AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
     Usuario u = Usuario(_emailController.text, _passwordController.text, null, null, null);
-    login(u, authNotifier);
-    /* 
-    Db database = new Db();
-    try {
-
-      await database.iniciarSesion(u) as User;
-          /*
-      if (!user.emailVerified) {
-        await user.sendEmailVerification();
-      }*/
-      
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
-        return MainPage(
-          user: database.getCurrentUser(),
-        );
-      }));
-    } catch (e) {
+    try{
+      login(u, authNotifier);
+    }
+    catch (e) {
       if(_emailController.text=="" || _passwordController.text==""){
         _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("You must fill all the fields"),
@@ -419,10 +405,6 @@ class _LoginState extends State<Login> {
         content: Text("Wrong email or password"),
       ));
       }
-      /*
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Wrong email or password"),
-      ));*/
-    }*/
+    }
   }
 }

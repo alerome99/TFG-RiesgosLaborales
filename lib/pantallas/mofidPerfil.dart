@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifier/user_notifier.dart';
 import 'package:tfg/pantallas/perfil.dart';
+import 'package:path/path.dart' as Path;
 
 import '../db.dart';
 import '../modelo/user.dart';
@@ -25,13 +28,13 @@ class _ModifPerfilState extends State<ModifPerfil> {
   bool showPassword = false;
   //Db database = new Db();
   String email;
-  File _imageFile;
   Usuario usuario;
+  PickedFile _imageFile;
   String id;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
-  
+  final ImagePicker _picker = ImagePicker();
 
 
   @override
@@ -67,6 +70,116 @@ class _ModifPerfilState extends State<ModifPerfil> {
       .doc(userNotifier.currentUsuario.getId())
       .update({'email': _emailController.toString(), 'numero': _numeroController.toString(), 'nombre': _nombreController.toString()});
       */
+  }
+  
+  void takePhoto(ImageSource source) async {
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    final pickedFile = await _picker.getImage(
+      source: source,
+    );
+    setState(() {
+      _imageFile = pickedFile;
+    });
+    if (pickedFile != null) {
+      String fileName = Path.basename(_imageFile.path);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child(fileName);
+      var imageFile = File(_imageFile.path);
+      UploadTask uploadTask = ref.putFile(imageFile);
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      uploadTask.then((res) {
+      });
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection('usuario');
+      collectionReference
+          .doc(userNotifier.currentUsuario.getId())
+          .update({'url': imageUrl.toString()});
+    }
+  }
+
+  Widget imageModal() {
+    return Container(
+        height: 100.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "Choose Profile photo",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera),
+                    label: Text("Camera")),
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.image),
+                    label: Text("Gallery"))
+              ],
+            )
+          ],
+        ));
+  }
+
+  Widget foto() {
+    return Container(
+      width: 110,
+      height: 110,
+      child: Stack(
+        fit: StackFit.expand,
+        overflow: Overflow.visible,
+        children: [
+          CircleAvatar(
+            backgroundImage: _imageFile == null
+                ? AssetImage('assets/images/usuario.png')
+                : FileImage(File(_imageFile.path)),
+          ),
+          Positioned(
+            right: -6,
+            bottom: 0,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FlatButton(
+                padding: EdgeInsets.all(8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                color: Color(0xFFF5F6F9),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => imageModal()),
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/camara.png',
+                  width: 60,
+                  height: 60,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -117,54 +230,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   SizedBox(
                     height: 15,
                   ),
-                  Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 4,
-                                  color: Theme.of(context)
-                                      .scaffoldBackgroundColor),
-                              boxShadow: [
-                                BoxShadow(
-                                    spreadRadius: 2,
-                                    blurRadius: 10,
-                                    color: Colors.black.withOpacity(0.1),
-                                    offset: Offset(0, 10))
-                              ],
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: NetworkImage(
-                                    "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                                  ))),
-                        ),
-                        Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  width: 4,
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                ),
-                                color: Colors.green,
-                              ),
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                              ),
-                            )),
-                      ],
-                    ),
-                  ),
+                  foto(),
                   SizedBox(
                     height: 35,
                   ),
