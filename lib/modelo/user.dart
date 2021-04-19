@@ -9,20 +9,23 @@ class Usuario {
   String dni;
   String nombreCompleto;
   String id;
+  String url;
 
-  Usuario(String email, String password, String phone, String dni, String nombreCompleto){
+  Usuario(String email, String password, String phone, String dni, String nombreCompleto, String url){
     this.email = email;
     this.nombreCompleto = nombreCompleto;
     //this.name,
     this.phone = phone;
     this.dni = dni;
     this.password = password;
+    this.url = url;
   }
 
   Usuario.fromMap(Map<String, dynamic> data) {
     email = data['email'];
     phone = data['numero'];
     dni = data['dni'];
+    url = data['url'];
     nombreCompleto = data['nombre'];
   }
 

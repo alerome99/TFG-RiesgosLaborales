@@ -41,9 +41,108 @@ class _ModifPerfilState extends State<ModifPerfil> {
   void initState() {
     UserNotifier userNotifier =
         Provider.of<UserNotifier>(context, listen: false);
-    Usuario u = new Usuario("", "", "", "", "");
+    Usuario u = new Usuario("", "", "", "", "", "");
     setUserInic(u, userNotifier);
+    //getUser(userNotifier);
     super.initState();
+  }
+
+  Widget foto() {
+    return Container(
+      width: 110,
+      height: 110,
+      child: Stack(
+        fit: StackFit.expand,
+        overflow: Overflow.visible,
+        children: [
+          //Image.network("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
+          //Image.networs"https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"
+          CircleAvatar(
+            //backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
+            backgroundImage: _imageFile == null
+                ? AssetImage('assets/images/usuario.png')
+                : FileImage(File(_imageFile.path)),
+                //:NetworkImage(imagePath),
+          ),
+          Positioned(
+            right: -6,
+            bottom: 0,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FlatButton(
+                padding: EdgeInsets.all(8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                color: Color(0xFFF5F6F9),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => imageModal()),
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/camara.png',
+                  width: 60,
+                  height: 60,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget fotoCargada() {
+    UserNotifier userNotifier =
+        Provider.of<UserNotifier>(context, listen: false);
+    return Container(
+      width: 110,
+      height: 110,
+      child: Stack(
+        fit: StackFit.expand,
+        overflow: Overflow.visible,
+        children: [
+          //Image.network("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
+          //Image.networs"https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"
+          CircleAvatar(
+            //backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
+            backgroundImage: _imageFile == null
+                ? NetworkImage(userNotifier.currentUsuario.url)
+                : FileImage(File(_imageFile.path)),
+                //:NetworkImage(imagePath),
+          ),
+          Positioned(
+            right: -6,
+            bottom: 0,
+            child: SizedBox(
+              height: 40,
+              width: 40,
+              child: FlatButton(
+                padding: EdgeInsets.all(8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                color: Color(0xFFF5F6F9),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: ((builder) => imageModal()),
+                  );
+                },
+                child: Image.asset(
+                  'assets/images/camara.png',
+                  width: 60,
+                  height: 60,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void actualizarDatos() async{
@@ -138,50 +237,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
         ));
   }
 
-  Widget foto() {
-    return Container(
-      width: 110,
-      height: 110,
-      child: Stack(
-        fit: StackFit.expand,
-        overflow: Overflow.visible,
-        children: [
-          CircleAvatar(
-            backgroundImage: _imageFile == null
-                ? AssetImage('assets/images/usuario.png')
-                : FileImage(File(_imageFile.path)),
-          ),
-          Positioned(
-            right: -6,
-            bottom: 0,
-            child: SizedBox(
-              height: 40,
-              width: 40,
-              child: FlatButton(
-                padding: EdgeInsets.all(8.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                color: Color(0xFFF5F6F9),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => imageModal()),
-                  );
-                },
-                child: Image.asset(
-                  'assets/images/camara.png',
-                  width: 60,
-                  height: 60,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
@@ -230,7 +285,8 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   SizedBox(
                     height: 15,
                   ),
-                  foto(),
+                  userNotifier.currentUsuario.url == null ?
+                  foto(): fotoCargada(),
                   SizedBox(
                     height: 35,
                   ),

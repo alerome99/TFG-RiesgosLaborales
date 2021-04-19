@@ -448,7 +448,7 @@ class _RegisterState extends State<Registro> {
       ));
       } else {
         if (_passwordController.text == _passwordRepeatController.text){
-      Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text);
+      Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text, "");
       AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
       registrarUsuario(u, authNotifier);
       /*
