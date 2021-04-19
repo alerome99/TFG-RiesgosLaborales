@@ -1,5 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/pantallas/login.dart';
 import 'package:tfg/pantallas/perfil.dart';
+import 'package:tfg/pantallas/principal.dart';
+
+import '../db.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -7,22 +14,22 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-
   @override
-  Widget build(BuildContext context){
-      return Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: <Color>[
-                  Colors.blueAccent,
-                  Colors.lightBlue,
-                ])),
-                child: Container(
-                  child: Column(
-                    children: <Widget>[
-                      /*
+  Widget build(BuildContext context) {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: <Color>[
+                Colors.blueAccent,
+                Colors.lightBlue,
+              ])),
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    /*
                     CircleAvatar(
                         //borderRadius: BorderRadius.all(Radius.circular(100.0)),
                         radius : 60, 
@@ -34,39 +41,72 @@ class _MenuState extends State<Menu> {
                         ),
                       ),
                       ),*/
-                      Padding(
-                        padding: EdgeInsets.all(0.0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            'assets/images/delegado-prevencion-riesgos-laborales.jpg',
-                            width: 95,
+                    Padding(
+                      padding: EdgeInsets.all(0.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Image.asset(
+                          'assets/images/delegado-prevencion-riesgos-laborales.jpg',
+                          width: 95,
                           height: 95,
-                          ),
                         ),
                       ),
-                      Padding(padding: EdgeInsets.all(6.0), child: Text('Riesgos laborales', style: TextStyle(color: Colors.white, fontSize: 25.0),),),
-                    ],
-                  ),
-                )),
-            CustomList(Icons.person, 'Profile', () => {irAPerfil(),}),
-            CustomList(Icons.add_circle_rounded, 'Add Inspection', () => {}), 
-            CustomList(Icons.analytics, 'Past Inpections', () => {}),
-            CustomList(Icons.lock, 'Log Out', () => {}),
-          ],
-        ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(6.0),
+                      child: Text(
+                        'Riesgos laborales',
+                        style: TextStyle(color: Colors.white, fontSize: 25.0),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          CustomList(
+              Icons.home,
+              'Home',
+              () => {
+                    irAPaginaPrincipal(),
+                  }),
+          CustomList(
+              Icons.person,
+              'Profile',
+              () => {
+                    irAPerfil(),
+                  }),
+          CustomList(
+              Icons.lock,
+              'Log Out',
+              () => {
+                    signOut(),
+                  }),
+        ],
+      ),
     );
   }
+
   void irAPerfil() async {
-    //Db database = new Db();
-    //database.getUsuarioPorEmail("a@gmail.com");
-    {Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Perfil()));
-      /*
-        return Perfil(
-          user: database.getCurrentUser(),
-        );*/
+    {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
+    }
   }
+
+  void signOut() async {
+    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    await FirebaseAuth.instance
+        .signOut()
+        .catchError((error) => print(error.code));
+    authNotifier.setUser(null);
+    Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) => Login()));
+  }
+
+  void irAPaginaPrincipal() async {
+    {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+    }
   }
 }
 

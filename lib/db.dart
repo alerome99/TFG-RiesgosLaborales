@@ -8,7 +8,6 @@ import 'notifier/auth_notifier.dart';
 FirebaseAuth _auth; // = FirebaseAuth.instance;
 QuerySnapshot response;
 
-/*
 FirebaseFirestore _db; // = FirebaseFirestore.instance;
 
 Db() {
@@ -16,6 +15,7 @@ Db() {
   _db = FirebaseFirestore.instance;
 }
 
+/*
 Future<Usuario> getUsuarioPorEmail(String email) async {
   Usuario usuario;
   FirebaseFirestore.instance
@@ -57,38 +57,34 @@ initializeCurrentUser(AuthNotifier authNotifier) async {
   }
 }
 
-signout(AuthNotifier authNotifier) async {
-  await FirebaseAuth.instance
-      .signOut()
-      .catchError((error) => print(error.code));
-
-  authNotifier.setUser(null);
-}
-
 registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
-  _auth
+  UserCredential authResult = await FirebaseAuth.instance
       .createUserWithEmailAndPassword(
         email: u.getEmail(),
         password: u.getPassword(),
       )
       .catchError((error) => print(error.code));
-  Map<String, dynamic> demoData = {
-    "email": u.getEmail(),
-    "numero": u.getPhone(),
-    "dni": u.getDni(),
-    "nombre": u.getNombre()
-  };
-  User currentUser = await FirebaseAuth.instance.currentUser;
-  authNotifier.setUser(currentUser);
-  //AÑADE A LA COLECCION data UNA NUEVA INSTANCIA CON DOS DATOS UNO name Y OTRO moto CUYOS VALORES ESTAN DEFINIDOS ENCIMA
-  //ESTO SE PODRIA METER EN UNA FUNCION PARA EL LOGIN POR EJEMPLO
-  CollectionReference collectionReference =
-      FirebaseFirestore.instance.collection('usuario');
-  collectionReference.add(demoData);
+  if (authResult != null) {
+    User firebaseUser = authResult.user;
+    if (firebaseUser != null) {
+      print("Registered: $firebaseUser");
+      Map<String, dynamic> demoData = {
+        "email": u.getEmail(),
+        "numero": u.getPhone(),
+        "dni": u.getDni(),
+        "nombre": u.getNombre()
+      };
+      //AÑADE A LA COLECCION data UNA NUEVA INSTANCIA CON DOS DATOS UNO name Y OTRO moto CUYOS VALORES ESTAN DEFINIDOS ENCIMA
+      //ESTO SE PODRIA METER EN UNA FUNCION PARA EL LOGIN POR EJEMPLO
+      CollectionReference collectionReference =
+          FirebaseFirestore.instance.collection('usuario');
+      collectionReference.add(demoData);
+      authNotifier.setUser(firebaseUser);
+    }
+  }
 }
 
-modificarUsuario(String email, String numero, String nombre,
-    String id) async {
+modificarUsuario(String email, String numero, String nombre, String id) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
   collectionReference

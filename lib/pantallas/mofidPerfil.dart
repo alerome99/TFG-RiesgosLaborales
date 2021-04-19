@@ -36,17 +36,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
   final TextEditingController _numeroController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
-
-  @override
-  void initState() {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
-    Usuario u = new Usuario("", "", "", "", "", "");
-    setUserInic(u, userNotifier);
-    //getUser(userNotifier);
-    super.initState();
-  }
-
   Widget foto() {
     return Container(
       width: 110,
@@ -62,7 +51,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
             backgroundImage: _imageFile == null
                 ? AssetImage('assets/images/usuario.png')
                 : FileImage(File(_imageFile.path)),
-                //:NetworkImage(imagePath),
+            //:NetworkImage(imagePath),
           ),
           Positioned(
             right: -6,
@@ -112,7 +101,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
             backgroundImage: _imageFile == null
                 ? NetworkImage(userNotifier.currentUsuario.url)
                 : FileImage(File(_imageFile.path)),
-                //:NetworkImage(imagePath),
+            //:NetworkImage(imagePath),
           ),
           Positioned(
             right: -6,
@@ -145,23 +134,24 @@ class _ModifPerfilState extends State<ModifPerfil> {
     );
   }
 
-  void actualizarDatos() async{
+  void actualizarDatos() async {
     UserNotifier userNotifier =
         Provider.of<UserNotifier>(context, listen: false);
     id = userNotifier.currentUsuario.getId();
-    if(_emailController.text==""){
+    if (_emailController.text == "") {
       _emailController.text = userNotifier.currentUsuario.email;
     }
-    if(_numeroController.text==""){
+    if (_numeroController.text == "") {
       _numeroController.text = userNotifier.currentUsuario.phone;
     }
-    if(_nombreController.text==""){
+    if (_nombreController.text == "") {
       _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
     }
-    await modificarUsuario(_emailController.text, _numeroController.text, _nombreController.text, id);
-    Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Perfil()));
-    
+    await modificarUsuario(_emailController.text, _numeroController.text,
+        _nombreController.text, id);
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
+
     /*
       CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
@@ -170,7 +160,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
       .update({'email': _emailController.toString(), 'numero': _numeroController.toString(), 'nombre': _nombreController.toString()});
       */
   }
-  
+
   void takePhoto(ImageSource source) async {
     UserNotifier userNotifier =
         Provider.of<UserNotifier>(context, listen: false);
@@ -187,8 +177,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
       var imageFile = File(_imageFile.path);
       UploadTask uploadTask = ref.putFile(imageFile);
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
-      uploadTask.then((res) {
-      });
+      uploadTask.then((res) {});
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('usuario');
       collectionReference
@@ -240,8 +229,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
   @override
   Widget build(BuildContext context) {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
-
-    getUser(userNotifier);
     //cargarUsuario();
     //print(usuario.getPhone());
     return Scaffold(
@@ -258,15 +245,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
                 MaterialPageRoute(builder: (BuildContext context) => Perfil()));
           },
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.green,
-            ),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: Stack(
         children: [
@@ -285,8 +263,17 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   SizedBox(
                     height: 15,
                   ),
-                  userNotifier.currentUsuario.url == null ?
-                  foto(): fotoCargada(),
+                  Align(
+                    alignment: Alignment(0, 1),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        userNotifier.currentUsuario.url == null
+                            ? foto()
+                            : fotoCargada(),
+                      ],
+                    ),
+                  ),
                   SizedBox(
                     height: 35,
                   ),
@@ -299,7 +286,10 @@ class _ModifPerfilState extends State<ModifPerfil> {
                           contentPadding: EdgeInsets.only(bottom: 3),
                           labelText: "Nombre Completo",
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: userNotifier.currentUsuario.nombreCompleto,
+                          hintText:
+                              userNotifier.currentUsuario.nombreCompleto == null
+                                  ? ""
+                                  : userNotifier.currentUsuario.nombreCompleto,
                           hintStyle: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -309,7 +299,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   ),
                   //buildTextField("Nombre Completo", userNotifier.currentUsuario.nombreCompleto !=null ? userNotifier.currentUsuario.nombreCompleto : "", false),
                   //buildTextField(
-                      //"Email", FirebaseAuth.instance.currentUser.email, false),
+                  //"Email", FirebaseAuth.instance.currentUser.email, false),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
@@ -319,7 +309,9 @@ class _ModifPerfilState extends State<ModifPerfil> {
                           contentPadding: EdgeInsets.only(bottom: 3),
                           labelText: "Email",
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: userNotifier.currentUsuario.email,
+                          hintText: userNotifier.currentUsuario.email == null
+                              ? ""
+                              : userNotifier.currentUsuario.email,
                           hintStyle: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -336,7 +328,9 @@ class _ModifPerfilState extends State<ModifPerfil> {
                           contentPadding: EdgeInsets.only(bottom: 3),
                           labelText: "Telefono",
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: userNotifier.currentUsuario.phone,
+                          hintText: userNotifier.currentUsuario.phone == null
+                              ? ""
+                              : userNotifier.currentUsuario.phone,
                           hintStyle: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -354,7 +348,10 @@ class _ModifPerfilState extends State<ModifPerfil> {
                         padding: EdgeInsets.symmetric(horizontal: 50),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => Perfil()));
+                        },
                         child: Text("CANCEL",
                             style: TextStyle(
                                 fontSize: 14,
@@ -467,8 +464,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
       ),
     );
   }
-  
-
 
 /*
   Future<void> cargarUsuario() async {

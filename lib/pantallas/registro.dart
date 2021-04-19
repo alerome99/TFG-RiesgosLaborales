@@ -450,24 +450,14 @@ class _RegisterState extends State<Registro> {
         if (_passwordController.text == _passwordRepeatController.text){
       Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text, "");
       AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
-      registrarUsuario(u, authNotifier);
-      /*
-      Db database = new Db(); 
-      await database.registrarUsuario(u);
-      User user = database.getCurrentUser();
-      if (user != null) {
-        /*
-        if (!user.emailVerified) {
-          await user.sendEmailVerification();
-        }*/
-        //await user.updateProfile();
-        //final user1 = _auth.currentUser;
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => MainPage(
-                  user: user,
-                  //user: user1,
-                )));
-      }*/
+      try{
+        await registrarUsuario(u, authNotifier);
+        Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Login()));
+      }catch (e) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("You must fill all the fields")));
+      }
     } else {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Password and repeat password must have the same content"),

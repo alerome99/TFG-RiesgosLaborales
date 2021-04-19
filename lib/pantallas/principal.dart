@@ -27,189 +27,21 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  PickedFile _imageFile;
   String imagePath;
   final ImagePicker _picker = ImagePicker();
-
-  @override
-  void initState() {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
-    Usuario u = new Usuario("", "", "", "", "", "");
-    setUserInic(u, userNotifier);
-    //getUser(userNotifier);
-    super.initState();
-  }
-
   Widget foto() {
     return Container(
-      width: 110,
-      height: 110,
-      child: Stack(
-        fit: StackFit.expand,
-        overflow: Overflow.visible,
-        children: [
-          //Image.network("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
-          //Image.networs"https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"
-          CircleAvatar(
-            //backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
-            backgroundImage: _imageFile == null
-                ? AssetImage('assets/images/usuario.png')
-                : FileImage(File(_imageFile.path)),
-                //:NetworkImage(imagePath),
-          ),
-          Positioned(
-            right: -6,
-            bottom: 0,
-            child: SizedBox(
-              height: 40,
-              width: 40,
-              child: FlatButton(
-                padding: EdgeInsets.all(8.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                color: Color(0xFFF5F6F9),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => imageModal()),
-                  );
-                },
-                child: Image.asset(
-                  'assets/images/camara.png',
-                  width: 60,
-                  height: 60,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget fotoCargada() {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
-    return Container(
-      width: 110,
-      height: 110,
-      child: Stack(
-        fit: StackFit.expand,
-        overflow: Overflow.visible,
-        children: [
-          //Image.network("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
-          //Image.networs"https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"
-          CircleAvatar(
-            //backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
-            backgroundImage: _imageFile == null
-                ? NetworkImage(userNotifier.currentUsuario.url)
-                : FileImage(File(_imageFile.path)),
-                //:NetworkImage(imagePath),
-          ),
-          Positioned(
-            right: -6,
-            bottom: 0,
-            child: SizedBox(
-              height: 40,
-              width: 40,
-              child: FlatButton(
-                padding: EdgeInsets.all(8.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                color: Color(0xFFF5F6F9),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => imageModal()),
-                  );
-                },
-                child: Image.asset(
-                  'assets/images/camara.png',
-                  width: 60,
-                  height: 60,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget imageModal() {
-    return Container(
-        height: 100.0,
-        width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(
-              "Choose Profile photo",
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FlatButton.icon(
-                    onPressed: () {
-                      takePhoto(ImageSource.camera);
-                    },
-                    icon: Icon(Icons.camera),
-                    label: Text("Camera")),
-                FlatButton.icon(
-                    onPressed: () {
-                      takePhoto(ImageSource.gallery);
-                    },
-                    icon: Icon(Icons.image),
-                    label: Text("Gallery"))
-              ],
-            )
-          ],
-        ));
-  }
-
-  void takePhoto(ImageSource source) async {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
-    final pickedFile = await _picker.getImage(
-      source: source,
-    );
-    setState(() {
-      _imageFile = pickedFile;
-    });
-    if (pickedFile != null) {
-      String fileName = Path.basename(_imageFile.path);
-      FirebaseStorage storage = FirebaseStorage.instance;
-      Reference ref = storage.ref().child(fileName);
-      var imageFile = File(_imageFile.path);
-      UploadTask uploadTask = ref.putFile(imageFile);
-      var imageUrl = await (await uploadTask).ref.getDownloadURL();
-      uploadTask.then((res) {
-      });
-      imagePath = imageUrl.toString();
-      CollectionReference collectionReference =
-          FirebaseFirestore.instance.collection('usuario');
-      collectionReference
-          .doc(userNotifier.currentUsuario.getId())
-          .update({'url': imageUrl.toString()});
-    }
+        width: 170,
+        height: 170,
+        decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            image: new DecorationImage(
+                fit: BoxFit.fill,
+                image: new NetworkImage(
+                    "https://www.cursosfemxa.es/images/stories/virtuemart/product/privada-prevencion-riesgos-laborales.jpg"))));
   }
 
   Widget parteSuperior() {
-    UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     return Container(
       height: 300.0,
       child: Stack(
@@ -227,31 +59,12 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment(0, 1),
+          Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                userNotifier.currentUsuario.url == null ?
-                foto(): fotoCargada(),
-                //Text(userNotifier.currentUsuario.url),
-                //SizedBox(height: 10.0),
-                //foto(),
-                SizedBox(height: 4.0),
-                Text(
-                  "Cargar nombre usuario",
-                  style: TextStyle(
-                    fontSize: 21.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "Developer",
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    color: Colors.grey[700],
-                  ),
-                ),
+                SizedBox(height: 130.0),
+                foto(),
               ],
             ),
           ),
@@ -262,22 +75,11 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     getUser(userNotifier);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        actions: <Widget>[
-          // action button
-          FlatButton(
-            onPressed: () => signout(authNotifier),
-            child: Text(
-              "Logout",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-          ),
-        ],
       ),
       drawer: Menu(),
       body: SingleChildScrollView(
@@ -285,7 +87,17 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           children: <Widget>[
             parteSuperior(),
-            SizedBox(height: 50.0),
+            SizedBox(height: 30.0),
+            Text(
+              "Welcome to ORI",
+              //FirebaseAuth.instance.currentUser.email,
+              style: TextStyle(
+                fontSize: 34.0,
+                color: Colors.blue,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 30.0),
             Row(
               children: <Widget>[
                 Container(
@@ -332,44 +144,9 @@ class _MainPageState extends State<MainPage> {
                 ),
               ],
             ),
-            //IconButton(icon: Icon(Icons.menu), onPressed: null),
           ],
         ),
       ),
     );
-    /*
-    return Scaffold(
-      key: _scaffoldKey,
-      body: Container(
-        width: double.infinity,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              child: Text(
-                widget.user.email,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-              ),
-            ),
-            Container(
-              child: OutlineButton(
-                child: Text("LogOut"),
-                onPressed: () {
-                  _signOut().whenComplete(() {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => Login()));
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );*/
-  }
-
-  Future _signOut() async {
-    await _auth.signOut();
   }
 }

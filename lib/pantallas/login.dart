@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/notifier/user_notifier.dart';
 import 'package:tfg/pantallas/registro.dart';
 
 import '../db.dart';
@@ -391,9 +392,11 @@ class _LoginState extends State<Login> {
 
   void _signInWithEmailAndPassword() async {
     AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    UserNotifier userNotifier = Provider.of<UserNotifier>(context, listen:false);
     Usuario u = Usuario(_emailController.text, _passwordController.text, null, null, null, null);
     try{
-      login(u, authNotifier);
+      await login(u, authNotifier);
+      await getUser(userNotifier);
     }
     catch (e) {
       if(_emailController.text=="" || _passwordController.text==""){
