@@ -82,6 +82,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerEmail'),
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -111,6 +112,7 @@ class _RegisterState extends State<Registro> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
+          key: Key('registerButton'),
           onPressed: () async => _registerAccount(),
           elevation: 5.0,
           padding: EdgeInsets.all(15.0),
@@ -140,6 +142,7 @@ class _RegisterState extends State<Registro> {
         ),
       ),
       InkWell(
+          key: Key('goLogin'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Login()));
@@ -172,6 +175,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPass'),
             controller: _passwordController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
@@ -216,6 +220,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPassRepeat'),
             controller: _passwordRepeatController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
@@ -254,6 +259,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPhone'),
             controller: _phoneController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -297,6 +303,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerDni'),
             controller: _dniController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -340,6 +347,7 @@ class _RegisterState extends State<Registro> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerName'),
             controller: _nameController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -456,7 +464,7 @@ class _RegisterState extends State<Registro> {
                   builder: (BuildContext context) => Login()));
       }catch (e) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("You must fill all the fields")));
+        content: Text("Email is already registered")));
       }
     } else {
       _scaffoldKey.currentState.showSnackBar(SnackBar(

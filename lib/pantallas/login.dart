@@ -79,6 +79,7 @@ class _LoginState extends State<Login> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key("emailField"),
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -166,6 +167,7 @@ class _LoginState extends State<Login> {
           decoration: myBoxDecoration(),
           height: 60.0,
           child: TextFormField(
+            key: Key("passField"),
             obscureText: true,
             controller: _passwordController,
             style: TextStyle(color: Colors.white),
@@ -201,6 +203,7 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
+          key: Key('loginButton'),
           onPressed: () async {
             if (_formKey1.currentState.validate() && _formKey2.currentState.validate()) {
             _signInWithEmailAndPassword();
@@ -259,6 +262,7 @@ class _LoginState extends State<Login> {
         ),
       ),
       InkWell(
+          key: Key('goRegister'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Registro()));},
