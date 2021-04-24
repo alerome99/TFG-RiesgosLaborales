@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/notifier/inspeccion_notifier.dart';
 import 'package:tfg/notifier/user_notifier.dart';
 import 'package:tfg/pantallas/registro.dart';
 

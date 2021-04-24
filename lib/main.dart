@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/notifier/inspeccion_notifier.dart';
 import 'package:tfg/notifier/user_notifier.dart';
 
 import 'notifier/auth_notifier.dart';
@@ -20,6 +21,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => UserNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => InspeccionNotifier(),
         ),
       ],
       child: MyApp(),

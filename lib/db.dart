@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/modelo/user.dart';
+import 'package:tfg/notifier/inspeccion_notifier.dart';
 import 'package:tfg/notifier/user_notifier.dart';
+import 'modelo/inspeccion.dart';
 import 'modelo/user.dart';
 import 'notifier/auth_notifier.dart';
 
@@ -106,6 +108,18 @@ getUsers(UserNotifier userNotifier /*, String email*/) async {
   });
 
   userNotifier.userList = userList;
+}
+
+getProvincias(InspeccionNotifier inspeccionNotifier) async {
+  QuerySnapshot snapshot =
+      await FirebaseFirestore.instance.collection('provincia').get();
+  List<Provincia> provinciaList = [];
+  snapshot.docs.forEach((document) {
+    Provincia p = Provincia.fromMap(document.data());
+    provinciaList.add(p);
+  });
+
+  inspeccionNotifier.provinciaList = provinciaList;
 }
 
 getUser(UserNotifier userNotifier /*, String email*/) async {

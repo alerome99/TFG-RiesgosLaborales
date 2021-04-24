@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,8 +29,17 @@ class _PerfilState extends State<Perfil> {
   String imagePath;
   final ImagePicker _picker = ImagePicker();
   bool showPassword = false;
+  
   @override
   Widget build(BuildContext context) {
+    final cajaAzul2 = Container(
+        height: 220.0,
+        width: 500.0,
+        decoration: BoxDecoration(
+          gradient:
+              LinearGradient(colors: [Colors.cyanAccent, Colors.blueAccent]),
+        ),
+    );
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     return Scaffold(
       appBar: AppBar(
@@ -85,6 +95,7 @@ class _PerfilState extends State<Perfil> {
                     fontSize: 14, letterSpacing: 2.2, color: Colors.white),
               ),
             ),
+            Container(child: cajaAzul2),
             //IconButton(icon: Icon(Icons.menu), onPressed: null),
           ],
         ),

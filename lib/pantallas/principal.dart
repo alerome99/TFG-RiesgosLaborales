@@ -10,7 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/notifier/inspeccion_notifier.dart';
 import 'package:tfg/notifier/user_notifier.dart';
+import 'package:tfg/pantallas/addInspeccion.dart';
 import 'package:tfg/widgets/menu.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Path;
@@ -76,6 +78,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
+    InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
+    getProvincias(inspeccionNotifier);
     getUser(userNotifier);
     return Scaffold(
       appBar: AppBar(
@@ -113,9 +117,9 @@ class _MainPageState extends State<MainPage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Icon(Icons.analytics, size: 70.0),
-                              Text('Stadistics',
-                                  style: new TextStyle(fontSize: 17.0)),
+                              Icon(Icons.list_alt, size: 70.0),
+                              Text('Inspecciones',
+                                  style: new TextStyle(fontSize: 22.0)),
                             ],
                           ),
                         )),
@@ -128,7 +132,8 @@ class _MainPageState extends State<MainPage> {
                   child: Card(
                     color: Colors.grey,
                     child: InkWell(
-                        onTap: () {},
+                        onTap: () {Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (BuildContext context) => AddInspeccion()));},
                         splashColor: Colors.blue,
                         child: Center(
                           child: Column(
@@ -136,7 +141,7 @@ class _MainPageState extends State<MainPage> {
                             children: <Widget>[
                               Icon(Icons.add_circle_rounded, size: 70.0),
                               Text('Add Inspection',
-                                  style: new TextStyle(fontSize: 17.0)),
+                                  style: new TextStyle(fontSize: 22.0)),
                             ],
                           ),
                         )),
