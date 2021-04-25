@@ -6,6 +6,7 @@ import 'package:tfg/notifiers/user_notifier.dart';
 
 import 'notifiers/auth_notifier.dart';
 import 'notifiers/riesgo_notifier.dart';
+import 'notifiers/subRiesgo_notifier.dart';
 import 'pantallas/login.dart';
 import 'pantallas/principal.dart';
 
@@ -25,6 +26,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => RiesgoNotifier(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => SubRiesgoNotifier(),
         ),
       ],
       child: MyApp(),
