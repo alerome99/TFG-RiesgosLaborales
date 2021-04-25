@@ -1,17 +1,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/notifier/user_notifier.dart';
+import 'package:tfg/notifiers/user_notifier.dart';
 import 'package:tfg/pantallas/perfil.dart';
 import 'package:path/path.dart' as Path;
 
-import '../db.dart';
+import '../providers/db.dart';
 import '../modelo/user.dart';
 
 class ModifPerfil extends StatefulWidget {

@@ -1,24 +1,20 @@
-import 'dart:io';
 import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/modelo/user.dart';
-import 'package:tfg/notifier/auth_notifier.dart';
-import 'package:tfg/notifier/inspeccion_notifier.dart';
-import 'package:tfg/notifier/user_notifier.dart';
+import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgo_notifier.dart';
+import 'package:tfg/notifiers/user_notifier.dart';
 import 'package:tfg/pantallas/addInspeccion.dart';
+import 'package:tfg/providers/riesgoProvider.dart';
 import 'package:tfg/widgets/menu.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as Path;
 
 import '../customClipper.dart';
-import '../db.dart';
+import '../providers/db.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -79,6 +75,8 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
+    RiesgoNotifier riesgoNotifier = Provider.of<RiesgoNotifier>(context, listen: false);
+    inicializarRiesgos(riesgoNotifier);
     getProvincias(inspeccionNotifier);
     getUser(userNotifier);
     return Scaffold(
