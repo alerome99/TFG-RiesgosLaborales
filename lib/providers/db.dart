@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/modelo/user.dart';
-import 'package:tfg/notifier/inspeccion_notifier.dart';
-import 'package:tfg/notifier/user_notifier.dart';
-import 'modelo/inspeccion.dart';
-import 'modelo/user.dart';
-import 'notifier/auth_notifier.dart';
+import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/user_notifier.dart';
+import '../modelo/inspeccion.dart';
+import '../modelo/user.dart';
+import '../notifiers/auth_notifier.dart';
 
 FirebaseAuth _auth; // = FirebaseAuth.instance;
 QuerySnapshot response;
@@ -16,24 +16,6 @@ Db() {
   _auth = FirebaseAuth.instance;
   _db = FirebaseFirestore.instance;
 }
-
-/*
-Future<Usuario> getUsuarioPorEmail(String email) async {
-  Usuario usuario;
-  FirebaseFirestore.instance
-      .collection('usuario')
-      .where('email', isEqualTo: email)
-      .get()
-      .then((QuerySnapshot querySnapshot) {
-    querySnapshot.docs.forEach((doc) {
-      print(doc['dni']);
-      usuario = new Usuario(
-          doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
-      print(usuario.getPhone());
-      return usuario;
-    });
-  });
-}*/
 
 login(Usuario user, AuthNotifier authNotifier) async {
   UserCredential authResult = await FirebaseAuth.instance

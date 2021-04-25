@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/notifier/auth_notifier.dart';
+import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/pantallas/login.dart';
 import 'package:tfg/pantallas/perfil.dart';
 import 'package:tfg/pantallas/principal.dart';
-
-import '../db.dart';
 
 class Menu extends StatefulWidget {
   @override
@@ -16,7 +14,6 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context);
     return Drawer(
       child: ListView(
         children: <Widget>[
@@ -29,18 +26,6 @@ class _MenuState extends State<Menu> {
               child: Container(
                 child: Column(
                   children: <Widget>[
-                    /*
-                    CircleAvatar(
-                        //borderRadius: BorderRadius.all(Radius.circular(100.0)),
-                        radius : 60, 
-                        child: Padding(padding: EdgeInsets.all(10.0),
-                        child: Image.asset(
-                          'assets/images/delegado-prevencion-riesgos-laborales.jpg',
-                          width: 100,
-                          height: 100,
-                        ),
-                      ),
-                      ),*/
                     Padding(
                       padding: EdgeInsets.all(0.0),
                       child: ClipRRect(

@@ -1,14 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
 
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/modelo/inspeccion.dart';
-import 'package:tfg/notifier/inspeccion_notifier.dart';
-import '../db.dart';
-
+import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/pantallas/seleccionRiesgo.dart';
+import 'package:tfg/widgets/fondo.dart';
 
 class AddInspeccion extends StatefulWidget {
   @override
@@ -21,56 +17,6 @@ class _AddInspeccionState extends State<AddInspeccion> {
   final TextEditingController _latitudController = TextEditingController();
   final TextEditingController _longitudController = TextEditingController();
 
-  Widget FondoApp() {
-    final gradiente = Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        begin: FractionalOffset(0.0, 0.2),
-        end: FractionalOffset(0.0, 0.6),
-        colors: [
-          Color.fromRGBO(13, 0, 255, 1.0),
-          Color.fromRGBO(175, 0, 255, 1.0)
-        ],
-      )),
-    );
-
-    final cajaAzul = Transform.rotate(
-      angle: -pi / 13.2,
-      child: Container(
-        height: 460.0,
-        width: 460.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(175.0),
-          gradient:
-              LinearGradient(colors: [Colors.cyanAccent, Colors.blueAccent]),
-        ),
-      ),
-    );
-
-    final cajaVerde = Transform.rotate(
-      angle: -pi / 1.1,
-      child: Container(
-        height: 460.0,
-        width: 460.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(155.0),
-          gradient:
-              LinearGradient(colors: [Colors.lightGreen, Colors.greenAccent]),
-        ),
-      ),
-    );
-
-    return Stack(
-      children: <Widget>[
-        gradiente,
-        Positioned(top: -100, child: cajaAzul),
-        Positioned(bottom: -100, child: cajaVerde),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +27,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Stack(children: <Widget>[
-            FondoApp(),
+            Fondo(),
             Positioned(
               bottom: 0.0,
               right: 0.0,
@@ -169,7 +115,8 @@ class _AddInspeccionState extends State<AddInspeccion> {
                         FlatButton(child: Text('Cancelar'), onPressed: () => Navigator.of(context).pop(),),
                         FlatButton(
                           child: Text('Ok'),
-                          onPressed: () {},
+                          onPressed: () {Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) => SeleccionRiesgo()));},
                         ),
                       ],
                     )
@@ -201,7 +148,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
       ),
       readOnly: true,
       validator: (value) {
-        bool flag;
+        bool flag; 
         if ( value.isEmpty) flag = false;
         (num.tryParse(value) == null ) ? flag = false : flag = true;
 
