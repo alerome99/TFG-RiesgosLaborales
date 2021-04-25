@@ -1,30 +1,30 @@
 class SubRiesgo {
 
-  String id;
+  int id;
   String nombre;
   String icono;
-  String idRiesgoPadre;
+  int idRiesgoPadre;
 
-  SubRiesgo(String id, String nombre, String icono, String idRiesgoPadre){
+  SubRiesgo(int id, String nombre, String icono, int idRiesgoPadre){
     this.id = id;
     this.nombre = nombre;
     this.icono = icono;
     this.idRiesgoPadre = idRiesgoPadre;
   }
 
-  void setIdRiesgoPadre(String irp){
+  void setIdRiesgoPadre(int irp){
     idRiesgoPadre = irp;
   }
 
-  String getIdRiesgoPadre(){
+  int getIdRiesgoPadre(){
     return idRiesgoPadre;
   }
   
-  void setId(String i){
+  void setId(int i){
     id = i;
   }
 
-  String getId(){
+  int getId(){
     return id;
   }
 

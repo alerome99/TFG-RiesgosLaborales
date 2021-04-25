@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
+import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/user_notifier.dart';
 import 'package:tfg/pantallas/addInspeccion.dart';
 import 'package:tfg/providers/riesgoProvider.dart';
@@ -76,7 +77,13 @@ class _MainPageState extends State<MainPage> {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
     InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
     RiesgoNotifier riesgoNotifier = Provider.of<RiesgoNotifier>(context, listen: false);
-    inicializarRiesgos(riesgoNotifier);
+    SubRiesgoNotifier subRiesgoNotifier = Provider.of<SubRiesgoNotifier>(context, listen: false);
+    if(riesgoNotifier.bandera!=1){
+      inicializarRiesgos(riesgoNotifier);
+    }
+    if(subRiesgoNotifier.bandera!=1){
+      inicializarSubRiesgos(subRiesgoNotifier);
+    }
     getProvincias(inspeccionNotifier);
     getUser(userNotifier);
     return Scaffold(

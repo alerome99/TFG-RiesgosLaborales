@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/registro.dart';
 
 import '../providers/db.dart';
@@ -400,6 +401,8 @@ class _LoginState extends State<Login> {
     try{
       await login(u, authNotifier);
       await getUser(userNotifier);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (BuildContext context) => MainPage()));
     }
     catch (e) {
       if(_emailController.text=="" || _passwordController.text==""){
