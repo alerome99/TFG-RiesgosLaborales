@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
+import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
-import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/widgets/fondo.dart';
 
-class SeleccionRiesgo extends StatefulWidget {
+class SeleccionSubRiesgo extends StatefulWidget {
   @override
-  _SeleccionRiesgoState createState() => _SeleccionRiesgoState();
+  _SeleccionSubRiesgoState createState() => _SeleccionSubRiesgoState();
 }
 
-class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
+class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,28 +61,34 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   }
 
   Widget _botonesRedondeados() {
-    RiesgoNotifier riesgoNotifier =
-        Provider.of<RiesgoNotifier>(context, listen: false);
     SubRiesgoNotifier subRiesgoNotifier =
         Provider.of<SubRiesgoNotifier>(context, listen: false);
+    RiesgoNotifier riesgoNotifier =
+        Provider.of<RiesgoNotifier>(context, listen: false);
+    List<SubRiesgo> subRiesgos = [];
+    for (int i = 0; i < subRiesgoNotifier.subRiesgoList.length; i++){
+      if (subRiesgoNotifier.subRiesgoList[i].idRiesgoPadre == riesgoNotifier.currentRiesgo.id){
+        subRiesgos.add(subRiesgoNotifier.subRiesgoList[i]);
+      }
+    }
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: riesgoNotifier.riesgoList.length,
+      itemCount: subRiesgos.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        if (index % 2 == 0 && index + 1 != riesgoNotifier.riesgoList.length) {
-          if (index + 1 != riesgoNotifier.riesgoList.length) {
+        if (index % 2 == 0 && index + 1 != subRiesgos.length) {
+          if (index + 1 != subRiesgos.length) {
             rows.add(TableRow(children: [
               _crearBotonRedondeado(
-                  Colors.blue, riesgoNotifier.riesgoList[index]),
+                  Colors.blue, subRiesgos[index]),
               _crearBotonRedondeado(
-                  Colors.blue, riesgoNotifier.riesgoList[index + 1]),
+                  Colors.blue, subRiesgos[index + 1]),
             ]));
           } else {
             rows.add(TableRow(children: [
               _crearBotonRedondeado(
-                  Colors.blue, riesgoNotifier.riesgoList[index]),
+                  Colors.blue, subRiesgos[index]),
               Container()
             ]));
           }
@@ -92,16 +98,14 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
     );
   }
 
-  Widget _crearBotonRedondeado(Color color, Riesgo r) {
-    RiesgoNotifier riesgoNotifier =
-        Provider.of<RiesgoNotifier>(context, listen: false);
+  Widget _crearBotonRedondeado(Color color, SubRiesgo sr) {
     final card = Container(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         FadeInImage(
           placeholder: AssetImage('assets/images/original.gif'),
-          image: AssetImage('assets/icons/${r.icono}_V-01.png'),
+          image: AssetImage('assets/icons/${sr.icono}_V-01.png'),
           fadeInDuration: Duration(milliseconds: 200),
           height: 160.0,
           fit: BoxFit.cover,
@@ -110,7 +114,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
           child: Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(10.0),
-              child: Text(r.nombre,
+              child: Text(sr.nombre,
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
         )
       ],
@@ -118,9 +122,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
 
     return GestureDetector(
       onTap: () {
-        riesgoNotifier.currentRiesgo = r;
-        Navigator.of(context)
-          .push(MaterialPageRoute(builder: (BuildContext context) => SeleccionSubRiesgo()));
+
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),

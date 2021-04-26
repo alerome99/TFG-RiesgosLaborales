@@ -12,6 +12,7 @@ import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/user_notifier.dart';
 import 'package:tfg/pantallas/addInspeccion.dart';
 import 'package:tfg/providers/riesgoProvider.dart';
+import 'package:tfg/widgets/fondo.dart';
 import 'package:tfg/widgets/menu.dart';
 
 import '../customClipper.dart';
@@ -30,8 +31,8 @@ class _MainPageState extends State<MainPage> {
   final ImagePicker _picker = ImagePicker();
   Widget foto() {
     return Container(
-        width: 170,
-        height: 170,
+        width: 180,
+        height: 180,
         decoration: new BoxDecoration(
             shape: BoxShape.circle,
             image: new DecorationImage(
@@ -42,17 +43,19 @@ class _MainPageState extends State<MainPage> {
 
   Widget parteSuperior() {
     return Container(
-      height: 300.0,
+      height: 380.0,
       child: Stack(
         children: <Widget>[
           Container(),
           ClipPath(
             clipper: MyCustomClipper(),
             child: Container(
-              height: 300.0,
+              height: 380.0,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage("https://picsum.photos/200"),
+                  //image: NetworkImage("https://derecho.usal.es/wp-content/uploads/2017/11/constructionworkers-1200x565.jpg"),
+                  //https://preventiam.com/wp-content/uploads/2019/09/tecnicas-prevencion-riesgos-laborales.jpg
+                  image: NetworkImage("https://i2.wp.com/www.asesorus.es/wp-content/uploads/2019/11/prevencion-riesgos-laborales.jpg?fit=710%2C320&ssl=1"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -62,7 +65,7 @@ class _MainPageState extends State<MainPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                SizedBox(height: 130.0),
+                SizedBox(height: 190.0),
                 foto(),
               ],
             ),
@@ -75,13 +78,16 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     UserNotifier userNotifier = Provider.of<UserNotifier>(context);
-    InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
-    RiesgoNotifier riesgoNotifier = Provider.of<RiesgoNotifier>(context, listen: false);
-    SubRiesgoNotifier subRiesgoNotifier = Provider.of<SubRiesgoNotifier>(context, listen: false);
-    if(riesgoNotifier.bandera!=1){
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    RiesgoNotifier riesgoNotifier =
+        Provider.of<RiesgoNotifier>(context, listen: false);
+    SubRiesgoNotifier subRiesgoNotifier =
+        Provider.of<SubRiesgoNotifier>(context, listen: false);
+    if (riesgoNotifier.bandera != 1) {
       inicializarRiesgos(riesgoNotifier);
     }
-    if(subRiesgoNotifier.bandera!=1){
+    if (subRiesgoNotifier.bandera != 1) {
       inicializarSubRiesgos(subRiesgoNotifier);
     }
     getProvincias(inspeccionNotifier);
@@ -91,23 +97,30 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.blue,
       ),
       drawer: Menu(),
-      body: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-            parteSuperior(),
-            SizedBox(height: 30.0),
-            Text(
-              "Welcome to ORI",
-              //FirebaseAuth.instance.currentUser.email,
-              style: TextStyle(
-                fontSize: 34.0,
-                color: Colors.blue,
-              ),
-              textAlign: TextAlign.center,
+      body: Stack(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          parteSuperior(),
+          Align(
+  alignment: Alignment.center,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 80, 24, 0),
+            child: Text(
+            "Welcome to ORI",
+            style: TextStyle(
+              fontSize: 38.0,
+              color: Colors.blue,
             ),
-            SizedBox(height: 30.0),
-            Row(
+            textAlign: TextAlign.center,
+            ),
+          ),
+          ),
+          Positioned(
+            bottom: 100.0,
+            child: Row(
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
@@ -137,8 +150,11 @@ class _MainPageState extends State<MainPage> {
                   child: Card(
                     color: Colors.grey,
                     child: InkWell(
-                        onTap: () {Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (BuildContext context) => AddInspeccion()));},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  AddInspeccion()));
+                        },
                         splashColor: Colors.blue,
                         child: Center(
                           child: Column(
@@ -154,8 +170,8 @@ class _MainPageState extends State<MainPage> {
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
