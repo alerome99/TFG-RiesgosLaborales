@@ -32,33 +32,33 @@ class _FotoState extends State<Foto> {
                 : FileImage(File(_imageFile.path)),
             //:NetworkImage(imagePath),
           ),
-          Positioned(
-            right: -6,
-            bottom: 0,
-            child: SizedBox(
-              height: 40,
-              width: 40,
-              child: FlatButton(
-                padding: EdgeInsets.all(8.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                color: Color(0xFFF5F6F9),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => ImageModal()),
-                  );
-                },
-                child: Image.asset(
-                  'assets/images/camara.png',
-                  width: 60,
-                  height: 60,
+            Positioned(
+              right: -6,
+              bottom: 0,
+              child: SizedBox(
+                height: 40,
+                width: 40,
+                child: FlatButton(
+                  padding: EdgeInsets.all(8.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  color: Color(0xFFF5F6F9),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: ((builder) => ImageModal()),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/images/camara.png',
+                    width: 60,
+                    height: 60,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
       ),
     );
   }

@@ -1,17 +1,29 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tfg/modelo/subRiesgo.dart';
+
+enum EstadoInspeccion { 
+   enRealizacion, 
+   pendiente, 
+   cerrada
+}
+
 class Inspeccion {
-  String id;
-  DateTime fechaInicio;
-  DateTime fechaFin;
+  int id;
+  Timestamp fechaInicio;
+  Timestamp fechaFin;
   String lugar;
   String provincia;
   double latitud;
   double longitud;
   String descripcion;
   String titulo;
+  EstadoInspeccion estado;
+  List<SubRiesgo> subRiesgos;
 
-  Inspeccion(String id, DateTime fechaInicio, DateTime fechaFin, String lugar, String provincia, double latitud, double longitud, String descripcion, String titulo){
+  Inspeccion(int id, Timestamp fechaInicio, Timestamp fechaFin, String lugar, String provincia, double latitud, double longitud, String descripcion, String titulo){
     this.id = id;
+    estado = EstadoInspeccion.enRealizacion;
     this.fechaInicio = fechaInicio;
     this.fechaFin = fechaFin;
     this.lugar = lugar;
@@ -19,11 +31,13 @@ class Inspeccion {
     this.latitud = latitud;
     this.longitud = longitud;
     this.descripcion = descripcion;
+    subRiesgos = [];
     this.titulo = titulo;
   }
 
   Inspeccion.fromMap(Map<String, dynamic> data) {
     id = data['id'];
+    estado = data['estado'];
     fechaInicio = data['fechaInicio'];
     fechaFin = data['fechaFin'];
     lugar = data['lugar'];
@@ -34,27 +48,55 @@ class Inspeccion {
     titulo = data['titulo'];
   }
 
-  String getId(){
+  List<SubRiesgo> getRiesgos(){
+    return subRiesgos;
+  }
+
+  void addRiesgo(SubRiesgo sr){
+    subRiesgos.add(sr);
+  }
+
+  void delRiesgo(int id){
+    for (int i = 0; i < subRiesgos.length; i++){
+      if(subRiesgos[i].id == id){
+        subRiesgos.remove(i);
+      }
+    }
+  }
+
+  int getNumeroRiesgos(){
+    return subRiesgos.length;
+  }
+
+  int getId(){
     return id;
   }
 
-  void setId(String id){
+  void setId(int id){
     this.id = id;
   }
 
-  DateTime getFechaInicio(){
+  EstadoInspeccion getEstado(){
+    return estado;
+  }
+
+  void setEstado(EstadoInspeccion ei){
+    estado = ei;
+  }
+
+  Timestamp getFechaInicio(){
     return fechaInicio;
   } 
 
-  void setFechaInicio(DateTime fi){
+  void setFechaInicio(Timestamp fi){
     fechaInicio = fi;
   }
 
-  DateTime getFechaFin(){
+  Timestamp getFechaFin(){
     return fechaFin;
   }
 
-  void setFechaFin(DateTime ff){
+  void setFechaFin(Timestamp ff){
     fechaFin = ff;
   }
 

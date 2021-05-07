@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/modelo/riesgo.dart';
-import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
+import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
-class SeleccionSubRiesgo extends StatefulWidget {
+class ListaInspecciones extends StatefulWidget {
   @override
-  _SeleccionSubRiesgoState createState() => _SeleccionSubRiesgoState();
+  _ListaInspeccionesState createState() => _ListaInspeccionesState();
 }
 
-class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
+class _ListaInspeccionesState extends State<ListaInspecciones> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +50,7 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700)),
             SizedBox(height: 7.0),
-            Text('Selecciona el riesgo laboral encontrado:',
+            Text('Lista de inspecciones',
                 style: TextStyle(color: Colors.black, fontSize: 17.0))
           ],
         ),
@@ -58,50 +59,32 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   }
 
   Widget _botonesRedondeados() {
-    SubRiesgoNotifier subRiesgoNotifier =
-        Provider.of<SubRiesgoNotifier>(context, listen: false);
-    RiesgoNotifier riesgoNotifier =
-        Provider.of<RiesgoNotifier>(context, listen: false);
-    List<SubRiesgo> subRiesgos = [];
-    for (int i = 0; i < subRiesgoNotifier.subRiesgoList.length; i++) {
-      if (subRiesgoNotifier.subRiesgoList[i].idRiesgoPadre ==
-          riesgoNotifier.currentRiesgo.id) {
-        subRiesgos.add(subRiesgoNotifier.subRiesgoList[i]);
-      }
-    }
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: subRiesgos.length,
+      itemCount: inspeccionNotifier.inspeccionList.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        // && index + 1 != subRiesgos.length
-        if (index % 2 == 0) {
-          if (index + 1 != subRiesgos.length) {
-            rows.add(TableRow(children: [
-              _crearBotonRedondeado(Colors.blue, subRiesgos[index]),
-              _crearBotonRedondeado(Colors.blue, subRiesgos[index + 1]),
-            ]));
-          } else {
-            rows.add(TableRow(children: [
-              _crearBotonRedondeado(Colors.blue, subRiesgos[index]),
-              Container()
-            ]));
-          }
-        }
+        rows.add(TableRow(children: [
+          _crearBotonRedondeado(Colors.blue, inspeccionNotifier.inspeccionList[index]),
+        ]));
         return Table(children: rows);
       },
     );
   }
 
-  Widget _crearBotonRedondeado(Color color, SubRiesgo sr) {
+  Widget _crearBotonRedondeado(Color color, Inspeccion i) {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     final card = Container(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         FadeInImage(
           placeholder: AssetImage('assets/images/original.gif'),
-          image: AssetImage('assets/icons/${sr.icono}_V-01.png'),
+          image: AssetImage('assets/icons/${100}_V-01.png'),
           fadeInDuration: Duration(milliseconds: 200),
           height: 160.0,
           fit: BoxFit.cover,
@@ -110,15 +93,18 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
           child: Container(
               alignment: Alignment.center,
               padding: EdgeInsets.all(10.0),
-              child: Text(sr.nombre,
+              child: Text(i.titulo,
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
         )
       ],
     ));
 
     return GestureDetector(
+      
       onTap: () {
-        agregarRiesgo(sr);
+        inspeccionNotifier.currentInspeccion = i  ;
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => SeleccionRiesgo()));
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),
@@ -141,35 +127,5 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
         ),
       ),
     );
-  }
-
-  agregarRiesgo(SubRiesgo sr) async {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
-    InspeccionNotifier inspeccionNotifier =
-        Provider.of<InspeccionNotifier>(context, listen: false);
-    bool existe = false;
-    getRiesgosInspeccionTodos(riesgoInspeccionNotifier, inspeccionNotifier);
-    SubRiesgo sr2;
-    try{
-      for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++){
-        if (riesgoInspeccionNotifier.riesgoList[i].id == sr.id ){
-          existe = true;
-          sr2 = riesgoInspeccionNotifier.riesgoList[i];
-        }
-      }
-      if(!existe){
-        await addRiesgo(sr, inspeccionNotifier);
-      }else{
-        await actualizarRiesgo(false, sr2);
-      }
-      
-      Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => SeleccionRiesgo()));
-    }
-    catch (e) {
-      //error en la operacion de BD
-    }
-
   }
 }

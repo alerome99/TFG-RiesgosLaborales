@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
+import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
+import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
+import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
+import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class SeleccionRiesgo extends StatefulWidget {
@@ -14,20 +18,44 @@ class SeleccionRiesgo extends StatefulWidget {
 class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   @override
   Widget build(BuildContext context) {
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
+        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    getRiesgosInspeccionNoEliminados(riesgoInspeccionNotifier, inspeccionNotifier);
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Fondo(),
           SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-             _titulos(),
-             _botonesRedondeados(),
-          
-
-        ],
-      ),
+            physics: ScrollPhysics(),
+            child: Column(
+              children: <Widget>[
+                _titulos(),
+                _botonesRedondeados(),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 0.0,
+            right: 0.0,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              child: Row(
+                children: <Widget>[
+                  FloatingActionButton.extended(
+                    heroTag: UniqueKey(),
+                    //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
+                    icon: Icon(Icons.archive_outlined, size: 30.0),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+                    },
+                    label: Text('Risks'),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -37,12 +65,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   Widget _titulos() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(
-          20.0,
-          25.0,
-          20.0,
-          10.0
-        ),
+        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -63,15 +86,13 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   Widget _botonesRedondeados() {
     RiesgoNotifier riesgoNotifier =
         Provider.of<RiesgoNotifier>(context, listen: false);
-    SubRiesgoNotifier subRiesgoNotifier =
-        Provider.of<SubRiesgoNotifier>(context, listen: false);
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: riesgoNotifier.riesgoList.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        if (index % 2 == 0 && index + 1 != riesgoNotifier.riesgoList.length) {
+        if (index % 2 == 0) {
           if (index + 1 != riesgoNotifier.riesgoList.length) {
             rows.add(TableRow(children: [
               _crearBotonRedondeado(
@@ -119,8 +140,8 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
     return GestureDetector(
       onTap: () {
         riesgoNotifier.currentRiesgo = r;
-        Navigator.of(context)
-          .push(MaterialPageRoute(builder: (BuildContext context) => SeleccionSubRiesgo()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (BuildContext context) => SeleccionSubRiesgo()));
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),

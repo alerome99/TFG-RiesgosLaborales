@@ -17,6 +17,7 @@ import 'package:tfg/widgets/menu.dart';
 
 import '../customClipper.dart';
 import '../providers/db.dart';
+import 'listaInspecciones.dart';
 
 class MainPage extends StatefulWidget {
   final User user;
@@ -90,6 +91,7 @@ class _MainPageState extends State<MainPage> {
     if (subRiesgoNotifier.bandera != 1) {
       inicializarSubRiesgos(subRiesgoNotifier);
     }
+    getInspecciones(inspeccionNotifier);
     getProvincias(inspeccionNotifier);
     getUser(userNotifier);
     return Scaffold(
@@ -107,7 +109,7 @@ class _MainPageState extends State<MainPage> {
           Align(
   alignment: Alignment.center,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 80, 24, 0),
+            padding: EdgeInsets.fromLTRB(20, 130, 24, 0),
             child: Text(
             "Welcome to ORI",
             style: TextStyle(
@@ -119,7 +121,7 @@ class _MainPageState extends State<MainPage> {
           ),
           ),
           Positioned(
-            bottom: 100.0,
+            bottom: 50.0,
             child: Row(
               children: <Widget>[
                 Container(
@@ -129,7 +131,11 @@ class _MainPageState extends State<MainPage> {
                   child: Card(
                     color: Colors.grey,
                     child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  ListaInspecciones()));
+                        },
                         splashColor: Colors.blue,
                         child: Center(
                           child: Column(
