@@ -1,21 +1,44 @@
 class SubRiesgo {
 
   int id;
-  String nombre;
+  String nombre, idDocumento;
   String icono;
   int idRiesgoPadre;
+  bool eliminado;
 
   SubRiesgo(int id, String nombre, String icono, int idRiesgoPadre){
     this.id = id;
     this.nombre = nombre;
     this.icono = icono;
     this.idRiesgoPadre = idRiesgoPadre;
+    eliminado = false;
+  }
+
+  SubRiesgo.fromMap(Map<String, dynamic> data) {
+    nombre = data['nombre'];
+    icono = data['icono'];
+    eliminado = data['eliminado'];
+  }
+
+  bool getEliminado(){
+    return eliminado;
+  }
+
+  void setEliminado(){
+    eliminado = true;
   }
 
   void setIdRiesgoPadre(int irp){
     idRiesgoPadre = irp;
   }
 
+  String getIdDocumento(){
+    return idDocumento;
+  }
+
+  void setIdDocumento(String id){
+    idDocumento = id;
+  }
   int getIdRiesgoPadre(){
     return idRiesgoPadre;
   }

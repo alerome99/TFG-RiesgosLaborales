@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
+import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/user_notifier.dart';
 import '../modelo/inspeccion.dart';
 import '../modelo/user.dart';
@@ -68,12 +71,77 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
   }
 }
 
+addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async{
+    Map<String, dynamic> demoData = {
+      "id": i.getId(),
+      "descripcion": i.getDescripcion(),
+      "titulo": i.getTitulo(),
+      "fechaFin": i.getFechaFin(),
+      "fechaInicio": i.getFechaInicio(),
+      "provincia": i.getProvincia(),
+      "lugar": i.getLugar(),
+      "estado": i.getEstado(),
+    };
+    CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('inspeccion');
+    collectionReference.add(demoData);
+    inspeccionNotifier.currentInspeccion = i;
+}
+
+addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async{
+    Map<String, dynamic> demoData = {
+      "idInspeccion": inspeccionNotifier.currentInspeccion.id,
+      "icono": sr.icono,
+      "nombre": sr.nombre,
+      "eliminado": false,
+    };
+    CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('riesgo');
+    collectionReference.add(demoData);
+}
+
+getRiesgosInspeccionNoEliminados(RiesgoInspeccionNotifier riesgoInspeccionNotifier, InspeccionNotifier inspeccionNotifier) async{
+  QuerySnapshot snapshot =
+    await FirebaseFirestore.instance.collection('riesgo')
+    .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id).where('eliminado', isEqualTo:false)
+    .get();
+  List<SubRiesgo> riesgoList = [];
+  snapshot.docs.forEach((document) {
+    SubRiesgo r = SubRiesgo.fromMap(document.data());
+    r.setIdDocumento(document.id);
+    riesgoList.add(r);
+  });
+  riesgoInspeccionNotifier.riesgoList = riesgoList;
+}
+
+getRiesgosInspeccionTodos(RiesgoInspeccionNotifier riesgoInspeccionNotifier, InspeccionNotifier inspeccionNotifier) async{
+  QuerySnapshot snapshot =
+    await FirebaseFirestore.instance.collection('riesgo')
+    .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
+    .get();
+  List<SubRiesgo> riesgoList = [];
+  snapshot.docs.forEach((document) {
+    SubRiesgo r = SubRiesgo.fromMap(document.data());
+    r.setIdDocumento(document.id);
+    riesgoList.add(r);
+  });
+  riesgoInspeccionNotifier.riesgoList = riesgoList;
+}
+
 modificarUsuario(String email, String numero, String nombre, String id) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
   collectionReference
       .doc(id)
       .update({'email': email, 'numero': numero, 'nombre': nombre});
+}
+
+actualizarRiesgo(bool estado, SubRiesgo sr) {
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('riesgo');
+  collectionReference
+      .doc(sr.getIdDocumento())
+      .update({'eliminado': estado});
 }
 
 User getCurrentUser() {
@@ -97,11 +165,21 @@ getProvincias(InspeccionNotifier inspeccionNotifier) async {
       await FirebaseFirestore.instance.collection('provincia').get();
   List<Provincia> provinciaList = [];
   snapshot.docs.forEach((document) {
-    Provincia p = Provincia.fromMap(document.data());
-    provinciaList.add(p);
-  });
-
+  Provincia p = Provincia.fromMap(document.data());
+  provinciaList.add(p);
+});
   inspeccionNotifier.provinciaList = provinciaList;
+}
+
+getInspecciones(InspeccionNotifier inspeccionNotifier) async {
+  QuerySnapshot snapshot =
+      await FirebaseFirestore.instance.collection('inspeccion').get();
+  List<Inspeccion> inspeccionesList = [];
+  snapshot.docs.forEach((document) {
+  Inspeccion i = Inspeccion.fromMap(document.data());
+  inspeccionesList.add(i);
+});
+  inspeccionNotifier.inspeccionList = inspeccionesList;
 }
 
 getUser(UserNotifier userNotifier /*, String email*/) async {
