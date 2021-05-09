@@ -65,7 +65,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   Widget _titulos() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 10.0),
+        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

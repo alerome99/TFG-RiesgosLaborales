@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/user_notifier.dart';
@@ -92,11 +94,28 @@ addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async{
     Map<String, dynamic> demoData = {
       "idInspeccion": inspeccionNotifier.currentInspeccion.id,
       "icono": sr.icono,
+      "id": sr.id,
       "nombre": sr.nombre,
       "eliminado": false,
     };
     CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
+    collectionReference.add(demoData);
+}
+
+addEvaluacion(Evaluacion evaluacion) async{
+    Map<String, dynamic> demoData = {
+      "id": evaluacion.id,
+      "titulo": evaluacion.titulo,
+      "idInspeccion": evaluacion.idInspeccion,
+      "idRiesgo": evaluacion.idRiesgo,
+      "accionCorrectora": evaluacion.accionCorrectora,
+      "nivelConsecuencias": evaluacion.nivelConsecuencias,
+      "nivelDeficiencia": evaluacion.nivelDeficiencia,
+      "nivelExposicion": evaluacion.nivelExposion,
+    };
+    CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('evaluacion');
     collectionReference.add(demoData);
 }
 
@@ -114,7 +133,7 @@ getRiesgosInspeccionNoEliminados(RiesgoInspeccionNotifier riesgoInspeccionNotifi
   riesgoInspeccionNotifier.riesgoList = riesgoList;
 }
 
-getRiesgosInspeccionTodos(RiesgoInspeccionNotifier riesgoInspeccionNotifier, InspeccionNotifier inspeccionNotifier) async{
+getRiesgosInspeccionTodos(RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier, InspeccionNotifier inspeccionNotifier) async{
   QuerySnapshot snapshot =
     await FirebaseFirestore.instance.collection('riesgo')
     .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
@@ -125,7 +144,7 @@ getRiesgosInspeccionTodos(RiesgoInspeccionNotifier riesgoInspeccionNotifier, Ins
     r.setIdDocumento(document.id);
     riesgoList.add(r);
   });
-  riesgoInspeccionNotifier.riesgoList = riesgoList;
+  riesgoInspeccionEliminadaNotifier.riesgoList = riesgoList;
 }
 
 modificarUsuario(String email, String numero, String nombre, String id) async {

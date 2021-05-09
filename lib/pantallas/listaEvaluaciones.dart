@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
@@ -10,6 +12,8 @@ import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
+
+import 'evaluacion.dart';
 
 class ListaRiesgosPorEvaluar extends StatefulWidget {
   @override
@@ -82,13 +86,12 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     );
   }
 
-  Widget _botonesRedondeados() {
+  Widget _botonesRedondeados(){
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    getRiesgosInspeccionNoEliminados(
-        riesgoInspeccionNotifier, inspeccionNotifier);
+  print(riesgoInspeccionNotifier.riesgoList.length);
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -146,10 +149,8 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     return GestureDetector(
       onTap: () {
         riesgoInspeccionNotifier.currentRiesgo = sr;
-        /*
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => SeleccionSubRiesgo()));
-            */
+            builder: (BuildContext context) => EvaluacionRiesgo()));     
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),
@@ -212,7 +213,9 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         
     }
     actualizarRiesgo(true, sr2);
+
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+
   }
 }
