@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
@@ -18,6 +19,11 @@ class SeleccionSubRiesgo extends StatefulWidget {
 class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   @override
   Widget build(BuildContext context) {
+    RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier =
+        Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    getRiesgosInspeccionTodos(riesgoInspeccionEliminadaNotifier, inspeccionNotifier);
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -144,18 +150,19 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   }
 
   agregarRiesgo(SubRiesgo sr) async {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier =
+        Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     bool existe = false;
-    getRiesgosInspeccionTodos(riesgoInspeccionNotifier, inspeccionNotifier);
+    //getRiesgosInspeccionTodos(riesgoInspeccionNotifier, inspeccionNotifier);
     SubRiesgo sr2;
     try{
-      for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++){
-        if (riesgoInspeccionNotifier.riesgoList[i].id == sr.id ){
+      for (int i = 0; i < riesgoInspeccionEliminadaNotifier.riesgoList.length; i++){
+        if (riesgoInspeccionEliminadaNotifier.riesgoList[i].id == sr.id && riesgoInspeccionEliminadaNotifier.riesgoList[i].getEliminado()){
+          print("Entra");
           existe = true;
-          sr2 = riesgoInspeccionNotifier.riesgoList[i];
+          sr2 = riesgoInspeccionEliminadaNotifier.riesgoList[i];
         }
       }
       if(!existe){

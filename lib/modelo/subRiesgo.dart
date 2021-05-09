@@ -18,6 +18,7 @@ class SubRiesgo {
     nombre = data['nombre'];
     icono = data['icono'];
     eliminado = data['eliminado'];
+    id = data['id'];
   }
 
   bool getEliminado(){
