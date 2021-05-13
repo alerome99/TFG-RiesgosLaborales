@@ -20,12 +20,15 @@ class EvaluacionRiesgo extends StatefulWidget {
 }
 
 class _EvaluacionState extends State<EvaluacionRiesgo> {
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   File foto;
   double _valueDeficiencia = 0.0;
-  double _valueExposion = 0.0;
+  double _valueExposicion = 0.0;
   double _valueConsecuencias = 0.0;
+  int _deficiencia = 0;
+  int _exposicion = 0;
+  int _consecuencias = 0;
 
   final TextEditingController _latitudController = TextEditingController();
   final TextEditingController _tituloController = TextEditingController();
@@ -38,6 +41,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -223,12 +227,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                   _valueDeficiencia = value;
                   switch (value.ceil()) {
                     case 0:
+                      _deficiencia = 0;
                       break;
                     case 1:
+                      _deficiencia = 2;
                       break;
                     case 2:
+                      _deficiencia = 6;
                       break;
                     case 3:
+                      _deficiencia = 10;
                       break;
                   }
                   setState(() {});
@@ -305,13 +313,28 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 showValueIndicator: ShowValueIndicator.always,
               ),
               child: Slider(
-                value: _valueExposion,
+                value: _valueExposicion,
                 min: 0,
                 max: 3,
                 divisions: 3,
                 onChanged: (value) {
-                  _valueDeficiencia = value;
-                }
+                  _valueExposicion = value;
+                  switch (value.ceil()) {
+                    case 0:
+                      _exposicion = 1;
+                      break;
+                    case 1:
+                      _exposicion = 2;
+                      break;
+                    case 2:
+                      _exposicion = 3;
+                      break;
+                    case 3:
+                      _exposicion = 4;
+                      break;
+                  }
+                  setState(() {});
+                },
               ),
             ),
           ),
@@ -392,12 +415,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                   _valueConsecuencias = value;
                   switch (value.ceil()) {
                     case 0:
+                      _consecuencias = 10;
                       break;
                     case 1:
+                      _consecuencias = 25;
                       break;
                     case 2:
+                      _consecuencias = 60;
                       break;
                     case 3:
+                      _consecuencias = 100;
                       break;
                   }
                   setState(() {});
@@ -502,7 +529,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       style: TextStyle(fontSize: 18.0),
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
-          labelText: 'Riesgo',
+          labelText: 'Titulo evaluación',
           labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
     );
   }
@@ -537,15 +564,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             );
           }
         
-          void mostrarSnackbar(String mensaje) {
-            final snackbar = SnackBar(
-              content: Text(mensaje),
-              duration: Duration(milliseconds: 1500),
-            );
-        
-            scaffoldKey.currentState.showSnackBar(snackbar);
-          }
-        
   void guardar() async {
       InspeccionNotifier inspeccionNotifier =
           Provider.of<InspeccionNotifier>(context, listen: false);
@@ -553,14 +571,23 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
           Provider.of<RiesgoInspeccionNotifier>(context, listen: false); 
       EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
           Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);   
-      Evaluacion eval = new Evaluacion(1, riesgoInspeccionNotifier.currentRiesgo.id, inspeccionNotifier.currentInspeccion.id, _tituloController.text, _accionCorrectoraController.text, _tipoFactorController, _valueDeficiencia, _valueExposion, _valueConsecuencias);
-      try{
-        await addEvaluacion(eval);
-        Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+      Evaluacion eval = new Evaluacion(1, riesgoInspeccionNotifier.currentRiesgo.id, inspeccionNotifier.currentInspeccion.id, _tituloController.text, _accionCorrectoraController.text, _tipoFactorController, _deficiencia, _exposicion, _consecuencias);
+      if(_tituloController.text=="" || _tipoFactorController=="" || _accionCorrectoraController=="" ){
+        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("You must fill all the fields"),));
       }
-      catch (e) {
-        //error en la operacion de BD
+      else{
+        try{
+          await addEvaluacion(eval);
+          await marcarRiesgoComoEvaluado(true, riesgoInspeccionNotifier.currentRiesgo);
+          Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+        }
+        catch (e) {
+          //error en la operacion de BD
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+            content: Text("Error al añadir evaluación"),
+          ));
+        }
       }
     }
 

@@ -9,6 +9,7 @@ import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/principal.dart';
+import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
@@ -23,6 +24,12 @@ class ListaRiesgosPorEvaluar extends StatefulWidget {
 class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
   @override
   Widget build(BuildContext context) {
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
+        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    getRiesgosInspeccionNoEliminados(
+        riesgoInspeccionNotifier, inspeccionNotifier);
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -38,6 +45,48 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
           ),
           Positioned(
             bottom: 0.0,
+            left: 0.0,
+            child: Container(
+              padding: EdgeInsets.all(12.0),
+              child: Row(
+                children: <Widget>[
+                  /*
+                          IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => SeleccionRiesgo()));
+                  },
+                ),*/
+                  FloatingActionButton.extended(
+                    heroTag: UniqueKey(),
+                    //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
+                    //icon: Icon(Icons., size: 30.0),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              SeleccionRiesgo()));
+                      //Metodo que cambie el estado de la inspeccion y redireccione a la pagina principal
+                      /*
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => MainPage()));
+                        */
+                    },
+                    label: Text('Atras'),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0.0,
             right: 0.0,
             child: Container(
               padding: EdgeInsets.all(12.0),
@@ -48,11 +97,10 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                     //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
                     //icon: Icon(Icons., size: 30.0),
                     onPressed: () {
-                      //Metodo que cambie el estado de la inspeccion y redireccione a la pagina principal
-                      /*
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => MainPage()));
-                        */
+                      showModalBottomSheet(
+                        context: context,
+                        builder: ((builder) => _confirmacionModal()),
+                      );
                     },
                     label: Text('Finalizar inspección'),
                   ),
@@ -65,10 +113,60 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     );
   }
 
+  Widget _confirmacionModal() {
+    return Container(
+        height: 150.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 10,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "¿Estás seguro de que quieres finalizar la inspección?",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    finalizarInspeccion();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      onPrimary: Colors.black,
+                      elevation: 5),
+                  child: Text('SI'),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                  },
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                      onPrimary: Colors.black,
+                      elevation: 5),
+                  child: Text('NO'),
+                ),
+              ],
+            )
+          ],
+        ));
+  }
+
   Widget _titulos() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 10.0),
+        padding: EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -86,12 +184,11 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     );
   }
 
-  Widget _botonesRedondeados(){
+  Widget _botonesRedondeados() {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-  print(riesgoInspeccionNotifier.riesgoList.length);
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -150,7 +247,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
       onTap: () {
         riesgoInspeccionNotifier.currentRiesgo = sr;
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => EvaluacionRiesgo()));     
+            builder: (BuildContext context) => EvaluacionRiesgo()));
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),
@@ -198,7 +295,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     );
   }
 
-  void eliminarRiesgoInspeccion(SubRiesgo sr) {
+  void eliminarRiesgoInspeccion(SubRiesgo sr) async {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     SubRiesgo sr2;
@@ -208,14 +305,21 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         riesgoInspeccionNotifier.riesgoList[i].setEliminado();
       }
     }
-    for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++) {
-      print(riesgoInspeccionNotifier.riesgoList[i].getEliminado());
-        
-    }
-    actualizarRiesgo(true, sr2);
-
+    try {
+      await actualizarRiesgo(true, sr2);
+    } catch (e) {}
     Navigator.of(context).push(MaterialPageRoute(
         builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+  }
 
+  void finalizarInspeccion() async {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    try {
+      modificarEstadoComoPendienteInspeccion(
+          inspeccionNotifier.currentInspeccion.getIdDocumento());
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+    } catch (e) {}
   }
 }

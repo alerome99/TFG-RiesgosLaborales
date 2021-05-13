@@ -6,9 +6,8 @@ enum TipoFactor{
 class Evaluacion {
   String titulo, accionCorrectora;
   TipoFactor tipo;
-  int id, idRiesgo, idInspeccion;
-  double nivelExposion, nivelDeficiencia, nivelConsecuencias;
-  Evaluacion(int id, int idRiesgo, int idInspeccion, String titulo, String accionCorrectora, String tp, double nivelDeficiencia, double nivelExposicion, double nivelConsecuencias){
+  int id, idRiesgo, idInspeccion, nivelExposicion, nivelDeficiencia, nivelConsecuencias;
+  Evaluacion(int id, int idRiesgo, int idInspeccion, String titulo, String accionCorrectora, String tp, int nivelDeficiencia, int nivelExposicion, int nivelConsecuencias){
     this.id = id;
     this.idRiesgo = idRiesgo;
     this.idInspeccion = idInspeccion;
@@ -21,7 +20,7 @@ class Evaluacion {
     }
     this.nivelConsecuencias = nivelConsecuencias;
     this.nivelDeficiencia = nivelDeficiencia;
-    this.nivelExposion = nivelExposion;
+    this.nivelExposicion = nivelExposicion;
   }
 
   Evaluacion.fromMap(Map<String, dynamic> data) {
@@ -32,6 +31,6 @@ class Evaluacion {
     accionCorrectora = data['accionCorrectora'];
     nivelConsecuencias = data['nivelConsecuencias'];
     nivelDeficiencia = data['nivelDeficiencia'];
-    nivelExposion = data['nivelExposicion'];
+    nivelExposicion = data['nivelExposicion'];
   }
 }

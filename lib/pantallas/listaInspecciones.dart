@@ -67,9 +67,28 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
       itemCount: inspeccionNotifier.inspeccionList.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        rows.add(TableRow(children: [
-          _crearBotonRedondeado(Colors.blue, inspeccionNotifier.inspeccionList[index]),
-        ]));
+        if (inspeccionNotifier.inspeccionList[index].estado ==
+            EstadoInspeccion.enRealizacion) {
+          rows.add(TableRow(children: [
+            _crearBotonRedondeado(
+                Colors.blue, inspeccionNotifier.inspeccionList[index]),
+          ]));
+        }
+        if (inspeccionNotifier.inspeccionList[index].estado ==
+            EstadoInspeccion.pendiente) {
+          rows.add(TableRow(children: [
+            _crearBotonRedondeado(
+                Colors.green, inspeccionNotifier.inspeccionList[index]),
+          ]));
+        }
+        if (inspeccionNotifier.inspeccionList[index].estado ==
+            EstadoInspeccion.cerrada) {
+          rows.add(TableRow(children: [
+            _crearBotonRedondeado(
+                Colors.red, inspeccionNotifier.inspeccionList[index]),
+          ]));
+        }
+
         return Table(children: rows);
       },
     );
@@ -79,32 +98,35 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     final card = Container(
+        color: color,
         child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        FadeInImage(
-          placeholder: AssetImage('assets/images/original.gif'),
-          image: AssetImage('assets/icons/${100}_V-01.png'),
-          fadeInDuration: Duration(milliseconds: 200),
-          height: 160.0,
-          fit: BoxFit.cover,
-        ),
-        Expanded(
-          child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(10.0),
-              child: Text(i.titulo,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14))),
-        )
-      ],
-    ));
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            FadeInImage(
+              placeholder: AssetImage('assets/images/giphy-9.gif'),
+              image: AssetImage('assets/icons/${100}_V-01.png'),
+              fadeInDuration: Duration(milliseconds: 200),
+              height: 160.0,
+              fit: BoxFit.cover,
+            ),
+            Expanded(
+              child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(i.titulo,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500, fontSize: 14))),
+            )
+          ],
+        ));
 
     return GestureDetector(
-      
       onTap: () {
-        inspeccionNotifier.currentInspeccion = i  ;
-        Navigator.of(context).push(MaterialPageRoute(
+        if(i.getEstado()=="enRealizacion"){
+          inspeccionNotifier.currentInspeccion = i;
+          Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => SeleccionRiesgo()));
+        } 
       },
       child: Padding(
         padding: EdgeInsets.all(10.0),

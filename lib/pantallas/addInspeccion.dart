@@ -22,6 +22,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
+  final TextEditingController _nombreEmpresaController = TextEditingController();
   String _provinciaController;
 
   @override
@@ -108,6 +109,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                             children: <Widget>[
                               _crearTextFieldTitulo(),
                               _crearTextFieldLugar(),
+                              _crearTextNombreEmpresa(),
                               _crearSelectProvincia(),
                               //_crearFieldCoordenadas(),
                               _crearTextFieldDescripcion(),
@@ -296,6 +298,15 @@ class _AddInspeccionState extends State<AddInspeccion> {
     );
   }
 
+  Widget _crearTextNombreEmpresa() {
+    return TextFormField(
+      controller: _nombreEmpresaController,
+      textCapitalization: TextCapitalization.words,
+      decoration: InputDecoration(
+          labelText: 'Empresa', labelStyle: TextStyle(fontSize: 20.0)),
+    );
+  }
+
   void agregarInspeccion() async {
     InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
     int idNueva = 0;
@@ -306,8 +317,8 @@ class _AddInspeccionState extends State<AddInspeccion> {
         }
       }
     }
-    Inspeccion i = Inspeccion(idNueva, Timestamp.now(), null, _direccionController.text, "Valladolid", null, null, _descripcionController.text, _tituloController.text);
-    if(_tituloController.text=="" || _direccionController.text=="" || _provinciaController=="" || _descripcionController==""){
+    Inspeccion i = Inspeccion(idNueva, Timestamp.now(), null, _direccionController.text, "Valladolid", null, null, _descripcionController.text, _tituloController.text, _nombreEmpresaController.text);
+    if(_tituloController.text=="" || _direccionController.text=="" || _provinciaController=="" || _descripcionController.text=="" || _nombreEmpresaController.text==""){
       _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("You must fill all the fields"),));
     }
     else{
