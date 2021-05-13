@@ -10,18 +10,13 @@ enum EstadoInspeccion {
 
 class Inspeccion {
   int id;
-  Timestamp fechaInicio;
-  Timestamp fechaFin;
-  String lugar;
-  String provincia;
-  double latitud;
-  double longitud;
-  String descripcion;
-  String titulo;
+  Timestamp fechaInicio, fechaFin;
+  double latitud, longitud;
+  String descripcion, idDocumento, titulo, provincia, lugar, nombreEmpresa;
   EstadoInspeccion estado;
   List<SubRiesgo> subRiesgos;
 
-  Inspeccion(int id, Timestamp fechaInicio, Timestamp fechaFin, String lugar, String provincia, double latitud, double longitud, String descripcion, String titulo){
+  Inspeccion(int id, Timestamp fechaInicio, Timestamp fechaFin, String lugar, String provincia, double latitud, double longitud, String descripcion, String titulo, String nombreEmpresa){
     this.id = id;
     estado = EstadoInspeccion.enRealizacion;
     this.fechaInicio = fechaInicio;
@@ -33,11 +28,21 @@ class Inspeccion {
     this.descripcion = descripcion;
     subRiesgos = [];
     this.titulo = titulo;
+    this.nombreEmpresa = nombreEmpresa;
   }
 
   Inspeccion.fromMap(Map<String, dynamic> data) {
     id = data['id'];
-    estado = data['estado'];
+    String estadoTem = data['estado'];
+    if(estadoTem == "cerrada"){
+      estado = EstadoInspeccion.cerrada;
+    }
+    if(estadoTem == "enRealizacion"){
+      estado = EstadoInspeccion.enRealizacion;
+    }
+    if(estadoTem == "pendiente"){
+      estado = EstadoInspeccion.pendiente;
+    }
     fechaInicio = data['fechaInicio'];
     fechaFin = data['fechaFin'];
     lugar = data['lugar'];
@@ -46,6 +51,7 @@ class Inspeccion {
     longitud = data['longitud'];
     descripcion = data['descripcion'];
     titulo = data['titulo'];
+    nombreEmpresa = data['nombreEmpresa'];
   }
 
   List<SubRiesgo> getRiesgos(){
@@ -64,6 +70,22 @@ class Inspeccion {
     }
   }
 
+  String getIdDocumento(){
+    return idDocumento;
+  }
+
+  void setIdDocumento(String id){
+    idDocumento = id;
+  }
+
+  String getNombreEmpresa(){
+    return nombreEmpresa;
+  }
+
+  void setNombreEmpresa(String nP){
+    nombreEmpresa = nP;
+  }
+
   int getNumeroRiesgos(){
     return subRiesgos.length;
   }
@@ -76,8 +98,17 @@ class Inspeccion {
     this.id = id;
   }
 
-  EstadoInspeccion getEstado(){
-    return estado;
+  String getEstado(){
+    if(estado == EstadoInspeccion.cerrada){
+      return "cerrada";
+    }
+    if(estado == EstadoInspeccion.enRealizacion){
+      return "enRealizacion";
+    }
+    if(estado == EstadoInspeccion.pendiente){
+      return "pendiente";
+    }
+    return null;
   }
 
   void setEstado(EstadoInspeccion ei){
