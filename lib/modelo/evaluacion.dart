@@ -3,8 +3,18 @@ enum TipoFactor{
   Existente,
 }
 
+class FotoRiesgo{
+  String path;
+  int idRiesgoUnica;
+
+  FotoRiesgo(String path, int idRiesgoUnica){
+    this.path = path;
+    this.idRiesgoUnica = idRiesgoUnica;
+  }
+}
+
 class Evaluacion {
-  String titulo, accionCorrectora;
+  String titulo, accionCorrectora, tp, idDocumento;
   TipoFactor tipo;
   int id, idRiesgo, idInspeccion, nivelExposicion, nivelDeficiencia, nivelConsecuencias;
   Evaluacion(int id, int idRiesgo, int idInspeccion, String titulo, String accionCorrectora, String tp, int nivelDeficiencia, int nivelExposicion, int nivelConsecuencias){
@@ -25,6 +35,13 @@ class Evaluacion {
 
   Evaluacion.fromMap(Map<String, dynamic> data) {
     id = data['id'];
+    tp = data['tipoFactor'];
+    if(tp == "Potencial"){
+      tipo = TipoFactor.Potencial;
+    }
+    if(tp == "Existente"){
+      tipo = TipoFactor.Existente;
+    }
     titulo = data['titulo'];
     idInspeccion = data['idInspeccion'];
     idRiesgo = data['idRiesgo'];
@@ -32,5 +49,13 @@ class Evaluacion {
     nivelConsecuencias = data['nivelConsecuencias'];
     nivelDeficiencia = data['nivelDeficiencia'];
     nivelExposicion = data['nivelExposicion'];
+  }
+
+  void setIdDocumento(String id){
+    idDocumento = id;
+  }
+
+  String getIdDocumento(){
+    return idDocumento;
   }
 }

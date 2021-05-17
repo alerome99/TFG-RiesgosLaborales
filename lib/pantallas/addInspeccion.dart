@@ -22,7 +22,10 @@ class _AddInspeccionState extends State<AddInspeccion> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
-  final TextEditingController _nombreEmpresaController = TextEditingController();
+  final TextEditingController _nombreEmpresaController =
+      TextEditingController();
+  final TextEditingController controller = TextEditingController();
+  String _direccion;
   String _provinciaController;
 
   @override
@@ -143,6 +146,13 @@ class _AddInspeccionState extends State<AddInspeccion> {
     return TextFormField(
       controller: _descripcionController,
       maxLines: 4,
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese una descripción para la inspección';
+        } else {
+          return null;
+        }
+      },
       textCapitalization: TextCapitalization.sentences,
       decoration: InputDecoration(
           labelText: 'Descripcion', labelStyle: TextStyle(fontSize: 20.0)),
@@ -280,8 +290,8 @@ class _AddInspeccionState extends State<AddInspeccion> {
       decoration: InputDecoration(
           labelText: 'Direction', labelStyle: TextStyle(fontSize: 20.0)),
       validator: (value) {
-        if (value.length < 3) {
-          return 'Ingrese la dirección donde se va a realizar la inspección';
+        if (value.length < 1) {
+          return 'Ingrese el lugar en el que se va a realizar la inspección';
         } else {
           return null;
         }
@@ -293,6 +303,13 @@ class _AddInspeccionState extends State<AddInspeccion> {
     return TextFormField(
       controller: _tituloController,
       textCapitalization: TextCapitalization.words,
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese un titulo para la inspección';
+        } else {
+          return null;
+        }
+      },
       decoration: InputDecoration(
           labelText: 'Name', labelStyle: TextStyle(fontSize: 20.0)),
     );
@@ -301,6 +318,13 @@ class _AddInspeccionState extends State<AddInspeccion> {
   Widget _crearTextNombreEmpresa() {
     return TextFormField(
       controller: _nombreEmpresaController,
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese el nombre de la empresa';
+        } else {
+          return null;
+        }
+      },
       textCapitalization: TextCapitalization.words,
       decoration: InputDecoration(
           labelText: 'Empresa', labelStyle: TextStyle(fontSize: 20.0)),
@@ -308,30 +332,45 @@ class _AddInspeccionState extends State<AddInspeccion> {
   }
 
   void agregarInspeccion() async {
-    InspeccionNotifier inspeccionNotifier = Provider.of<InspeccionNotifier>(context, listen:false);
+    if (!_formKey.currentState.validate()) return;
+
+    _formKey.currentState.save();
+
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     int idNueva = 0;
-    if(inspeccionNotifier.inspeccionList.length != 0){
-      for(int j = 0 ; j < inspeccionNotifier.inspeccionList.length; j++){
-        if (idNueva < inspeccionNotifier.inspeccionList[j].id){
+    if (inspeccionNotifier.inspeccionList.length != 0) {
+      for (int j = 0; j < inspeccionNotifier.inspeccionList.length; j++) {
+        if (idNueva <= inspeccionNotifier.inspeccionList[j].id) {
           idNueva = inspeccionNotifier.inspeccionList[j].id + 1;
         }
       }
     }
-    Inspeccion i = Inspeccion(idNueva, Timestamp.now(), null, _direccionController.text, "Valladolid", null, null, _descripcionController.text, _tituloController.text, _nombreEmpresaController.text);
-    if(_tituloController.text=="" || _direccionController.text=="" || _provinciaController=="" || _descripcionController.text=="" || _nombreEmpresaController.text==""){
-      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("You must fill all the fields"),));
-    }
-    else{
-      try{
+    Inspeccion i = Inspeccion(
+        idNueva,
+        Timestamp.now(),
+        null,
+        _direccionController.text,
+        "Valladolid",
+        null,
+        null,
+        _descripcionController.text,
+        _tituloController.text,
+        _nombreEmpresaController.text);
+    if (_provinciaController == null) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Debes escoger una provincia"),
+      ));
+    } else {
+      try {
         await addInspeccion(i, inspeccionNotifier);
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => SeleccionRiesgo()));
-      }
-      catch (e) {
+      } catch (e) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir inspección"),
         ));
       }
     }
-  } 
+  }
 }

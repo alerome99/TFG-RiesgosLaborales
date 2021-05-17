@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
@@ -23,13 +25,22 @@ class ListaRiesgosPorEvaluar extends StatefulWidget {
 
 class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _actualizarLista();
+  }
+
+  Future _actualizarLista() async {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     getRiesgosInspeccionNoEliminados(
         riesgoInspeccionNotifier, inspeccionNotifier);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -39,50 +50,9 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
             child: Column(
               children: <Widget>[
                 _titulos(),
-                _botonesRedondeados(),
+                //_botonesRedondeados(),
+                _listaRiesgos(),
               ],
-            ),
-          ),
-          Positioned(
-            bottom: 0.0,
-            left: 0.0,
-            child: Container(
-              padding: EdgeInsets.all(12.0),
-              child: Row(
-                children: <Widget>[
-                  /*
-                          IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => SeleccionRiesgo()));
-                  },
-                ),*/
-                  FloatingActionButton.extended(
-                    heroTag: UniqueKey(),
-                    //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
-                    //icon: Icon(Icons., size: 30.0),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              SeleccionRiesgo()));
-                      //Metodo que cambie el estado de la inspeccion y redireccione a la pagina principal
-                      /*
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => MainPage()));
-                        */
-                    },
-                    label: Text('Atras'),
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
           Positioned(
@@ -150,6 +120,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
@@ -184,39 +155,64 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     );
   }
 
-  Widget _botonesRedondeados() {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+  Widget _listaRiesgos() {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    return ListView.builder(
-      physics: NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: riesgoInspeccionNotifier.riesgoList.length,
-      itemBuilder: (BuildContext context, int index) {
-        List<TableRow> rows = [];
-        if (index % 2 == 0) {
-          if (!riesgoInspeccionNotifier.riesgoList[index].getEliminado()) {
-            if (index + 1 != riesgoInspeccionNotifier.riesgoList.length) {
-              rows.add(TableRow(children: [
-                _crearBotonRedondeado(
-                    Colors.blue, riesgoInspeccionNotifier.riesgoList[index]),
-                _crearBotonRedondeado(Colors.blue,
-                    riesgoInspeccionNotifier.riesgoList[index + 1]),
-              ]));
-            } else {
-              rows.add(TableRow(children: [
-                _crearBotonRedondeado(
-                    Colors.blue, riesgoInspeccionNotifier.riesgoList[index]),
-                Container()
-              ]));
-            }
-          }
-        }
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('riesgo')
+            .where('idInspeccion',
+                isEqualTo: inspeccionNotifier.currentInspeccion.id)
+            .where('eliminado', isEqualTo: false)
+            .where('evaluado', isEqualTo: false)
+            .snapshots(),
+        builder: (
+          context,
+          snapshot,
+        ) {
+          if (snapshot.data == null)
+            return Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.red,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
+              ),
+            );
 
-        return Table(children: rows);
-      },
-    );
+          return ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                SubRiesgo r = new SubRiesgo(
+                    snapshot.data.docs[index]['id'],
+                    snapshot.data.docs[index]['nombre'],
+                    snapshot.data.docs[index]['icono'],
+                    0,
+                    snapshot.data.docs[index]['idUnica']);
+                List<TableRow> rows = [];
+                if (index % 2 == 0) {
+                  if (index + 1 != snapshot.data.docs.length) {
+                    SubRiesgo r2 = new SubRiesgo(
+                        snapshot.data.docs[index + 1]['id'],
+                        snapshot.data.docs[index + 1]['nombre'],
+                        snapshot.data.docs[index + 1]['icono'],
+                        0,
+                        snapshot.data.docs[index]['idUnica']);
+                    rows.add(TableRow(children: [
+                      _crearBotonRedondeado(Colors.blue, r),
+                      _crearBotonRedondeado(Colors.blue, r2),
+                    ]));
+                  } else {
+                    rows.add(TableRow(children: [
+                      _crearBotonRedondeado(Colors.blue, r),
+                      Container()
+                    ]));
+                  }
+                }
+
+                return Table(children: rows);
+              });
+        });
   }
 
   Widget _crearBotonRedondeado(Color color, SubRiesgo sr) {
@@ -300,16 +296,15 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     SubRiesgo sr2;
     for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++) {
-      if (riesgoInspeccionNotifier.riesgoList[i].id == sr.id) {
+      if (riesgoInspeccionNotifier.riesgoList[i].idUnica == sr.idUnica) {
         sr2 = riesgoInspeccionNotifier.riesgoList[i];
         riesgoInspeccionNotifier.riesgoList[i].setEliminado();
       }
     }
     try {
       await actualizarRiesgo(true, sr2);
+      //Navigator.pop(context);
     } catch (e) {}
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
   }
 
   void finalizarInspeccion() async {
@@ -321,5 +316,10 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (BuildContext context) => MainPage()));
     } catch (e) {}
+  }
+
+  Future<bool> _onWillPopScope() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => SeleccionRiesgo()));
   }
 }

@@ -1,13 +1,14 @@
 class SubRiesgo {
 
-  int id;
+  int id, idUnica;
   String nombre, idDocumento;
   String icono;
   int idRiesgoPadre;
   bool eliminado, evaluado;
 
-  SubRiesgo(int id, String nombre, String icono, int idRiesgoPadre){
+  SubRiesgo(int id, String nombre, String icono, int idRiesgoPadre, int idUnica){
     this.id = id;
+    this.idUnica = idUnica;
     this.nombre = nombre;
     this.icono = icono;
     this.idRiesgoPadre = idRiesgoPadre;
@@ -15,12 +16,23 @@ class SubRiesgo {
     evaluado = false;
   }
 
+
+
   SubRiesgo.fromMap(Map<String, dynamic> data) {
     nombre = data['nombre'];
     icono = data['icono'];
     eliminado = data['eliminado'];
     id = data['id'];
+    idUnica = data['idUnica'];
     evaluado = data['evaluado'];
+  }
+
+  int getIdUnica(){
+    return idUnica;
+  }
+
+  void setIdUnica(int id){
+    idUnica = id;
   }
 
   bool getEliminado(){

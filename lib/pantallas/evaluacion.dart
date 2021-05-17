@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as Path;
 
 import 'dart:io';
 import 'dart:convert';
@@ -11,8 +14,11 @@ import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
+import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
+import 'package:tfg/widgets/foto.dart';
+import 'package:tfg/widgets/imageModal.dart';
 
 class EvaluacionRiesgo extends StatefulWidget {
   @override
@@ -21,7 +27,7 @@ class EvaluacionRiesgo extends StatefulWidget {
 
 class _EvaluacionState extends State<EvaluacionRiesgo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  static final _formKey = GlobalKey<FormState>();
   File foto;
   double _valueDeficiencia = 0.0;
   double _valueExposicion = 0.0;
@@ -29,10 +35,15 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   int _deficiencia = 0;
   int _exposicion = 0;
   int _consecuencias = 0;
+  File _foto;
+  PickedFile _imageFile;
+  String imagePath;
+  final ImagePicker _picker = ImagePicker();
 
   final TextEditingController _latitudController = TextEditingController();
   final TextEditingController _tituloController = TextEditingController();
-  final TextEditingController _accionCorrectoraController = TextEditingController();
+  final TextEditingController _accionCorrectoraController =
+      TextEditingController();
   String _tipoFactorController;
   final TextEditingController _longitudController = TextEditingController();
 
@@ -40,32 +51,36 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              Fondo(),
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(vertical: 70.0, horizontal: 15.0),
-                child: Column(
-                  children: <Widget>[
-                    _formulario(context),
-                  ],
+    return WillPopScope(
+      onWillPop: _onWillPopScope,
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Stack(
+              children: <Widget>[
+                Fondo(),
+                SingleChildScrollView(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 70.0, horizontal: 15.0),
+                  child: Column(
+                    children: <Widget>[
+                      _formulario(context),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      /*
+        /*
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
         onPressed: _tomarForo,
       ),*/
+      ),
     );
   }
 
@@ -132,6 +147,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     return Container(
       padding: EdgeInsets.fromLTRB(15, 0, 15, 5),
       child: Form(
+        key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -143,6 +159,10 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             //_crearFieldCoordenadas(),
             _crearTextFieldAccionCorrectora(),
             //_mostrarFoto(),
+            Container(
+              height: 20,
+            ),
+            _crearBotonFoto(),
             _crearBoton(),
           ],
         ),
@@ -175,23 +195,24 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       child: Column(
         children: <Widget>[
           Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: Text(
-            'Nivel de Deficiencia',
-            style: TextStyle(fontSize: 17),
-          ),),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Text(
+              'Nivel de Deficiencia',
+              style: TextStyle(fontSize: 17),
+            ),
+          ),
           Container(
             height: 7,
-            width: _size.width*0.8,
+            width: _size.width * 0.8,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black, width: 0.1),
-              gradient: LinearGradient(colors: [     
-                Color.fromRGBO(0, 255, 4, 1),   
-                Color.fromRGBO(143, 255, 0, 1),  
-                Color.fromRGBO(170, 255, 0, 1), 
-                Color.fromRGBO(255, 128, 0, 1), 
-                Color.fromRGBO(255, 89, 0, 1), 
-                Color.fromRGBO(255, 0, 0, 1), 
+              gradient: LinearGradient(colors: [
+                Color.fromRGBO(0, 255, 4, 1),
+                Color.fromRGBO(143, 255, 0, 1),
+                Color.fromRGBO(170, 255, 0, 1),
+                Color.fromRGBO(255, 128, 0, 1),
+                Color.fromRGBO(255, 89, 0, 1),
+                Color.fromRGBO(255, 0, 0, 1),
               ]),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -268,24 +289,25 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Column(
         children: <Widget>[
-                    Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: Text(
-            'Nivel de Exposicion',
-            style: TextStyle(fontSize: 17),
-          ),),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Text(
+              'Nivel de Exposicion',
+              style: TextStyle(fontSize: 17),
+            ),
+          ),
           Container(
             height: 7,
-            width: _size.width*0.8,
+            width: _size.width * 0.8,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black, width: 0.1),
-              gradient: LinearGradient(colors: [     
-                Color.fromRGBO(0, 255, 4, 1),   
-                Color.fromRGBO(143, 255, 0, 1),  
-                Color.fromRGBO(170, 255, 0, 1), 
-                Color.fromRGBO(255, 128, 0, 1), 
-                Color.fromRGBO(255, 89, 0, 1), 
-                Color.fromRGBO(255, 0, 0, 1), 
+              gradient: LinearGradient(colors: [
+                Color.fromRGBO(0, 255, 4, 1),
+                Color.fromRGBO(143, 255, 0, 1),
+                Color.fromRGBO(170, 255, 0, 1),
+                Color.fromRGBO(255, 128, 0, 1),
+                Color.fromRGBO(255, 89, 0, 1),
+                Color.fromRGBO(255, 0, 0, 1),
               ]),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -355,6 +377,128 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 
+  Widget _listaRiesgos() {
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
+        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('riesgo')
+            .where('idUnica',
+                isEqualTo: riesgoInspeccionNotifier.currentRiesgo.idUnica)
+            .snapshots(),
+        builder: (
+          context,
+          snapshot,
+        ) {
+          if (snapshot.data == null)
+            return Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.red,
+                valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
+              ),
+            );
+
+          return ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                /*
+                SubRiesgo r = new SubRiesgo(
+                    snapshot.data.docs[index]['id'],
+                    snapshot.data.docs[index]['nombre'],
+                    snapshot.data.docs[index]['icono'],
+                    0);*/
+              });
+        });
+  }
+
+  Widget _imageModal() {
+    return Container(
+        height: 100.0,
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "Escoge una foto",
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera),
+                    label: Text("Camera")),
+                FlatButton.icon(
+                    onPressed: () {
+                      takePhoto(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.image),
+                    label: Text("Gallery"))
+              ],
+            )
+          ],
+        ));
+  }
+
+  void takePhoto(ImageSource source) async {
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
+        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    final pickedFile = await _picker.getImage(
+      source: source,
+    );
+    setState(() {
+      _imageFile = pickedFile;
+    });
+    if (pickedFile != null) {
+      String fileName = Path.basename(_imageFile.path);
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child(fileName);
+      var imageFile = File(_imageFile.path);
+      UploadTask uploadTask = ref.putFile(imageFile);
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      uploadTask.then((res) {});
+      imagePath = imageUrl.toString();
+      FotoRiesgo f = new FotoRiesgo(imageUrl.toString(), riesgoInspeccionNotifier.currentRiesgo.idUnica);
+      try {
+        await addFotoRiesgo(f);
+        Navigator.of(context).pop();
+      } catch (e) {
+        //error en la operacion de BD
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Error al añadir la foto"),
+        ));
+      }
+    }
+  }
+
+  Widget _crearBotonFoto() {
+    return MaterialButton(
+      minWidth: 200.0,
+      height: 40.0,
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          builder: ((builder) => _imageModal()),
+        );
+      },
+      color: Colors.deepPurple,
+      child: Text('Añadir foto', style: TextStyle(color: Colors.white)),
+    );
+  }
+
   Widget _crearSliderNConsecuencias() {
     final _size = MediaQuery.of(context).size;
 
@@ -362,24 +506,25 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Column(
         children: <Widget>[
-                    Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: Text(
-            'Nivel Consecuencias',
-            style: TextStyle(fontSize: 17),
-          ),),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Text(
+              'Nivel Consecuencias',
+              style: TextStyle(fontSize: 17),
+            ),
+          ),
           Container(
             height: 7,
-            width: _size.width*0.8,
+            width: _size.width * 0.8,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.black, width: 0.1),
-              gradient: LinearGradient(colors: [     
-                Color.fromRGBO(0, 255, 4, 1),   
-                Color.fromRGBO(143, 255, 0, 1),  
-                Color.fromRGBO(170, 255, 0, 1), 
-                Color.fromRGBO(255, 128, 0, 1), 
-                Color.fromRGBO(255, 89, 0, 1), 
-                Color.fromRGBO(255, 0, 0, 1), 
+              gradient: LinearGradient(colors: [
+                Color.fromRGBO(0, 255, 4, 1),
+                Color.fromRGBO(143, 255, 0, 1),
+                Color.fromRGBO(170, 255, 0, 1),
+                Color.fromRGBO(255, 128, 0, 1),
+                Color.fromRGBO(255, 89, 0, 1),
+                Color.fromRGBO(255, 0, 0, 1),
               ]),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -443,6 +588,34 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 Text('100'),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _onWillPopScope() {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("¿Seguro que quieres abandonar la evaluación?"),
+        content: Text('Esto descartará lo añadido hasta el momento'),
+        actions: [
+          new ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('SI'),
+          ),
+          new ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('NO'),
           ),
         ],
       ),
@@ -528,6 +701,13 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       controller: _tituloController,
       style: TextStyle(fontSize: 18.0),
       textCapitalization: TextCapitalization.sentences,
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese un titulo para esta evaluación';
+        } else {
+          return null;
+        }
+      },
       decoration: InputDecoration(
           labelText: 'Titulo evaluación',
           labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
@@ -535,17 +715,20 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   }
 
   Widget _crearTextFieldAccionCorrectora() {
-    return Container(
-      padding: EdgeInsets.only(bottom: 15),
-      child: TextFormField(
-        controller: _accionCorrectoraController,
-        maxLines: 3,
-        style: TextStyle(fontSize: 18),
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-            labelText: 'Acción Correctora',
-            labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
-      ),
+    return TextFormField(
+      controller: _accionCorrectoraController,
+      style: TextStyle(fontSize: 18),
+      textCapitalization: TextCapitalization.sentences,
+      decoration: InputDecoration(
+          labelText: 'Acción Correctora',
+          labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese un titulo para esta evaluación';
+        } else {
+          return null;
+        }
+      },
     );
   }
 
@@ -559,37 +742,60 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         textColor: Colors.white,
         label: Text('Guardar'),
         icon: Icon(Icons.save),
-        onPressed: () {guardar();},
-              ),
-            );
-          }
-        
+        onPressed: () {
+          guardar();
+        },
+      ),
+    );
+  }
+
   void guardar() async {
-      InspeccionNotifier inspeccionNotifier =
-          Provider.of<InspeccionNotifier>(context, listen: false);
-      RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-          Provider.of<RiesgoInspeccionNotifier>(context, listen: false); 
-      EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
-          Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);   
-      Evaluacion eval = new Evaluacion(1, riesgoInspeccionNotifier.currentRiesgo.id, inspeccionNotifier.currentInspeccion.id, _tituloController.text, _accionCorrectoraController.text, _tipoFactorController, _deficiencia, _exposicion, _consecuencias);
-      if(_tituloController.text=="" || _tipoFactorController=="" || _accionCorrectoraController=="" ){
-        _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("You must fill all the fields"),));
-      }
-      else{
-        try{
-          await addEvaluacion(eval);
-          await marcarRiesgoComoEvaluado(true, riesgoInspeccionNotifier.currentRiesgo);
-          Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
-        }
-        catch (e) {
-          //error en la operacion de BD
-          _scaffoldKey.currentState.showSnackBar(SnackBar(
-            content: Text("Error al añadir evaluación"),
-          ));
+    if (!_formKey.currentState.validate()) return;
+
+    _formKey.currentState.save();
+
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
+        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
+        Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
+    int idNueva = 0;
+    if (evaluacionRiesgoNotifier.evaluacionList.length != 0) {
+      for (int j = 0; j < evaluacionRiesgoNotifier.evaluacionList.length; j++) {
+        if (idNueva <= evaluacionRiesgoNotifier.evaluacionList[j].id) {
+          idNueva = evaluacionRiesgoNotifier.evaluacionList[j].id + 1;
         }
       }
     }
+    Evaluacion eval = new Evaluacion(
+        idNueva,
+        riesgoInspeccionNotifier.currentRiesgo.idUnica,
+        inspeccionNotifier.currentInspeccion.id,
+        _tituloController.text,
+        _accionCorrectoraController.text,
+        _tipoFactorController,
+        _deficiencia,
+        _exposicion,
+        _consecuencias);
+    if (_tipoFactorController == null) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Debes seleccionar un tipo de factor"),
+      ));
+    } else {
+      try {
+        await addEvaluacion(eval);
+        await marcarRiesgoComoEvaluado(
+            true, riesgoInspeccionNotifier.currentRiesgo);
+        Navigator.of(context).pop();
+      } catch (e) {
+        //error en la operacion de BD
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Error al añadir evaluación"),
+        ));
+      }
+    }
+  }
 
 /*
   Widget _mostrarFoto( ) {

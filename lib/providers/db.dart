@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
+import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
@@ -73,59 +74,81 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
   }
 }
 
-addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async{
-    Map<String, dynamic> demoData = {
-      "id": i.getId(),
-      "descripcion": i.getDescripcion(),
-      "titulo": i.getTitulo(),
-      "fechaFin": i.getFechaFin(),
-      "fechaInicio": i.getFechaInicio(),
-      "provincia": i.getProvincia(),
-      "lugar": i.getLugar(),
-      "estado": i.getEstado(),
-      "nombreEmpresa": i.getNombreEmpresa(),
-    };
-    CollectionReference collectionReference =
+addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
+  Map<String, dynamic> demoData = {
+    "id": i.getId(),
+    "descripcion": i.getDescripcion(),
+    "titulo": i.getTitulo(),
+    "fechaFin": i.getFechaFin(),
+    "fechaInicio": i.getFechaInicio(),
+    "provincia": i.getProvincia(),
+    "lugar": i.getLugar(),
+    "estado": i.getEstado(),
+    "nombreEmpresa": i.getNombreEmpresa(),
+  };
+  CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('inspeccion');
-    collectionReference.add(demoData);
-    inspeccionNotifier.currentInspeccion = i;
+  collectionReference.add(demoData);
+  inspeccionNotifier.currentInspeccion = i;
 }
 
-addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async{
-    Map<String, dynamic> demoData = {
-      "idInspeccion": inspeccionNotifier.currentInspeccion.id,
-      "icono": sr.icono,
-      "id": sr.id,
-      "nombre": sr.nombre,
-      "eliminado": false,
-      "evaluado": false,
-    };
-    CollectionReference collectionReference =
+addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async {
+  Map<String, dynamic> demoData = {
+    "idInspeccion": inspeccionNotifier.currentInspeccion.id,
+    "icono": sr.icono,
+    "id": sr.id,
+    "idUnica": sr.idUnica,
+    "nombre": sr.nombre,
+    "eliminado": false,
+    "evaluado": false,
+  };
+  CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
-    collectionReference.add(demoData);
+  collectionReference.add(demoData);
 }
 
-addEvaluacion(Evaluacion evaluacion) async{
-    Map<String, dynamic> demoData = {
-      "id": evaluacion.id,
-      "titulo": evaluacion.titulo,
-      "idInspeccion": evaluacion.idInspeccion,
-      "idRiesgo": evaluacion.idRiesgo,
-      "accionCorrectora": evaluacion.accionCorrectora,
-      "nivelConsecuencias": evaluacion.nivelConsecuencias,
-      "nivelDeficiencia": evaluacion.nivelDeficiencia,
-      "nivelExposicion": evaluacion.nivelExposicion,
-    };
-    CollectionReference collectionReference =
+addFotoRiesgo(FotoRiesgo f) async {
+  Map<String, dynamic> demoData = {
+    "idRiesgo": f.idRiesgoUnica,
+    "url": f.path,
+  };
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('fotoRiesgo');
+  collectionReference.add(demoData);
+}
+
+addEvaluacion(Evaluacion evaluacion) async {
+  String tipo;
+  if (evaluacion.tipo == TipoFactor.Existente) {
+    tipo = "Existente";
+  } else {
+    tipo = "Potencial";
+  }
+  Map<String, dynamic> demoData = {
+    "id": evaluacion.id,
+    "tipoFactor": tipo,
+    "titulo": evaluacion.titulo,
+    "idInspeccion": evaluacion.idInspeccion,
+    "idRiesgo": evaluacion.idRiesgo,
+    "accionCorrectora": evaluacion.accionCorrectora,
+    "nivelConsecuencias": evaluacion.nivelConsecuencias,
+    "nivelDeficiencia": evaluacion.nivelDeficiencia,
+    "nivelExposicion": evaluacion.nivelExposicion,
+  };
+  CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('evaluacion');
-    collectionReference.add(demoData);
+  collectionReference.add(demoData);
 }
 
-getRiesgosInspeccionNoEliminados(RiesgoInspeccionNotifier riesgoInspeccionNotifier, InspeccionNotifier inspeccionNotifier) async{
-  QuerySnapshot snapshot =
-    await FirebaseFirestore.instance.collection('riesgo')
-    .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id).where('eliminado', isEqualTo:false).where('evaluado', isEqualTo:false)
-    .get();
+getRiesgosInspeccionNoEliminados(
+    RiesgoInspeccionNotifier riesgoInspeccionNotifier,
+    InspeccionNotifier inspeccionNotifier) async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('riesgo')
+      .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
+      .where('eliminado', isEqualTo: false)
+      .where('evaluado', isEqualTo: false)
+      .get();
   List<SubRiesgo> riesgoList = [];
   snapshot.docs.forEach((document) {
     SubRiesgo r = SubRiesgo.fromMap(document.data());
@@ -135,11 +158,14 @@ getRiesgosInspeccionNoEliminados(RiesgoInspeccionNotifier riesgoInspeccionNotifi
   riesgoInspeccionNotifier.riesgoList = riesgoList;
 }
 
-getRiesgosInspeccionTodos(RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier, InspeccionNotifier inspeccionNotifier) async{
-  QuerySnapshot snapshot =
-    await FirebaseFirestore.instance.collection('riesgo')
-    .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id).where('evaluado', isEqualTo:false)
-    .get();
+getRiesgosInspeccionTodos(
+    RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier,
+    InspeccionNotifier inspeccionNotifier) async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('riesgo')
+      .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
+      .where('evaluado', isEqualTo: false)
+      .get();
   List<SubRiesgo> riesgoList = [];
   snapshot.docs.forEach((document) {
     SubRiesgo r = SubRiesgo.fromMap(document.data());
@@ -149,6 +175,18 @@ getRiesgosInspeccionTodos(RiesgoInspeccionEliminadaNotifier riesgoInspeccionElim
   riesgoInspeccionEliminadaNotifier.riesgoList = riesgoList;
 }
 
+getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier) async {
+  QuerySnapshot snapshot =
+      await FirebaseFirestore.instance.collection('evaluacion').get();
+  List<Evaluacion> evaluacionList = [];
+  snapshot.docs.forEach((document) {
+    Evaluacion e = Evaluacion.fromMap(document.data());
+    e.setIdDocumento(document.id);
+    evaluacionList.add(e);
+  });
+  evaluacionRiesgoNotifier.evaluacionList = evaluacionList;
+}
+
 modificarUsuario(String email, String numero, String nombre, String id) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
@@ -156,28 +194,25 @@ modificarUsuario(String email, String numero, String nombre, String id) async {
       .doc(id)
       .update({'email': email, 'numero': numero, 'nombre': nombre});
 }
+
 marcarRiesgoComoEvaluado(bool evaluado, SubRiesgo sr) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
-  collectionReference
-      .doc(sr.getIdDocumento())
-      .update({'evaluado': evaluado});
+  collectionReference.doc(sr.getIdDocumento()).update({'evaluado': evaluado});
 }
 
 actualizarRiesgo(bool estado, SubRiesgo sr) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
-  collectionReference
-      .doc(sr.getIdDocumento())
-      .update({'eliminado': estado});
+  collectionReference.doc(sr.getIdDocumento()).update({'eliminado': estado});
 }
 
-modificarEstadoComoPendienteInspeccion(String id) async{
+modificarEstadoComoPendienteInspeccion(String id) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('inspeccion');
   collectionReference
       .doc(id)
-      .update({'estado': "pendiente", 'fechaFin': Timestamp.now()});  
+      .update({'estado': "pendiente", 'fechaFin': Timestamp.now()});
 }
 
 User getCurrentUser() {
@@ -201,9 +236,9 @@ getProvincias(InspeccionNotifier inspeccionNotifier) async {
       await FirebaseFirestore.instance.collection('provincia').get();
   List<Provincia> provinciaList = [];
   snapshot.docs.forEach((document) {
-  Provincia p = Provincia.fromMap(document.data());
-  provinciaList.add(p);
-});
+    Provincia p = Provincia.fromMap(document.data());
+    provinciaList.add(p);
+  });
   inspeccionNotifier.provinciaList = provinciaList;
 }
 
