@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
+import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
+import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
@@ -18,46 +21,49 @@ class SeleccionRiesgo extends StatefulWidget {
 class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   @override
   Widget build(BuildContext context) {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
-    InspeccionNotifier inspeccionNotifier =
-        Provider.of<InspeccionNotifier>(context, listen: false);
-    getRiesgosInspeccionNoEliminados(riesgoInspeccionNotifier, inspeccionNotifier);
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          Fondo(),
-          SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                _titulos(),
-                _botonesRedondeados(),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 0.0,
-            right: 0.0,
-            child: Container(
-              padding: EdgeInsets.all(12.0),
-              child: Row(
+    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
+        Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
+    getEvaluaciones(evaluacionRiesgoNotifier);
+
+    return WillPopScope(
+      onWillPop: _onWillPopScope,
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            Fondo(),
+            SingleChildScrollView(
+              physics: ScrollPhysics(),
+              child: Column(
                 children: <Widget>[
-                  FloatingActionButton.extended(
-                    heroTag: UniqueKey(),
-                    //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
-                    icon: Icon(Icons.archive_outlined, size: 30.0),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
-                    },
-                    label: Text('Risks'),
-                  ),
+                  _titulos(),
+                  _botonesRedondeados(),
                 ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 0.0,
+              right: 0.0,
+              child: Container(
+                padding: EdgeInsets.all(12.0),
+                child: Row(
+                  children: <Widget>[
+                    FloatingActionButton.extended(
+                      heroTag: UniqueKey(),
+                      //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
+                      icon: Icon(Icons.archive_outlined, size: 30.0),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ListaRiesgosPorEvaluar()));
+                      },
+                      label: Text('Evaluar'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -162,6 +168,34 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
             child: card,
           ),
         ),
+      ),
+    );
+  }
+
+  Future<bool> _onWillPopScope() {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("¿Seguro que quieres regrsar a la página anterior?"),
+        content: Text('Esto le sacara de la inspección'),
+        actions: [
+          new ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('SI'),
+          ),
+          new ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('NO'),
+          ),
+        ],
       ),
     );
   }

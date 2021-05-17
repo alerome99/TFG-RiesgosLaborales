@@ -82,7 +82,7 @@ class _PerfilState extends State<Perfil> {
                     fontSize: 14, letterSpacing: 2.2, color: Colors.white),
               ),
             ),
-            Container(child: cajaAzul2),
+            //Container(child: cajaAzul2),
             //IconButton(icon: Icon(Icons.menu), onPressed: null),
           ],
         ),

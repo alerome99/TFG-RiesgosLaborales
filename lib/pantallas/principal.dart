@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
@@ -31,7 +32,9 @@ class _MainPageState extends State<MainPage> {
   String imagePath;
   final ImagePicker _picker = ImagePicker();
   Widget foto() {
-    return Container(
+    return WillPopScope(
+      onWillPop: _onWillPopScope,
+      child: Container(
         width: 180,
         height: 180,
         decoration: new BoxDecoration(
@@ -39,7 +42,8 @@ class _MainPageState extends State<MainPage> {
             image: new DecorationImage(
                 fit: BoxFit.fill,
                 image: new NetworkImage(
-                    "https://www.cursosfemxa.es/images/stories/virtuemart/product/privada-prevencion-riesgos-laborales.jpg"))));
+                    "https://www.cursosfemxa.es/images/stories/virtuemart/product/privada-prevencion-riesgos-laborales.jpg")))),
+    );
   }
 
   Widget parteSuperior() {
@@ -73,6 +77,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
+      
     );
   }
 
@@ -176,6 +181,32 @@ class _MainPageState extends State<MainPage> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+  Future<bool> _onWillPopScope() {
+    return showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text("¿Seguro que quieres salir de la aplicación?"),
+        actions: [
+          new ElevatedButton(
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('SI'),
+          ),
+          new ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(
+                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
+            child: Text('NO'),
           ),
         ],
       ),

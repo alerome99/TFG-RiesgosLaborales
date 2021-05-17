@@ -25,7 +25,7 @@ import 'package:tfg/notifiers/subRiesgo_notifier.dart';
     final respuesta = await rootBundle.loadString('data/subRiesgos.json');
     Map dataMap = json.decode(respuesta); 
     for (var i = 0; i < dataMap['subRiesgos'].length; i++) {
-      SubRiesgo sr = new SubRiesgo(dataMap['subRiesgos'][i]['id'], dataMap['subRiesgos'][i]['nombre'], dataMap['subRiesgos'][i]['icono'], dataMap['subRiesgos'][i]['idPadre']);
+      SubRiesgo sr = new SubRiesgo(dataMap['subRiesgos'][i]['id'], dataMap['subRiesgos'][i]['nombre'], dataMap['subRiesgos'][i]['icono'], dataMap['subRiesgos'][i]['idPadre'], 0);
       _subRiesgos.add(sr);
     }
     subRiesgoNotifier.subRiesgoList = _subRiesgos;

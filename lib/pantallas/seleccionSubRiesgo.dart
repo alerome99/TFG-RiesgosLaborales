@@ -11,6 +11,8 @@ import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
+import 'listaEvaluaciones.dart';
+
 class SeleccionSubRiesgo extends StatefulWidget {
   @override
   _SeleccionSubRiesgoState createState() => _SeleccionSubRiesgoState();
@@ -23,7 +25,8 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
         Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    getRiesgosInspeccionTodos(riesgoInspeccionEliminadaNotifier, inspeccionNotifier);
+    getRiesgosInspeccionTodos(
+        riesgoInspeccionEliminadaNotifier, inspeccionNotifier);
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -154,29 +157,37 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
         Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    bool existe = false;
-    //getRiesgosInspeccionTodos(riesgoInspeccionNotifier, inspeccionNotifier);
-    SubRiesgo sr2;
-    try{
-      for (int i = 0; i < riesgoInspeccionEliminadaNotifier.riesgoList.length; i++){
-        if (riesgoInspeccionEliminadaNotifier.riesgoList[i].id == sr.id && riesgoInspeccionEliminadaNotifier.riesgoList[i].getEliminado()){
-          print("Entra");
-          existe = true;
-          sr2 = riesgoInspeccionEliminadaNotifier.riesgoList[i];
+    //bool existe = false;
+    //SubRiesgo sr2;
+    try {
+      int idNueva = 0;
+      if (riesgoInspeccionEliminadaNotifier.riesgoList.length != 0) {
+        for (int i = 0;
+            i < riesgoInspeccionEliminadaNotifier.riesgoList.length;
+            i++) {
+              /*
+          if (riesgoInspeccionEliminadaNotifier.riesgoList[i].id == sr.id &&
+              riesgoInspeccionEliminadaNotifier.riesgoList[i].getEliminado()) {
+            existe = true;
+            sr2 = riesgoInspeccionEliminadaNotifier.riesgoList[i];
+          }*/
+          if (idNueva <= riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica) {
+            idNueva = riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica + 1;
+            //sr2.setIdUnica(idNueva);
+          }
         }
       }
-      if(!existe){
-        await addRiesgo(sr, inspeccionNotifier);
-      }else{
-        await actualizarRiesgo(false, sr2);
-      }
+      sr.setIdUnica(idNueva);
       
-      Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => SeleccionRiesgo()));
-    }
-    catch (e) {
+      //if (!existe) {
+        await addRiesgo(sr, inspeccionNotifier);
+        Navigator.pop(context, true);
+      /*} else {
+        await actualizarRiesgo(false, sr2);
+        Navigator.pop(context, true);
+      }*/
+    } catch (e) {
       //error en la operacion de BD
     }
-
   }
 }
