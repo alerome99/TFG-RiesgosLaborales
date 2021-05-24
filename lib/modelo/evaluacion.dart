@@ -4,12 +4,20 @@ enum TipoFactor{
 }
 
 class FotoRiesgo{
-  String path;
+  String path, idDocumento;
   int idRiesgoUnica;
 
   FotoRiesgo(String path, int idRiesgoUnica){
     this.path = path;
     this.idRiesgoUnica = idRiesgoUnica;
+  }
+
+  void setIdDocumento(String id){
+    idDocumento = id;
+  }
+
+  String getIdDocumento(){
+    return idDocumento;
   }
 }
 

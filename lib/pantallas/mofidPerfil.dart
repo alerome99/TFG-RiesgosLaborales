@@ -198,42 +198,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
               ),
             ),
           ),
-
-          /*
-          Scaffold(
-              body: StreamBuilder(
-                // <2> Pass `Future<QuerySnapshot>` to future
-                stream: FirebaseFirestore.instance
-                    .collection('usuario')
-                    .where('email', isEqualTo: email)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final List<DocumentSnapshot> documents = snapshot.data.docs;
-
-                    return Stack(
-                      children: <Widget>[
-                        buildTextField("Nombre Completo", email, false),
-                        /*
-                              buildTextField("Nombre Completo", documents[0]['nombre'], false),
-                              buildTextField("Email", documents[0]['email'], false),
-                              buildTextField("Telefono", documents[0]['numero'], false),
-                              buildTextField("Location", "TLV, Israel", false),
-                              */
-                      ],
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("It Error!");
-                  }
-                },
-              ),
-            /*StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('usuario')
-                      .where('email', isEqualTo: email)
-                    .snapshots(),
-                ),*/
-          ),*/
         ],
       ),
     );
@@ -281,30 +245,4 @@ class _ModifPerfilState extends State<ModifPerfil> {
       ),
     );
   }
-
-/*
-  Future<void> cargarUsuario() async {
-    /*
-        email = database.getCurrentUser().email;
-        Usuario usuario =  database.getUsuarioPorEmail(email) as Usuario;
-        //type 'Future<Usuario>' is not a subtype of type 'Usuario' in type cast
-        //Usuario u = usuario.
-        String prueba = usuario.getNombre();
-        print("holaaaaaaaaaaa $email");
-        print("holaaaaaaa2 $prueba");
-        */
-    //email = database.getCurrentUser().email;
-    Usuario usuario;
-    FirebaseFirestore.instance
-        .collection('usuario')
-        .where('email', isEqualTo: email)
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        print(doc['dni']);
-        usuario = new Usuario(
-            doc['email'], null, doc['numero'], doc['dni'], doc['nombre']);
-      });
-    });
-  }*/
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/pantallas/mapa.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
@@ -27,7 +28,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
   final TextEditingController controller = TextEditingController();
   String _direccion;
   String _provinciaController;
-
+  String recibido;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +106,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                     ),
                     Material(
                       child: Container(
-                        padding: EdgeInsets.all(20.0),
+                        padding: EdgeInsets.fromLTRB(14.0, 14.0, 28.0, 14.0),
                         child: Form(
                           key: _formKey,
                           child: Column(
@@ -159,101 +160,6 @@ class _AddInspeccionState extends State<AddInspeccion> {
     );
   }
 
-  /*
-                              Widget _crearTextFieldLatitud() {
-                                return TextFormField(
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
-                                  controller: _latitudController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Latitud',
-                                    labelStyle: TextStyle(fontSize: 20.0),
-                                  ),
-                                  readOnly: true,
-                                  validator: (value) {
-                                    bool flag; 
-                                    if ( value.isEmpty) flag = false;
-                                    (num.tryParse(value) == null ) ? flag = false : flag = true;
-                            
-                                    if ( flag && num.tryParse(value).ceilToDouble() != 0.0){
-                                      return null;
-                                    } else {
-                                      return 'Solo numeros';
-                                    }   
-                                  },
-                                );
-                              }
-                            
-                              Widget _crearFieldCoordenadas() {
-                                return Container(
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Column(
-                                          children: <Widget>[
-                                            _crearTextFieldLatitud(),
-                                            _crearTextFieldLongitud()
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        iconSize: 30.0,
-                                        icon: Icon(Icons.location_searching),
-                                        color: Theme.of(context).primaryColor,
-                                        onPressed: () => _getLocation()
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                             
-                            
-                              Widget _crearTextFieldLongitud() {
-                                return TextFormField(
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
-                                  controller: _longitudController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Longitud',
-                                    labelStyle: TextStyle(fontSize: 20.0)
-                                  ),
-                                  validator: (value) {
-                                    bool flag;
-                                    if ( value.isEmpty) flag = false;
-                                    (num.tryParse(value) == null ) ? flag = false : flag = true;
-                            
-                                    if ( flag && num.tryParse(value).ceilToDouble() != 0.0){
-                                      return null;
-                                    } else {
-                                      return 'Solo numeros';
-                                    }  
-                                  },
-                                );
-                              }
-                            
-                              _getLocation() async {
-                                Location location = new Location();
-                                bool _serviceEnabled;
-                                PermissionStatus _permissionGranted;
-                                LocationData _locationData;
-                                _serviceEnabled = await location.serviceEnabled();
-                                if (!_serviceEnabled) {
-                                  _serviceEnabled = await location.requestService();
-                                  if (!_serviceEnabled) {
-                                    return;
-                                  }
-                                }
-                                _permissionGranted = await location.hasPermission();
-                                if (_permissionGranted == PermissionStatus.denied) {
-                                  _permissionGranted = await location.requestPermission();
-                                  if (_permissionGranted != PermissionStatus.granted) {
-                                    return;
-                                  }
-                                }
-                                _locationData = await location.getLocation();
-                                _formKey.currentState.save();
-                              }
-                              */
-
   Widget _crearSelectProvincia() {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
@@ -284,18 +190,49 @@ class _AddInspeccionState extends State<AddInspeccion> {
   }
 
   Widget _crearTextFieldLugar() {
-    return TextFormField(
-      controller: _direccionController,
-      textCapitalization: TextCapitalization.words,
-      decoration: InputDecoration(
-          labelText: 'Direction', labelStyle: TextStyle(fontSize: 20.0)),
-      validator: (value) {
-        if (value.length < 1) {
-          return 'Ingrese el lugar en el que se va a realizar la inspección';
-        } else {
-          return null;
-        }
-      },
+
+    if (recibido != null) {
+      _direccionController.text = recibido;
+    }
+
+    return Stack(
+      children: [
+        TextFormField(
+          controller: _direccionController,
+          maxLines: 2,
+          textCapitalization: TextCapitalization.words,
+          decoration: InputDecoration(
+              labelText: 'Direction', labelStyle: TextStyle(fontSize: 20.0)),
+          validator: (value) {
+            if (value.length < 1) {
+              return 'Ingrese el lugar en el que se va a realizar la inspección';
+            } else {
+              return null;
+            }
+          },
+        ),
+        Positioned(
+          top: 32,
+          right: -10,
+          height: 40,
+          width: 40,
+          child: Container(
+            child: Ink(
+              decoration: ShapeDecoration(
+                color: Colors.grey,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+              ),
+              child: IconButton(
+                  icon: Icon(Icons.map_outlined),
+                  color: Colors.white,
+                  onPressed: () async {
+                    recibido = await Navigator.push(context, MaterialPageRoute(builder: (_) => Mapa()));
+                  }),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

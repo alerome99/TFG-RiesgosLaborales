@@ -27,14 +27,10 @@ class _FotoCargadaState extends State<FotoCargada> {
         fit: StackFit.expand,
         overflow: Overflow.visible,
         children: [
-          //Image.network("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
-          //Image.networs"https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"
           CircleAvatar(
-            //backgroundImage: NetworkImage("https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/2b9e864c-ada2-4520-ba5f-19d39faffa9b5915008143652343343.jpg?alt=media&token=6675f928-b98a-459a-ae51-4ed06dca09c0"),
             backgroundImage: _imageFile == null
                 ? NetworkImage(userNotifier.currentUsuario.url)
                 : FileImage(File(_imageFile.path)),
-            //:NetworkImage(imagePath),
           ),
           Positioned(
             right: -6,

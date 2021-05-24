@@ -111,6 +111,7 @@ addFotoRiesgo(FotoRiesgo f) async {
   Map<String, dynamic> demoData = {
     "idRiesgo": f.idRiesgoUnica,
     "url": f.path,
+    "eliminada": false,
   };
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('fotoRiesgo');
@@ -266,6 +267,22 @@ getUser(UserNotifier userNotifier /*, String email*/) async {
     userT.setId(document.id);
   });
   userNotifier.currentUser = userT;
+}
+
+eliminarFoto(FotoRiesgo f ) async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('fotoRiesgo')
+      .where('url', isEqualTo: f.path)
+      .where('idRiesgo', isEqualTo: f.idRiesgoUnica)
+      .get();
+  snapshot.docs.forEach((document) {
+    f.setIdDocumento(document.id);
+  });
+    CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('fotoRiesgo');
+  collectionReference
+      .doc(f.getIdDocumento())
+      .update({'eliminada': true});
 }
 
 setUserInic(Usuario u, UserNotifier userNotifier) async {
