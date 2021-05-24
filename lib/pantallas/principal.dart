@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
@@ -35,14 +36,14 @@ class _MainPageState extends State<MainPage> {
     return WillPopScope(
       onWillPop: _onWillPopScope,
       child: Container(
-        width: 180,
-        height: 180,
-        decoration: new BoxDecoration(
-            shape: BoxShape.circle,
-            image: new DecorationImage(
-                fit: BoxFit.fill,
-                image: new NetworkImage(
-                    "https://www.cursosfemxa.es/images/stories/virtuemart/product/privada-prevencion-riesgos-laborales.jpg")))),
+          width: 180,
+          height: 180,
+          decoration: new BoxDecoration(
+              shape: BoxShape.circle,
+              image: new DecorationImage(
+                  fit: BoxFit.fill,
+                  image: new NetworkImage(
+                      "https://www.cursosfemxa.es/images/stories/virtuemart/product/privada-prevencion-riesgos-laborales.jpg")))),
     );
   }
 
@@ -60,7 +61,8 @@ class _MainPageState extends State<MainPage> {
                 image: DecorationImage(
                   //image: NetworkImage("https://derecho.usal.es/wp-content/uploads/2017/11/constructionworkers-1200x565.jpg"),
                   //https://preventiam.com/wp-content/uploads/2019/09/tecnicas-prevencion-riesgos-laborales.jpg
-                  image: NetworkImage("https://i2.wp.com/www.asesorus.es/wp-content/uploads/2019/11/prevencion-riesgos-laborales.jpg?fit=710%2C320&ssl=1"),
+                  image: NetworkImage(
+                      "https://i2.wp.com/www.asesorus.es/wp-content/uploads/2019/11/prevencion-riesgos-laborales.jpg?fit=710%2C320&ssl=1"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -77,7 +79,6 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      
     );
   }
 
@@ -99,6 +100,7 @@ class _MainPageState extends State<MainPage> {
     getInspecciones(inspeccionNotifier);
     getProvincias(inspeccionNotifier);
     getUser(userNotifier);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -112,18 +114,18 @@ class _MainPageState extends State<MainPage> {
           ),
           parteSuperior(),
           Align(
-  alignment: Alignment.center,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 130, 24, 0),
-            child: Text(
-            "Welcome to ORI",
-            style: TextStyle(
-              fontSize: 38.0,
-              color: Colors.blue,
+            alignment: Alignment.center,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 130, 24, 0),
+              child: Text(
+                "Welcome to ORI",
+                style: TextStyle(
+                  fontSize: 38.0,
+                  color: Colors.blue,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
-            textAlign: TextAlign.center,
-            ),
-          ),
           ),
           Positioned(
             bottom: 50.0,
@@ -162,6 +164,9 @@ class _MainPageState extends State<MainPage> {
                     color: Colors.grey,
                     child: InkWell(
                         onTap: () {
+                          Inspeccion i = new Inspeccion(null, null, null, null,
+                              null, null, null, null, null, null);
+                          inspeccionNotifier.currentInspeccion = i;
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   AddInspeccion()));
@@ -186,6 +191,7 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
   Future<bool> _onWillPopScope() {
     return showDialog(
       context: context,

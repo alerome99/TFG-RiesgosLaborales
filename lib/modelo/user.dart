@@ -62,22 +62,4 @@ class Usuario {
   void setId(String i) {
     id = i;
   }
-
-  /*
-  factory Usuario.fromFirestore(DocumentSnapshot userDoc){
-    Map userData = userDoc.data as Map;
-    return Usuario(
-      id: userDoc.id,
-      name: userData['name'],
-      email: userData['email'],
-    );
-  }
-
-  void setFromFireStore(DocumentSnapshot userDoc){
-    Map userData = userDoc.data as Map;
-    this.id = userDoc.id;
-    this.name = userData['name'];
-    this.email = userData['email'];
-    notifyListeners();
-  }*/
 }

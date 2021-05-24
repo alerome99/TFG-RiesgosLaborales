@@ -37,6 +37,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   int _consecuencias = 0;
   File _foto;
   PickedFile _imageFile;
+  List<String> fotos = new List<String>();
   String imagePath;
   final ImagePicker _picker = ImagePicker();
 
@@ -156,13 +157,12 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             _crearSliderNDeficiencia(),
             _crearSliderNExposicion(),
             _crearSliderNConsecuencias(),
-            //_crearFieldCoordenadas(),
             _crearTextFieldAccionCorrectora(),
-            //_mostrarFoto(),
             Container(
               height: 20,
             ),
             _crearBotonFoto(),
+            _listaFotos(),
             _crearBoton(),
           ],
         ),
@@ -170,6 +170,25 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 
+/*
+  Widget mapa() {
+    return AddressSearchTextField(
+      controller: TextEditingController(),
+      decoration: InputDecoration(),
+      style: TextStyle(),
+      barrierDismissible: true,
+      country: "España",
+      city: "Valladolid",
+      onDone: (AddressPoint point) {
+        print(point.latitude);
+        print(point.longitude);
+      },
+      onCleaned: () {},
+      hintText: '',
+      noResultsText: '',
+    );
+  }
+*/
   Widget _crearSeleccion() {
     return DropdownButtonFormField(
       decoration: InputDecoration(
@@ -377,14 +396,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 
-  Widget _listaRiesgos() {
+  Widget _listaFotos() {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    FotoRiesgo f1, f2;
     return StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('riesgo')
-            .where('idUnica',
+            .collection('fotoRiesgo')
+            .where('idRiesgo',
                 isEqualTo: riesgoInspeccionNotifier.currentRiesgo.idUnica)
+            .where('eliminada', isEqualTo: false)
             .snapshots(),
         builder: (
           context,
@@ -397,20 +418,77 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
               ),
             );
-
           return ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                /*
-                SubRiesgo r = new SubRiesgo(
-                    snapshot.data.docs[index]['id'],
-                    snapshot.data.docs[index]['nombre'],
-                    snapshot.data.docs[index]['icono'],
-                    0);*/
+                List<TableRow> rows = [];
+                //return Container(child : Text(snapshot.data.docs[index]['url']));
+                if (index % 2 == 0) {
+                  if (index + 1 != snapshot.data.docs.length) {
+                    f1 = new FotoRiesgo(snapshot.data.docs[index]['url'],
+                        snapshot.data.docs[index]['idRiesgo']);
+                    f2 = new FotoRiesgo(snapshot.data.docs[index + 1]['url'],
+                        snapshot.data.docs[index + 1]['idRiesgo']);
+                    rows.add(TableRow(children: [
+                      _tarjeta(context, f1),
+                      _tarjeta(context, f2),
+                    ]));
+                  } else {
+                    f1 = new FotoRiesgo(snapshot.data.docs[index]['url'],
+                        snapshot.data.docs[index]['idRiesgo']);
+                    rows.add(TableRow(children: [
+                      _tarjeta(context, f1),
+                    ]));
+                  }
+                }
+                return Table(children: rows);
               });
         });
+  }
+
+  Widget _tarjeta(BuildContext context, FotoRiesgo foto) {
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      child: Column(
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: FadeInImage(
+                    height: 150.0,
+                    width: 150.0,
+                    fit: BoxFit.cover,
+                    placeholder: AssetImage('assets/img/original.gif'),
+                    image: NetworkImage(foto.path)),
+              ),
+              Positioned(
+                top: -2,
+                right: -2,
+                height: 40,
+                width: 40,
+                child: Container(
+                  child: Ink(
+                    decoration: ShapeDecoration(
+                      color: Colors.red,
+                      shape: CircleBorder(),
+                    ),
+                    child: IconButton(
+                        icon: Icon(Icons.delete_forever),
+                        color: Colors.white,
+                        onPressed: () {
+                          eliminarFotoRiesgo(foto);
+                        }),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _imageModal() {
@@ -471,10 +549,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
       uploadTask.then((res) {});
       imagePath = imageUrl.toString();
-      FotoRiesgo f = new FotoRiesgo(imageUrl.toString(), riesgoInspeccionNotifier.currentRiesgo.idUnica);
+      FotoRiesgo f = new FotoRiesgo(
+          imageUrl.toString(), riesgoInspeccionNotifier.currentRiesgo.idUnica);
       try {
         await addFotoRiesgo(f);
-        Navigator.of(context).pop();
+        //Navigator.of(context).pop();
       } catch (e) {
         //error en la operacion de BD
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -622,80 +701,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 
-/*
-  Widget _crearFieldCoordenadas() {
-    return Container(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                _crearTextFieldLatitud(),
-                _crearTextFieldLongitud()
-              ],
-            ),
-          ),
-          IconButton(
-            iconSize: 30.0,
-            icon: Icon(Icons.location_searching),
-            color: Theme.of(context).primaryColor,
-            onPressed: _getLocation
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _crearTextFieldLatitud() {
-    return TextFormField(
-      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
-      controller: _latitudController,
-      enabled: false,
-      decoration: InputDecoration(
-        labelText: 'Latitud',
-        labelStyle: TextStyle(fontSize: 20.0),
-      ),
-      readOnly: true,
-      onSaved: (value) => _latitudController.text = '${evaluacion.coordenadas.latitud}',
-      validator: (value) {
-        bool flag;
-        if ( value.isEmpty) flag = false;
-        (num.tryParse(value) == null ) ? flag = false : flag = true;
-
-        if ( flag ){
-          return null;
-        } else {
-          return 'Solo números';
-        }  
-      },
-    );
-  }
-
-  Widget _crearTextFieldLongitud() {
-    return TextFormField(
-      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
-      controller: _longitudController,
-      enabled: false,
-      decoration: InputDecoration(
-        labelText: 'Longitud',
-        labelStyle: TextStyle(fontSize: 20.0)
-      ),
-      onSaved: (value) => _longitudController.text = '${evaluacion.coordenadas.longitud}',
-      validator: (value) {
-        bool flag;
-        if ( value.isEmpty) flag = false;
-        (num.tryParse(value) == null ) ? flag = false : flag = true;
-
-        if ( flag ){
-          return null;
-        } else {
-          return 'Solo numeros';
-        }  
-      },
-    );
-  }*/
-
   Widget _crearTextFieldRiesgo() {
     return TextFormField(
       controller: _tituloController,
@@ -797,209 +802,9 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     }
   }
 
-/*
-  Widget _mostrarFoto( ) {
-
-    if ( evaluacion.fotos != null && evaluacion.fotos.length > 0 ) {
-      
-      if ( foto != null ) {
-
-        return addFoto();
-      }
-      
-      return fotoCarrusel( evaluacion.fotos );
-    
-    } else {
-
-      if ( foto != null ) {
-      
-        return addFoto();
-      
-      } else {
-
-        return _carruselNoImg();
-      }
-
-    }
-
+  void eliminarFotoRiesgo(FotoRiesgo f) async {
+    try {
+      await eliminarFoto(f);
+    } catch (e) {}
   }
-
-  Widget addFoto() {
-
-    List<int> imageBytes = foto.readAsBytesSync();
-    String base64Image = base64Encode(imageBytes);
-
-    if ( evaluacion.fotos == null ) {
-      List<Foto> lista = List();
-      Foto aux = Foto(foto: Base64Decoder().convert(base64Image), idEvaluacion: evaluacion.id);
-      lista.add(aux);
-      evaluacion.fotos = lista;
-    } else {
-      evaluacion.fotos.add(Foto(foto: Base64Decoder().convert(base64Image), idEvaluacion: evaluacion.id));
-    }
-    
-    foto = null;
-    return fotoCarrusel( evaluacion.fotos );
-
-  }
-
-  _procesarImagen( ImageSource source) async {
-    final picker = ImagePicker();
-    
-    final pickedFile = await picker.getImage( source: source );
-
-    foto = File(pickedFile.path);
-
-    setState(() {});
-
-  }
-
-  _seleccionarForo(  ) async {
-
-    _procesarImagen( ImageSource.gallery);
-
-  }
-  
-  Widget _carruselNoImg() {
-
-    final _screenSize = MediaQuery.of(context).size;
-
-    return GestureDetector(
-      child: Container(
-        height: _screenSize.height * 0.2,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.0),
-          child: Image(
-              image: AssetImage('assets/img/no-image.png'),
-              fit: BoxFit.cover,
-            ),
-        ),
-      ),
-      onTap: _tomarForo,
-    );
-  }
-  
-  Widget fotoCarrusel( List<Foto> fotos ) {
-
-    final _pageController = new PageController(
-      initialPage: 0,
-      viewportFraction: 0.3
-    );
-
-    final _screenSize = MediaQuery.of(context).size;
-
-
-    return Container(
-      height: _screenSize.height * 0.2,
-      child: PageView.builder(
-        pageSnapping: false,
-        controller: _pageController,
-        itemCount: fotos.length,
-        itemBuilder: ( context, i ) => _tarjeta(context, fotos[i])
-      ),
-    );
-  }
-
-  Widget _tarjeta( BuildContext context, Foto foto ) {
-
-    return Container(
-        margin: EdgeInsets.only(right: 15.0),
-        child: Column(
-          children: <Widget>[
-            Stack(
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: FadeInImage(
-                    height: 150.0,
-                    width: 150.0,
-                    fit: BoxFit.cover,
-                    placeholder: AssetImage('assets/img/original.gif'),
-                    image: Image.memory(
-                      foto.foto,
-                    ).image,
-                  ),
-                ),
-                Positioned(
-                  top: -2,
-                  right: -2,
-                  height: 40,
-                  width: 40,
-                  child: Container(
-                    child: Ink(
-                      decoration: ShapeDecoration(
-                        color: Colors.red,
-                        shape: CircleBorder(),
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.delete_forever),
-                        color: Colors.white,
-                        onPressed: () async {
-                          if ( foto.id != null ){
-                            await DBProvider.db.deleteFoto(foto);
-                            evaluacion.fotos.remove(foto);
-                            setState(() {});
-                          } else {
-                            evaluacion.fotos.remove(foto);
-                            setState(() {});
-                          }
-                        }
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            
-          ],
-        ),
-      );
-
-  }
-
-
-  _tomarForo( ) async {
-
-    _procesarImagen( ImageSource.camera);
-  }
-
-*/
-/*
-  _getLocation() async {
-
-    Location location = new Location();
-
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    _locationData = await location.getLocation();
-
-    setState(() {
-      evaluacion.coordenadas.latitud = _locationData.latitude;
-      print(_locationData.latitude);
-      print(evaluacion.coordenadas.latitud);
-      evaluacion.coordenadas.longitud = _locationData.longitude;
-      print(_locationData.longitude);
-      print(evaluacion.coordenadas.longitud);
-    });
-
-    _formKey.currentState.save();
-*/
 }

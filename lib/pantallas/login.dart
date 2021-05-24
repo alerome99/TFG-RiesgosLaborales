@@ -135,11 +135,6 @@ class _LoginState extends State<Login> {
               ),
               hintText: 'Enter your Email',
             ),
-            /*
-            validator: (value) {
-              if (value.isEmpty) return 'Please enter some text';
-              return null;
-            },*/
           ),
         ),
       ],
@@ -174,23 +169,13 @@ class _LoginState extends State<Login> {
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                
+              prefixIcon: Icon(     
                 Icons.lock,
                 color: Colors.white,
                 //size: 16
-              ),/*
-              prefixIconConstraints: BoxConstraints(
-                minWidth: 50,
-                minHeight: 200,
-              ),*/
+              ),
               hintText: 'Enter your Password',
             ),
-            /*
-            validator: (value) {
-              if (value.isEmpty) return 'Please enter some text';
-              return null;
-            },*/
           ),
         ),
       ],

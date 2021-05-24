@@ -31,18 +31,6 @@ class _PerfilState extends State<Perfil> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        /*
-        actions: <Widget>[
-          // action button
-          FlatButton(
-            onPressed: () => signout(authNotifier),
-            child: Text(
-              "Logout",
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-          ),
-        ],
-        */
       ),
       drawer: Menu(),
       body: SingleChildScrollView(
@@ -82,8 +70,6 @@ class _PerfilState extends State<Perfil> {
                     fontSize: 14, letterSpacing: 2.2, color: Colors.white),
               ),
             ),
-            //Container(child: cajaAzul2),
-            //IconButton(icon: Icon(Icons.menu), onPressed: null),
           ],
         ),
       ),
@@ -118,9 +104,6 @@ class _PerfilState extends State<Perfil> {
                 userNotifier.currentUsuario.url == null
                     ? Foto()
                     : FotoCargada(),
-                //Text(userNotifier.currentUsuario.url),
-                //SizedBox(height: 10.0),
-                //foto(),
               ],
             ),
           ),
