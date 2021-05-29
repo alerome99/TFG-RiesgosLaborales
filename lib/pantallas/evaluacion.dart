@@ -30,11 +30,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   static final _formKey = GlobalKey<FormState>();
   File foto;
   double _valueDeficiencia = 0.0;
-  double _valueExposicion = 0.0;
-  double _valueConsecuencias = 0.0;
+  double _valueExposicion = 1.0;
+  double _valueConsecuencias = 10.0;
   int _deficiencia = 0;
-  int _exposicion = 0;
-  int _consecuencias = 0;
+  int _exposicion = 1;
+  int _consecuencias = 10;
   File _foto;
   PickedFile _imageFile;
   List<String> fotos = new List<String>();
@@ -49,9 +49,27 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   final TextEditingController _longitudController = TextEditingController();
 
   final TextEditingController c1 = new TextEditingController();
-
+  @override
+  void initState() {
+    super.initState();
+    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
+        Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
+    if(evaluacionRiesgoNotifier.currentEvaluacion!=null){
+      _tituloController.text = evaluacionRiesgoNotifier.currentEvaluacion.titulo;
+      if(evaluacionRiesgoNotifier.currentEvaluacion.tipo == TipoFactor.Existente){
+        _tipoFactorController = "Existente";
+      }else{
+        _tipoFactorController = "Potencial";
+      }
+      _accionCorrectoraController.text = evaluacionRiesgoNotifier.currentEvaluacion.accionCorrectora;
+      _valueDeficiencia = evaluacionRiesgoNotifier.currentEvaluacion.nivelDeficiencia.toDouble();
+      _valueExposicion = evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
+      _valueConsecuencias = evaluacionRiesgoNotifier.currentEvaluacion.nivelConsecuencias.toDouble();
+    }
+  }
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: _onWillPopScope,
       child: Scaffold(
@@ -189,6 +207,8 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 */
+
+
   Widget _crearSeleccion() {
     return DropdownButtonFormField(
       decoration: InputDecoration(
@@ -261,7 +281,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
               child: Slider(
                 value: _valueDeficiencia,
                 min: 0,
-                max: 3,
+                max: 10,
                 divisions: 3,
                 onChanged: (value) {
                   _valueDeficiencia = value;
@@ -355,8 +375,8 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
               ),
               child: Slider(
                 value: _valueExposicion,
-                min: 0,
-                max: 3,
+                min: 1,
+                max: 4,
                 divisions: 3,
                 onChanged: (value) {
                   _valueExposicion = value;
@@ -632,8 +652,8 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
               ),
               child: Slider(
                 value: _valueConsecuencias,
-                min: 0,
-                max: 3,
+                min: 10,
+                max: 100,
                 divisions: 3,
                 onChanged: (value) {
                   _valueConsecuencias = value;
@@ -783,16 +803,18 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         _deficiencia,
         _exposicion,
         _consecuencias);
+    evaluacionRiesgoNotifier.currentEvaluacion = eval;
     if (_tipoFactorController == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Debes seleccionar un tipo de factor"),
       ));
     } else {
       try {
+        await addRiesgo(riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier);
         await addEvaluacion(eval);
         await marcarRiesgoComoEvaluado(
             true, riesgoInspeccionNotifier.currentRiesgo);
-        Navigator.of(context).pop();
+        Navigator.pop(context, true);
       } catch (e) {
         //error en la operacion de BD
         _scaffoldKey.currentState.showSnackBar(SnackBar(

@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/pantallas/evaluacion.dart';
+import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/mapa.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
@@ -29,6 +31,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
   String _direccion;
   String _provinciaController;
   String recibido;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,7 +193,8 @@ class _AddInspeccionState extends State<AddInspeccion> {
   }
 
   Widget _crearTextFieldLugar() {
-
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     if (recibido != null) {
       _direccionController.text = recibido;
     }
@@ -227,7 +231,8 @@ class _AddInspeccionState extends State<AddInspeccion> {
                   icon: Icon(Icons.map_outlined),
                   color: Colors.white,
                   onPressed: () async {
-                    recibido = await Navigator.push(context, MaterialPageRoute(builder: (_) => Mapa()));
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Mapa())).then((value) { setState(() {_direccionController.text = inspeccionNotifier.currentInspeccion.lugar;});});                  
                   }),
             ),
           ),
@@ -302,7 +307,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
       try {
         await addInspeccion(i, inspeccionNotifier);
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => SeleccionRiesgo()));
+            builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
       } catch (e) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir inspección"),

@@ -6,6 +6,7 @@ import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
+import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
@@ -125,7 +126,7 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
         if(i.getEstado()=="enRealizacion"){
           inspeccionNotifier.currentInspeccion = i;
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => SeleccionRiesgo()));
+            builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
         } 
       },
       child: Padding(
