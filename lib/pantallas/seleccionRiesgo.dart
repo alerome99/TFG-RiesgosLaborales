@@ -24,10 +24,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
     getEvaluaciones(evaluacionRiesgoNotifier);
-
-    return WillPopScope(
-      onWillPop: _onWillPopScope,
-      child: Scaffold(
+    return Scaffold(
         body: Stack(
           children: <Widget>[
             Fondo(),
@@ -64,7 +61,6 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -146,7 +142,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
     return GestureDetector(
       onTap: () {
         riesgoNotifier.currentRiesgo = r;
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => SeleccionSubRiesgo()));
       },
       child: Padding(
@@ -168,34 +164,6 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
             child: card,
           ),
         ),
-      ),
-    );
-  }
-
-  Future<bool> _onWillPopScope() {
-    return showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text("¿Seguro que quieres regrsar a la página anterior?"),
-        content: Text('Esto le sacara de la inspección'),
-        actions: [
-          new ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            style: ElevatedButton.styleFrom(
-                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
-            child: Text('SI'),
-          ),
-          new ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            style: ElevatedButton.styleFrom(
-                primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
-            child: Text('NO'),
-          ),
-        ],
       ),
     );
   }

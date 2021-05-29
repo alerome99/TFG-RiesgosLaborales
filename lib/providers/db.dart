@@ -243,6 +243,10 @@ getProvincias(InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.provinciaList = provinciaList;
 }
 
+inicializarSubRiesgo(SubRiesgo sr, RiesgoInspeccionNotifier riesgoInspeccionNotifier){
+  riesgoInspeccionNotifier.currentRiesgo = sr;
+}
+
 getInspecciones(InspeccionNotifier inspeccionNotifier) async {
   QuerySnapshot snapshot =
       await FirebaseFirestore.instance.collection('inspeccion').get();
