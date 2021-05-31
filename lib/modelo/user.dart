@@ -24,6 +24,14 @@ class Usuario {
     tipo = data['tipo'];
   }
 
+  String getNumero(){
+    return phone;
+  }
+
+  void setNumero(String p){
+    phone = p;
+  }
+  
   String getEmail(){
     return email;
   }

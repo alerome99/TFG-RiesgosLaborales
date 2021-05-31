@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
+import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
@@ -101,7 +103,6 @@ class _MainPageState extends State<MainPage> {
     getInspecciones(inspeccionNotifier);
     getProvincias(inspeccionNotifier);
     getUser(userNotifier);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -128,7 +129,9 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           ),
-          userNotifier.currentUsuario.tipo == "inspector"
+          userNotifier.currentUsuario == null 
+          ? Text('s')
+          : userNotifier.currentUsuario.tipo == "inspector"
               ? cartasInspector()
               : cartasAdministrador(),
         ],

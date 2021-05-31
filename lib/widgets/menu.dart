@@ -61,6 +61,12 @@ class _MenuState extends State<Menu> {
                   }),
           CustomList(
               Icons.lock,
+              'Cambiar Contraseña',
+              () => {
+                    cambiarContra(),
+                  }),
+          CustomList(
+              Icons.lock,
               'Log Out',
               () => {
                     signOut(),
@@ -78,13 +84,19 @@ class _MenuState extends State<Menu> {
   }
 
   void signOut() async {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen: false);
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
     await FirebaseAuth.instance
         .signOut()
         .catchError((error) => print(error.code));
     authNotifier.setUser(null);
     Navigator.of(context)
-          .push(MaterialPageRoute(builder: (BuildContext context) => Login()));
+        .push(MaterialPageRoute(builder: (BuildContext context) => Login()));
+  }
+
+  void cambiarContra() async {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) => CambiarPass()));
   }
 
   void irAPaginaPrincipal() async {

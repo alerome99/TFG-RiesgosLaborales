@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +17,15 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
+enum AuthFormType { signIn, signUp, reset }
+
 class _LoginState extends State<Login> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailRecController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   //final Db database = new Db();
 
@@ -288,9 +292,10 @@ class _LoginState extends State<Login> {
     ]);
   }
 
+  Widget mostrarCamposDialog() {}
+
   Widget recuperarPassModal() {
     final size = MediaQuery.of(context).size;
-
     showDialog(
         context: context,
         barrierDismissible: true,
@@ -334,7 +339,7 @@ class _LoginState extends State<Login> {
                         child: Form(
                           child: Column(
                             children: <Widget>[
-                              //_crearFieldCoordenadas(),
+                              _crearFieldEmail(),
                             ],
                           ),
                         ),
@@ -348,8 +353,9 @@ class _LoginState extends State<Login> {
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         FlatButton(
-                          child: Text('Ok'),
+                          child: Text('Enviar'),
                           onPressed: () {
+                            resetearPass();
                           },
                         ),
                       ],
@@ -358,6 +364,23 @@ class _LoginState extends State<Login> {
                 ),
               ));
         });
+  }
+
+  @override
+  Widget _crearFieldEmail() {
+    return TextFormField(
+      controller: _emailRecController,
+      textCapitalization: TextCapitalization.words,
+      validator: (value) {
+        if (value.length < 1) {
+          return 'Ingrese su email';
+        } else {
+          return null;
+        }
+      },
+      decoration: InputDecoration(
+          labelText: 'Email', labelStyle: TextStyle(fontSize: 20.0)),
+    );
   }
 
   @override
@@ -451,5 +474,9 @@ class _LoginState extends State<Login> {
         ));
       }
     }
+  }
+
+  void resetearPass() async {
+    await resetearContra(_emailRecController.text);
   }
 }
