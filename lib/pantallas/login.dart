@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/registro.dart';
 
@@ -27,7 +27,8 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
     initializeCurrentUser(authNotifier);
     super.initState();
   }
@@ -61,124 +62,126 @@ class _LoginState extends State<Login> {
   Widget buildEmail() {
     return Form(
       key: _formKey1,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Email',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Recursive',
-            fontSize: 17.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
-          height: 60.0,
-          child: TextFormField(
-            key: Key("emailField"),
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.email,
-                color: Colors.white,
-              ),
-              hintText: 'Enter your Email',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Email',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Recursive',
+              fontSize: 17.0,
+              fontWeight: FontWeight.bold,
             ),
-            /*
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            alignment: Alignment.centerLeft,
+            decoration: myBoxDecoration(),
+            height: 60.0,
+            child: TextFormField(
+              key: Key("emailField"),
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Colors.white,
+                ),
+                hintText: 'Enter your Email',
+              ),
+              /*
             validator: (value) {
               if (value.isEmpty) return 'Please enter some text';
               return null;
             },*/
-          ),
-        ),
-      ],
-    ),
-    );
-  }
-  Widget buildEmail2() {
-    return Form(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Email',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Recursive',
-            fontSize: 17.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
-          height: 60.0,
-          child: TextFormField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.email,
-                color: Colors.white,
-              ),
-              hintText: 'Enter your Email',
             ),
           ),
-        ),
-      ],
-    ),
+        ],
+      ),
     );
   }
-    Widget buildPass() {
+
+  Widget buildEmail2() {
+    return Form(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Email',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Recursive',
+              fontSize: 17.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            alignment: Alignment.centerLeft,
+            decoration: myBoxDecoration(),
+            height: 60.0,
+            child: TextFormField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.email,
+                  color: Colors.white,
+                ),
+                hintText: 'Enter your Email',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildPass() {
     return Form(
       key: _formKey2,
       child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Password',
-          style: TextStyle(
-            color: Colors.white,
-            fontFamily: 'Recursive',
-            fontSize: 17.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
-          height: 60.0,
-          child: TextFormField(
-            key: Key("passField"),
-            obscureText: true,
-            controller: _passwordController,
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(     
-                Icons.lock,
-                color: Colors.white,
-                //size: 16
-              ),
-              hintText: 'Enter your Password',
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Password',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Recursive',
+              fontSize: 17.0,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
-      ],
+          SizedBox(height: 10.0),
+          Container(
+            alignment: Alignment.centerLeft,
+            decoration: myBoxDecoration(),
+            height: 60.0,
+            child: TextFormField(
+              key: Key("passField"),
+              obscureText: true,
+              controller: _passwordController,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(top: 14.0),
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: Colors.white,
+                  //size: 16
+                ),
+                hintText: 'Enter your Password',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -190,8 +193,9 @@ class _LoginState extends State<Login> {
       child: RaisedButton(
           key: Key('loginButton'),
           onPressed: () async {
-            if (_formKey1.currentState.validate() && _formKey2.currentState.validate()) {
-            _signInWithEmailAndPassword();
+            if (_formKey1.currentState.validate() &&
+                _formKey2.currentState.validate()) {
+              _signInWithEmailAndPassword();
             }
           },
           elevation: 5.0,
@@ -234,7 +238,7 @@ class _LoginState extends State<Login> {
                 fontFamily: 'Open',
               ))),
     );
-  }  
+  }
 
   Widget buildSignUp() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
@@ -250,7 +254,8 @@ class _LoginState extends State<Login> {
           key: Key('goRegister'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Registro()));},
+                builder: (BuildContext context) => Registro()));
+          },
           child: Text('Sign Up',
               style: TextStyle(
                 color: Colors.white,
@@ -272,10 +277,7 @@ class _LoginState extends State<Login> {
       ),
       InkWell(
           onTap: () {
-            showModalBottomSheet(
-                    context: context,
-                    builder: ((builder) => recuperarPassModal()),
-                  );
+            recuperarPassModal();
           },
           child: Text('Recover it',
               style: TextStyle(
@@ -285,37 +287,84 @@ class _LoginState extends State<Login> {
               )))
     ]);
   }
-  
+
   Widget recuperarPassModal() {
-    return Container(
-        height: 300.0,
-        width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 20,
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(
-              "Introduce your email:",
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            buildEmail2(),
-            SizedBox(height: 40.0),
-            buildButtonEnviar(),
-          ],
-        ));
+    final size = MediaQuery.of(context).size;
+
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 35.0),
+              child: Container(
+                width: size.width * 0.80,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5.0),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 3.0,
+                          offset: Offset(0.0, 5.0),
+                          spreadRadius: 3.0)
+                    ]),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        gradient: LinearGradient(
+                            colors: [Colors.lightGreen, Colors.greenAccent]),
+                      ),
+                      alignment: Alignment.center,
+                      height: size.height * 0.1,
+                      width: double.infinity,
+                      child: Text(
+                        'Recupera tu contraseña',
+                        style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontSize: 20.0,
+                            color: Colors.white),
+                      ),
+                    ),
+                    Material(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(14.0, 14.0, 28.0, 14.0),
+                        child: Form(
+                          child: Column(
+                            children: <Widget>[
+                              //_crearFieldCoordenadas(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        FlatButton(
+                          child: Text('Cancelar'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        FlatButton(
+                          child: Text('Ok'),
+                          onPressed: () {
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ));
+        });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -380,24 +429,26 @@ class _LoginState extends State<Login> {
   }
 
   void _signInWithEmailAndPassword() async {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
-    UserNotifier userNotifier = Provider.of<UserNotifier>(context, listen:false);
-    Usuario u = Usuario(_emailController.text, _passwordController.text, null, null, null, null);
-    try{
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
+    UsuarioNotifier userNotifier =
+        Provider.of<UsuarioNotifier>(context, listen: false);
+    Usuario u = Usuario(_emailController.text, _passwordController.text, null,
+        null, null, null, null);
+    try {
       await login(u, authNotifier);
       await getUser(userNotifier);
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (BuildContext context) => MainPage()));
-    }
-    catch (e) {
-      if(_emailController.text=="" || _passwordController.text==""){
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+    } catch (e) {
+      if (_emailController.text == "" || _passwordController.text == "") {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("You must fill all the fields"),
-      ));
-      }else{
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Wrong email or password"),
-      ));
+          content: Text("You must fill all the fields"),
+        ));
+      } else {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Wrong email or password"),
+        ));
       }
     }
   }

@@ -803,17 +803,21 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         _deficiencia,
         _exposicion,
         _consecuencias);
-    evaluacionRiesgoNotifier.currentEvaluacion = eval;
     if (_tipoFactorController == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Debes seleccionar un tipo de factor"),
       ));
     } else {
       try {
-        await addRiesgo(riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier);
-        await addEvaluacion(eval);
-        await marcarRiesgoComoEvaluado(
-            true, riesgoInspeccionNotifier.currentRiesgo);
+
+        if(evaluacionRiesgoNotifier.currentEvaluacion != null){
+            eval.setIdDocumento(evaluacionRiesgoNotifier.currentEvaluacion.getIdDocumento());
+            await modificarEvaluacion(eval);
+        }else{
+            await addRiesgo(riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier, eval);
+            await addEvaluacion(eval);
+            await marcarRiesgoComoEvaluado(true, riesgoInspeccionNotifier.currentRiesgo);
+        }
         Navigator.pop(context, true);
       } catch (e) {
         //error en la operacion de BD

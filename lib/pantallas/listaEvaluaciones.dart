@@ -245,7 +245,19 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
               shrinkWrap: true,
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
-                
+                Color col;
+                if(snapshot.data.docs[index]['total'] <= 20){
+                  col = Colors.green;
+                }
+                if(snapshot.data.docs[index]['id'] > 20 && snapshot.data.docs[index]['id']<=120){
+                  col = Colors.yellow;
+                }
+                if(snapshot.data.docs[index]['id'] > 120 && snapshot.data.docs[index]['id']<=500){
+                  col = Colors.orange;
+                }
+                if(snapshot.data.docs[index]['id'] > 500){
+                  col = Colors.red;
+                }
                 SubRiesgo r = new SubRiesgo(
                     snapshot.data.docs[index]['id'],
                     snapshot.data.docs[index]['nombre'],
@@ -254,14 +266,14 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                     snapshot.data.docs[index]['idUnica']);
                 List<TableRow> rows = [];
                 rows.add(TableRow(children: [
-                  _crearBotonRedondeado(Colors.blue, r),
+                  _crearBotonRedondeado(col, r),
                 ]));
                 return Table(children: rows);
               });
         });
   }
 
-  Widget _crearBotonRedondeado(Color color, SubRiesgo sr) {
+  Widget _crearBotonRedondeado(Color col, SubRiesgo sr) {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 
 import 'notifiers/auth_notifier.dart';
 import 'notifiers/riesgoInspeccionEliminada_notifier.dart';
@@ -22,7 +22,7 @@ Future<void> main() async {
           create: (context) => AuthNotifier(),
         ),
         ChangeNotifierProvider(
-          create: (context) => UserNotifier(),
+          create: (context) => UsuarioNotifier(),
         ),
         ChangeNotifierProvider(
           create: (context) => InspeccionNotifier(),

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/perfil.dart';
 import 'package:tfg/widgets/foto.dart';
 import 'package:tfg/widgets/fotoCargada.dart';
@@ -25,8 +25,8 @@ class _ModifPerfilState extends State<ModifPerfil> {
   final TextEditingController _numeroController = TextEditingController();
 
   void actualizarDatos() async {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
+    UsuarioNotifier userNotifier =
+        Provider.of<UsuarioNotifier>(context, listen: false);
     id = userNotifier.currentUsuario.getId();
     if (_emailController.text == "") {
       _emailController.text = userNotifier.currentUsuario.email;
@@ -45,7 +45,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    UserNotifier userNotifier = Provider.of<UserNotifier>(context);
+    UsuarioNotifier userNotifier = Provider.of<UsuarioNotifier>(context);
     //cargarUsuario();
     //print(usuario.getPhone());
     return Scaffold(

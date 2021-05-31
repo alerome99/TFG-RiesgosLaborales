@@ -11,8 +11,9 @@ import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/addInspeccion.dart';
+import 'package:tfg/pantallas/listaInspectores.dart';
 import 'package:tfg/providers/riesgoProvider.dart';
 import 'package:tfg/widgets/fondo.dart';
 import 'package:tfg/widgets/menu.dart';
@@ -84,7 +85,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    UserNotifier userNotifier = Provider.of<UserNotifier>(context);
+    UsuarioNotifier userNotifier = Provider.of<UsuarioNotifier>(context);
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     RiesgoNotifier riesgoNotifier =
@@ -127,64 +128,107 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
           ),
-          Positioned(
-            bottom: 50.0,
-            child: Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
-                  height: 200,
-                  width: 188,
-                  child: Card(
-                    color: Colors.grey,
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ListaInspecciones()));
-                        },
-                        splashColor: Colors.blue,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(Icons.list_alt, size: 70.0),
-                              Text('Inspecciones',
-                                  style: new TextStyle(fontSize: 22.0)),
-                            ],
-                          ),
-                        )),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
-                  height: 200,
-                  width: 188,
-                  child: Card(
-                    color: Colors.grey,
-                    child: InkWell(
-                        onTap: () {
-                          Inspeccion i = new Inspeccion(null, null, null, null,
-                              null, null, null, null, null, null);
-                          inspeccionNotifier.currentInspeccion = i;
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AddInspeccion()));
-                        },
-                        splashColor: Colors.blue,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(Icons.add_circle_rounded, size: 70.0),
-                              Text('Add Inspection',
-                                  style: new TextStyle(fontSize: 22.0)),
-                            ],
-                          ),
-                        )),
-                  ),
-                ),
-              ],
+          userNotifier.currentUsuario.tipo == "inspector"
+              ? cartasInspector()
+              : cartasAdministrador(),
+        ],
+      ),
+    );
+  }
+
+  Widget cartasAdministrador() {
+    return Positioned(
+      bottom: 40.0,
+
+        child: Row(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+              height: 200,
+              width: 188,
+              child: Card(
+                color: Colors.grey,
+                child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              ListaInspectores()));
+                    },
+                    splashColor: Colors.blue,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(Icons.list_alt, size: 70.0),
+                          Text('Inspectores',
+                              style: new TextStyle(fontSize: 22.0)),
+                        ],
+                      ),
+                    )),
+              ),
+            ),
+          ],
+        ),
+    );
+  }
+
+  Widget cartasInspector() {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
+    return Positioned(
+      bottom: 50.0,
+      child: Row(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+            height: 200,
+            width: 188,
+            child: Card(
+              color: Colors.grey,
+              child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            ListaInspecciones()));
+                  },
+                  splashColor: Colors.blue,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.list_alt, size: 70.0),
+                        Text('Inspecciones',
+                            style: new TextStyle(fontSize: 22.0)),
+                      ],
+                    ),
+                  )),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+            height: 200,
+            width: 188,
+            child: Card(
+              color: Colors.grey,
+              child: InkWell(
+                  onTap: () {
+                    Inspeccion i = new Inspeccion(null, null, null, null, null,
+                        null, null, null, null, null);
+                    inspeccionNotifier.currentInspeccion = i;
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => AddInspeccion()));
+                  },
+                  splashColor: Colors.blue,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.add_circle_rounded, size: 70.0),
+                        Text('Add Inspection',
+                            style: new TextStyle(fontSize: 22.0)),
+                      ],
+                    ),
+                  )),
             ),
           ),
         ],

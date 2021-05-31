@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as Path;
 import 'package:provider/provider.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 
 class ImageModal extends StatefulWidget {
   @override
@@ -59,8 +59,8 @@ class _ImageModalState extends State<ImageModal> {
   }
 
   void takePhoto(ImageSource source) async {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
+    UsuarioNotifier userNotifier =
+        Provider.of<UsuarioNotifier>(context, listen: false);
     final pickedFile = await _picker.getImage(
       source: source,
     );

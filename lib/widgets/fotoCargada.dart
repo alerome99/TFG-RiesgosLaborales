@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 
 import 'imageModal.dart';
 
@@ -18,8 +18,8 @@ class _FotoCargadaState extends State<FotoCargada> {
   final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
-    UserNotifier userNotifier =
-        Provider.of<UserNotifier>(context, listen: false);
+    UsuarioNotifier userNotifier =
+        Provider.of<UsuarioNotifier>(context, listen: false);
     return Container(
       width: 150,
       height: 150,

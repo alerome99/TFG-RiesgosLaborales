@@ -8,7 +8,7 @@ import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
-import 'package:tfg/notifiers/user_notifier.dart';
+import 'package:tfg/notifiers/usuario_notifier.dart';
 import '../modelo/inspeccion.dart';
 import '../modelo/user.dart';
 import '../notifiers/auth_notifier.dart';
@@ -92,7 +92,9 @@ addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.currentInspeccion = i;
 }
 
-addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async {
+addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier, Evaluacion eval) async {
+  int nivelProbabilidad = eval.nivelDeficiencia * eval.nivelExposicion;
+  int total = nivelProbabilidad * eval.nivelConsecuencias;
   Map<String, dynamic> demoData = {
     "idInspeccion": inspeccionNotifier.currentInspeccion.id,
     "icono": sr.icono,
@@ -101,6 +103,7 @@ addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier) async {
     "nombre": sr.nombre,
     "eliminado": false,
     "evaluado": false,
+    "total": total,
   };
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
@@ -196,6 +199,14 @@ modificarUsuario(String email, String numero, String nombre, String id) async {
       .update({'email': email, 'numero': numero, 'nombre': nombre});
 }
 
+modificarEvaluacion(Evaluacion eval){
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('evaluacion');
+  collectionReference
+      .doc(eval.getIdDocumento())
+      .update({'accionCorrectora': eval.accionCorrectora, 'nivelConsecuencias': eval.nivelConsecuencias, 'nivelDeficiencia': eval.nivelDeficiencia, 'nivelExposicion': eval.nivelExposicion, 'tipoFactor': eval.tipo, 'titulo': eval.titulo});
+}
+
 marcarRiesgoComoEvaluado(bool evaluado, SubRiesgo sr) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
@@ -220,7 +231,7 @@ User getCurrentUser() {
   return _auth.currentUser;
 }
 
-getUsers(UserNotifier userNotifier /*, String email*/) async {
+getUsers(UsuarioNotifier userNotifier /*, String email*/) async {
   QuerySnapshot snapshot =
       await FirebaseFirestore.instance.collection('usuario').get();
   List<Usuario> userList = [];
@@ -259,7 +270,7 @@ getInspecciones(InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.inspeccionList = inspeccionesList;
 }
 
-getUser(UserNotifier userNotifier /*, String email*/) async {
+getUser(UsuarioNotifier userNotifier /*, String email*/) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('usuario')
       .where('email', isEqualTo: FirebaseAuth.instance.currentUser.email)
@@ -289,6 +300,6 @@ eliminarFoto(FotoRiesgo f ) async {
       .update({'eliminada': true});
 }
 
-setUserInic(Usuario u, UserNotifier userNotifier) async {
+setUserInic(Usuario u, UsuarioNotifier userNotifier) async {
   userNotifier.currentUser = u;
 }
