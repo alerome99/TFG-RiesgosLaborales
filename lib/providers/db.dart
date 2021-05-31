@@ -1,3 +1,4 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/modelo/evaluacion.dart';
@@ -27,7 +28,6 @@ login(Usuario user, AuthNotifier authNotifier) async {
   UserCredential authResult = await FirebaseAuth.instance
       .signInWithEmailAndPassword(email: user.email, password: user.password)
       .catchError((error) => print(error.code));
-
   if (authResult != null) {
     User firebaseUser = authResult.user;
 
@@ -42,7 +42,6 @@ initializeCurrentUser(AuthNotifier authNotifier) async {
   User firebaseUser = await FirebaseAuth.instance.currentUser;
 
   if (firebaseUser != null) {
-    print(firebaseUser);
     authNotifier.setUser(firebaseUser);
   }
 }
@@ -191,12 +190,17 @@ getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier) async {
   evaluacionRiesgoNotifier.evaluacionList = evaluacionList;
 }
 
-modificarUsuario(String email, String numero, String nombre, String id) async {
+modificarUsuario(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifier usuario) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
   collectionReference
       .doc(id)
-      .update({'email': email, 'numero': numero, 'nombre': nombre});
+      .update({'email': u.email, 'numero': u.phone});
+    User firebaseUser = await FirebaseAuth.instance.currentUser;
+    firebaseUser
+        .updateEmail(u.email);
+    authNotifier.setUser(firebaseUser);
+    usuario.currentUser = u;
 }
 
 modificarEvaluacion(Evaluacion eval){
@@ -283,6 +287,9 @@ getUser(UsuarioNotifier userNotifier /*, String email*/) async {
   });
   userNotifier.currentUser = userT;
 }
+  Future resetearContra(String email) async {
+    return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
 
 eliminarFoto(FotoRiesgo f ) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance

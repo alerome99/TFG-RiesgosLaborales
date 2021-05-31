@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/perfil.dart';
 import 'package:tfg/widgets/foto.dart';
@@ -24,9 +25,25 @@ class _ModifPerfilState extends State<ModifPerfil> {
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
 
-  void actualizarDatos() async {
+  @override
+  void initState() {
+    super.initState();
     UsuarioNotifier userNotifier =
         Provider.of<UsuarioNotifier>(context, listen: false);
+
+    if (userNotifier.currentUsuario != null) {
+      _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
+      _numeroController.text = userNotifier.currentUsuario.phone;
+      _emailController.text = userNotifier.currentUsuario.email;
+    }
+  }
+
+  void actualizarDatos() async {
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
+    UsuarioNotifier userNotifier =
+        Provider.of<UsuarioNotifier>(context, listen: false);
+    Usuario u = userNotifier.currentUsuario;
     id = userNotifier.currentUsuario.getId();
     if (_emailController.text == "") {
       _emailController.text = userNotifier.currentUsuario.email;
@@ -34,11 +51,9 @@ class _ModifPerfilState extends State<ModifPerfil> {
     if (_numeroController.text == "") {
       _numeroController.text = userNotifier.currentUsuario.phone;
     }
-    if (_nombreController.text == "") {
-      _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
-    }
-    await modificarUsuario(_emailController.text, _numeroController.text,
-        _nombreController.text, id);
+    u.setEmail(_emailController.text);
+    u.setNumero(_numeroController.text);
+    await modificarUsuario(u, id, authNotifier, userNotifier);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
   }
@@ -97,62 +112,25 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
-                      controller: _nombreController,
+                      controller: _numeroController,
                       obscureText: false,
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3),
-                          labelText: "Nombre Completo",
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText:
-                              userNotifier.currentUsuario.nombreCompleto == null
-                                  ? ""
-                                  : userNotifier.currentUsuario.nombreCompleto,
-                          hintStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          )),
+                        contentPadding: EdgeInsets.only(bottom: 3),
+                        labelText: "Telefono",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
                     ),
                   ),
-                  //buildTextField("Nombre Completo", userNotifier.currentUsuario.nombreCompleto !=null ? userNotifier.currentUsuario.nombreCompleto : "", false),
-                  //buildTextField(
-                  //"Email", FirebaseAuth.instance.currentUser.email, false),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
                       controller: _emailController,
                       obscureText: false,
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3),
-                          labelText: "Email",
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: userNotifier.currentUsuario.email == null
-                              ? ""
-                              : userNotifier.currentUsuario.email,
-                          hintStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          )),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 35.0),
-                    child: TextFormField(
-                      controller: _numeroController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(bottom: 3),
-                          labelText: "Telefono",
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          hintText: userNotifier.currentUsuario.phone == null
-                              ? ""
-                              : userNotifier.currentUsuario.phone,
-                          hintStyle: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          )),
+                        contentPadding: EdgeInsets.only(bottom: 3),
+                        labelText: "Email",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
                     ),
                   ),
                   SizedBox(
