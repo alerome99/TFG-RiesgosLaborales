@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:tfg/modelo/user.dart';
 
-class UserNotifier with ChangeNotifier{
+class UsuarioNotifier with ChangeNotifier{
   List<Usuario> _userList = [];
   Usuario _currentUser;
 

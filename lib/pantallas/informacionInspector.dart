@@ -8,12 +8,12 @@ import 'package:tfg/widgets/menu.dart';
 
 import '../customClipper.dart';
 
-class Perfil extends StatefulWidget {
+class InformacionInspector extends StatefulWidget {
   @override
-  _PerfilState createState() => _PerfilState();
+  _InformacionInspectorState createState() => _InformacionInspectorState();
 }
 
-class _PerfilState extends State<Perfil> {
+class _InformacionInspectorState extends State<InformacionInspector> {
   String imagePath;
   bool showPassword = false;
   
