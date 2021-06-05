@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
@@ -8,11 +7,8 @@ import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/evaluacion.dart';
-import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
-
-import 'listaEvaluaciones.dart';
 
 class SeleccionSubRiesgo extends StatefulWidget {
   @override
@@ -85,7 +81,6 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
       itemCount: subRiesgos.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        // && index + 1 != subRiesgos.length
         if (index % 2 == 0) {
           if (index + 1 != subRiesgos.length) {
             rows.add(TableRow(children: [
@@ -156,44 +151,26 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   agregarRiesgo(SubRiesgo sr) async {
     RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier =
         Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
-    InspeccionNotifier inspeccionNotifier =
-        Provider.of<InspeccionNotifier>(context, listen: false);
-    //bool existe = false;
-    //SubRiesgo sr2;
     try {
       int idNueva = 0;
       if (riesgoInspeccionEliminadaNotifier.riesgoList.length != 0) {
         for (int i = 0;
             i < riesgoInspeccionEliminadaNotifier.riesgoList.length;
             i++) {
-          /*
-          if (riesgoInspeccionEliminadaNotifier.riesgoList[i].id == sr.id &&
-              riesgoInspeccionEliminadaNotifier.riesgoList[i].getEliminado()) {
-            existe = true;
-            sr2 = riesgoInspeccionEliminadaNotifier.riesgoList[i];
-          }*/
           if (idNueva <=
               riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica) {
             idNueva =
                 riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica + 1;
-            //sr2.setIdUnica(idNueva);
           }
         }
       }
       sr.setIdUnica(idNueva);
-
-      //if (!existe) {
       RiesgoInspeccionNotifier riesgoInspeccionNotifier =
           Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
       riesgoInspeccionNotifier.currentRiesgo = sr;
       Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (BuildContext context) => EvaluacionRiesgo()));
-      /*} else {
-        await actualizarRiesgo(false, sr2);
-        Navigator.pop(context, true);
-      }*/
     } catch (e) {
-      //error en la operacion de BD
     }
   }
 }

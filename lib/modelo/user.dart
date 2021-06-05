@@ -1,14 +1,12 @@
 
 class Usuario {
-  //String name;
-  String email, password, url, phone, dni, nombreCompleto, id, tipo;
+  String email, password, url, telefono, dni, nombreCompleto, id, tipo;
 
 
-  Usuario(String email, String password, String phone, String dni, String nombreCompleto, String url, String tipo){
+  Usuario(String email, String password, String telefono, String dni, String nombreCompleto, String url, String tipo){
     this.email = email;
     this.nombreCompleto = nombreCompleto;
-    //this.name,
-    this.phone = phone;
+    this.telefono = telefono;
     this.dni = dni;
     this.password = password;
     this.url = url;
@@ -17,7 +15,7 @@ class Usuario {
 
   Usuario.fromMap(Map<String, dynamic> data) {
     email = data['email'];
-    phone = data['numero'];
+    telefono = data['numero'];
     dni = data['dni'];
     url = data['url'];
     nombreCompleto = data['nombre'];
@@ -26,11 +24,11 @@ class Usuario {
   }
 
   String getNumero(){
-    return phone;
+    return telefono;
   }
 
   void setNumero(String p){
-    phone = p;
+    telefono = p;
   }
 
   void setPass(String p){
@@ -54,7 +52,7 @@ class Usuario {
   }
 
   String getPhone(){
-    return phone;
+    return telefono;
   }
 
   String getDni(){

@@ -15,7 +15,6 @@ class FotoCargada extends StatefulWidget {
 class _FotoCargadaState extends State<FotoCargada> {
   PickedFile _imageFile;
   String imagePath;
-  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     UsuarioNotifier userNotifier =

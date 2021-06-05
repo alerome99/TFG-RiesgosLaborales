@@ -50,13 +50,13 @@ class _MenuState extends State<Menu> {
               )),
           CustomList(
               Icons.home,
-              'Home',
+              'Página principal',
               () => {
                     irAPaginaPrincipal(),
                   }),
           CustomList(
               Icons.person,
-              'Profile',
+              'Perfil',
               () => {
                     irAPerfil(),
                   }),
@@ -68,9 +68,9 @@ class _MenuState extends State<Menu> {
                   }),
           CustomList(
               Icons.lock,
-              'Log Out',
+              'Cerrar Sesión',
               () => {
-                    signOut(),
+                    cerrarSesion(),
                   }),
         ],
       ),
@@ -84,7 +84,7 @@ class _MenuState extends State<Menu> {
     }
   }
 
-  void signOut() async {
+  void cerrarSesion() async {
     AuthNotifier authNotifier =
         Provider.of<AuthNotifier>(context, listen: false);
     await FirebaseAuth.instance

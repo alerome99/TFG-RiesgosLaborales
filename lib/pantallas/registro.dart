@@ -14,18 +14,19 @@ class Registro extends StatefulWidget {
 }
 
 class _RegisterState extends State<Registro> {
-  //String _prueba; -> Funciona
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordRepeatController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordRepetidaController =
+      TextEditingController();
+  final TextEditingController _telefonoController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  
+  final TextEditingController _nombreController = TextEditingController();
+
   @override
   void initState() {
-    AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
+    AuthNotifier authNotifier =
+        Provider.of<AuthNotifier>(context, listen: false);
     initializeCurrentUser(authNotifier);
     super.initState();
   }
@@ -37,11 +38,7 @@ class _RegisterState extends State<Registro> {
     super.dispose();
   }
 
-  BoxDecoration myBoxDecoration() {
-    //Color(0xFF9999D9),
-    //Color(0xA992A5F9),
-    //Color(0xFf73aef5),
-    //Color(0xFF42A5F9),
+  BoxDecoration boxDecoraccionCustom() {
     return BoxDecoration(
       boxShadow: [
         BoxShadow(
@@ -60,7 +57,7 @@ class _RegisterState extends State<Registro> {
     );
   }
 
-  Widget buildEmail() {
+  Widget email() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -76,48 +73,36 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerEmail'),
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-              //Icons.email,
-              //color: Colors.white,
-              //),
-              hintText: 'Enter your Email',
+              hintText: 'Introduce un email',
             ),
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
       ],
     );
   }
 
-  Widget buildButton() {
+  Widget botonRegistro() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
-          key: Key('registerButton'),
-          onPressed: () async => _registerAccount(),
+          onPressed: () async => registrarCuenta(),
           elevation: 5.0,
           padding: EdgeInsets.all(15.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50.0),
           ),
           color: Colors.white,
-          child: Text('REGISTER',
+          child: Text('REGISTRO',
               style: TextStyle(
                 color: Color(0xFF526AAA),
                 letterSpacing: 1.8,
@@ -128,10 +113,10 @@ class _RegisterState extends State<Registro> {
     );
   }
 
-  Widget buildSignUp() {
+  Widget inicioSesion() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
-        'Already have an Account? ',
+        'Tienes una cuenta? ',
         style: TextStyle(
           color: Colors.white,
           fontSize: 18.0,
@@ -139,12 +124,11 @@ class _RegisterState extends State<Registro> {
         ),
       ),
       InkWell(
-          key: Key('goLogin'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Login()));
+                builder: (BuildContext context) => Login()));
           },
-          child: Text('Sign In',
+          child: Text('Inicia Sesión',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.0,
@@ -153,12 +137,12 @@ class _RegisterState extends State<Registro> {
     ]);
   }
 
-  Widget buildPass() {
+  Widget pass() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Password',
+          'Contraseña',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -169,41 +153,29 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerPass'),
             controller: _passwordController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-                //Icons.lock,
-                //color: Colors.white,
-              //),
-              hintText: 'Enter your Password',
+              hintText: 'Introduce una contraseña',
             ),
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
       ],
     );
   }
 
-  Widget buildPassRepeat() {
+  Widget passRepetida() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Confirm Password',
-          //prueba, -> Funciona
+          'Confirma la contraseña',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -214,22 +186,16 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerPassRepeat'),
-            controller: _passwordRepeatController,
+            controller: _passwordRepetidaController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-              //Icons.lock,
-              //color: Colors.white,
-              //),
-              hintText: 'Repeat your Password',
-              //hintStyle:
+              hintText: 'Repite la contraseña',
             ),
           ),
         ),
@@ -237,12 +203,12 @@ class _RegisterState extends State<Registro> {
     );
   }
 
-    Widget buildTlefono() {
+  Widget telefono() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Phone number',
+          'Número de telefono',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -253,35 +219,24 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerPhone'),
-            controller: _phoneController,
+            controller: _telefonoController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-              //Icons.email,
-              //color: Colors.white,
-              //),
-              hintText: 'Enter your phone number',
+              hintText: 'Introduce un número de telefono',
             ),
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
       ],
     );
   }
 
-  Widget buildDni() {
+  Widget dni() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -297,40 +252,29 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerDni'),
             controller: _dniController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-              //Icons.email,
-              //color: Colors.white,
-              //),
-              hintText: 'Enter your DNI/NIF',
+              hintText: 'Introduce un DNI/NIF',
             ),
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
       ],
     );
   }
 
-  Widget buildName() {
+  Widget nombre() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          'Full name',
+          'Nombre completo',
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Recursive',
@@ -341,28 +285,17 @@ class _RegisterState extends State<Registro> {
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: myBoxDecoration(),
+          decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
-            key: Key('registerName'),
-            controller: _nameController,
+            controller: _nombreController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
-              //prefixIcon: Icon(
-              //Icons.email,
-              //color: Colors.white,
-              //),
-              hintText: 'Enter your full name',
+              hintText: 'Introduce tu nombre completo',
             ),
-            validator: (String value) {
-              if (value.isEmpty) {
-                return 'Please enter some text';
-              }
-              return null;
-            },
           ),
         ),
       ],
@@ -371,7 +304,6 @@ class _RegisterState extends State<Registro> {
 
   @override
   Widget build(BuildContext context) {
-    //_prueba = "hola"; -> Funciona
     return Scaffold(
       key: _scaffoldKey,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -388,10 +320,7 @@ class _RegisterState extends State<Registro> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      //Color(0xFF9999D9),
                       Color(0xF992A5F9),
-                      //Color(0xFF42A5F9),
-                      //Color(0xFf73aef5),
                       Color(0xC142A5F9),
                       Colors.blue,
                     ],
@@ -411,7 +340,7 @@ class _RegisterState extends State<Registro> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Sign Up',
+                        'Registrate',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Recursive',
@@ -420,21 +349,21 @@ class _RegisterState extends State<Registro> {
                         ),
                       ),
                       SizedBox(height: 40.0),
-                      buildEmail(),
+                      email(),
                       SizedBox(height: 20.0),
-                      buildPass(),
+                      pass(),
                       SizedBox(height: 20.0),
-                      buildPassRepeat(),
+                      passRepetida(),
                       SizedBox(height: 20.0),
-                      buildTlefono(),
+                      telefono(),
                       SizedBox(height: 20.0),
-                      buildDni(),
+                      dni(),
                       SizedBox(height: 20.0),
-                      buildName(),
+                      nombre(),
                       SizedBox(height: 25.0),
-                      buildButton(),
+                      botonRegistro(),
                       SizedBox(height: 10.0),
-                      buildSignUp(),
+                      inicioSesion(),
                     ],
                   ),
                 ),
@@ -446,28 +375,42 @@ class _RegisterState extends State<Registro> {
     );
   }
 
-  void _registerAccount() async {
-    if(_emailController.text=="" || _passwordController.text==""  || _passwordRepeatController.text=="" || _phoneController.text=="" || _dniController.text=="" || _nameController.text==""){
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("You must fill all the fields"),
-      ));
-      } else {
-        if (_passwordController.text == _passwordRepeatController.text){
-      Usuario u = new Usuario(_emailController.text, _passwordController.text, _phoneController.text, _dniController.text, _nameController.text, "", "inspector");
-      AuthNotifier authNotifier = Provider.of<AuthNotifier>(context, listen:false);
-      try{
-        await registrarUsuario(u, authNotifier);
-        Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Login()));
-      }catch (e) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Email is already registered")));
-      }
-    } else {
+  void registrarCuenta() async {
+    if (_emailController.text == "" ||
+        _passwordController.text == "" ||
+        _passwordRepetidaController.text == "" ||
+        _telefonoController.text == "" ||
+        _dniController.text == "" ||
+        _nombreController.text == "") {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text("Password and repeat password must have the same content"),
+        content: Text("Debes rellenar todos los campos"),
       ));
+    } else {
+      if (_passwordController.text == _passwordRepetidaController.text) {
+        Usuario u = new Usuario(
+            _emailController.text,
+            _passwordController.text,
+            _telefonoController.text,
+            _dniController.text,
+            _nombreController.text,
+            "",
+            "inspector");
+        AuthNotifier authNotifier =
+            Provider.of<AuthNotifier>(context, listen: false);
+        try {
+          await registrarUsuario(u, authNotifier);
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) => Login()));
+        } catch (e) {
+          _scaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text("Ese email ya está registrado")));
+        }
+      } else {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(
+              "Los campos de contraseña y contraseña repetida deben de ser iguales"),
+        ));
+      }
     }
-      }  
-}
+  }
 }

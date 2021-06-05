@@ -1,15 +1,11 @@
-import 'dart:io';
 import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
-import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
@@ -17,9 +13,7 @@ import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/addInspeccion.dart';
 import 'package:tfg/pantallas/listaInspectores.dart';
 import 'package:tfg/providers/riesgoProvider.dart';
-import 'package:tfg/widgets/fondo.dart';
 import 'package:tfg/widgets/menu.dart';
-
 import '../customClipper.dart';
 import '../providers/db.dart';
 import 'listaInspecciones.dart';
@@ -34,7 +28,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String imagePath;
-  final ImagePicker _picker = ImagePicker();
   Widget foto() {
     return WillPopScope(
       onWillPop: _onWillPopScope,
@@ -62,8 +55,6 @@ class _MainPageState extends State<MainPage> {
               height: 380.0,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  //image: NetworkImage("https://derecho.usal.es/wp-content/uploads/2017/11/constructionworkers-1200x565.jpg"),
-                  //https://preventiam.com/wp-content/uploads/2019/09/tecnicas-prevencion-riesgos-laborales.jpg
                   image: NetworkImage(
                       "https://i2.wp.com/www.asesorus.es/wp-content/uploads/2019/11/prevencion-riesgos-laborales.jpg?fit=710%2C320&ssl=1"),
                   fit: BoxFit.cover,
@@ -142,7 +133,6 @@ class _MainPageState extends State<MainPage> {
   Widget cartasAdministrador() {
     return Positioned(
       bottom: 40.0,
-
         child: Row(
           children: <Widget>[
             Container(
@@ -183,7 +173,7 @@ class _MainPageState extends State<MainPage> {
       child: Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 8.0, top: 15.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
             height: 200,
             width: 194,
             child: Card(
@@ -208,7 +198,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 8.0, top: 15.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
             height: 200,
             width: 194,
             child: Card(

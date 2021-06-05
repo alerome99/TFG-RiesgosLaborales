@@ -8,7 +8,6 @@ import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
 import '../modelo/inspeccion.dart';
 import '../modelo/user.dart';
@@ -17,20 +16,12 @@ import '../notifiers/auth_notifier.dart';
 FirebaseAuth _auth; // = FirebaseAuth.instance;
 QuerySnapshot response;
 
-FirebaseFirestore _db; // = FirebaseFirestore.instance;
-
-Db() {
-  _auth = FirebaseAuth.instance;
-  _db = FirebaseFirestore.instance;
-}
-
 login(Usuario user, AuthNotifier authNotifier) async {
   UserCredential authResult = await FirebaseAuth.instance
       .signInWithEmailAndPassword(email: user.email, password: user.password)
       .catchError((error) => print(error.code));
   if (authResult != null) {
     User firebaseUser = authResult.user;
-
     if (firebaseUser != null) {
       print("Log In: $firebaseUser");
       authNotifier.setUser(firebaseUser);
@@ -40,7 +31,6 @@ login(Usuario user, AuthNotifier authNotifier) async {
 
 initializeCurrentUser(AuthNotifier authNotifier) async {
   User firebaseUser = await FirebaseAuth.instance.currentUser;
-
   if (firebaseUser != null) {
     authNotifier.setUser(firebaseUser);
   }
@@ -64,8 +54,6 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
         "nombre": u.getNombre(),
         "contraseña": u.getPassword()
       };
-      //AÑADE A LA COLECCION data UNA NUEVA INSTANCIA CON DOS DATOS UNO name Y OTRO moto CUYOS VALORES ESTAN DEFINIDOS ENCIMA
-      //ESTO SE PODRIA METER EN UNA FUNCION PARA EL LOGIN POR EJEMPLO
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('usuario');
       collectionReference.add(demoData);
@@ -213,7 +201,7 @@ modificarUsuario(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifie
       FirebaseFirestore.instance.collection('usuario');
   collectionReference
       .doc(id)
-      .update({'email': u.email, 'numero': u.phone});
+      .update({'email': u.email, 'numero': u.telefono});
     User firebaseUser = await FirebaseAuth.instance.currentUser;
     firebaseUser
         .updateEmail(u.email);

@@ -5,10 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
-import 'package:tfg/pantallas/evaluacion.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/mapa.dart';
-import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
@@ -20,17 +18,13 @@ class AddInspeccion extends StatefulWidget {
 class _AddInspeccionState extends State<AddInspeccion> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _latitudController = TextEditingController();
-  final TextEditingController _longitudController = TextEditingController();
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _direccionController = TextEditingController();
   final TextEditingController _nombreEmpresaController =
       TextEditingController();
   final TextEditingController controller = TextEditingController();
-  String _direccion;
-  String _provinciaController;
-  String recibido;
+  String _provinciaController, recibido;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +49,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                       onPressed: () {
                         _mostrarAlertaInspeccion(context);
                       },
-                      label: Text('Create Inspection'),
+                      label: Text('CREAR NUEVA INSPECCIÓN'),
                     ),
                   ],
                 ),
@@ -69,7 +63,6 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
   void _mostrarAlertaInspeccion(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     showDialog(
         context: context,
         barrierDismissible: true,
@@ -100,7 +93,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                       height: size.height * 0.1,
                       width: double.infinity,
                       child: Text(
-                        'New Inspection',
+                        'Nueva Inspección',
                         style: TextStyle(
                             decoration: TextDecoration.none,
                             fontSize: 20.0,
@@ -117,8 +110,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                               _crearTextFieldTitulo(),
                               _crearTextFieldLugar(),
                               _crearTextNombreEmpresa(),
-                              _crearSelectProvincia(),
-                              //_crearFieldCoordenadas(),
+                              _crearSelectorProvincia(),
                               _crearTextFieldDescripcion(),
                             ],
                           ),
@@ -133,7 +125,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         FlatButton(
-                          child: Text('Ok'),
+                          child: Text('Confirmar'),
                           onPressed: () {
                             agregarInspeccion();
                           },
@@ -163,7 +155,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
     );
   }
 
-  Widget _crearSelectProvincia() {
+  Widget _crearSelectorProvincia() {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     var _provincias = List<DropdownMenuItem>();
@@ -181,7 +173,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
     return DropdownButtonFormField(
       decoration: InputDecoration(
-          labelText: 'Province', labelStyle: TextStyle(fontSize: 20.0)),
+          labelText: 'Provincia', labelStyle: TextStyle(fontSize: 20.0)),
       value: _provinciaController,
       items: _provincias,
       onChanged: (value) {
@@ -206,7 +198,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
           maxLines: 2,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
-              labelText: 'Direction', labelStyle: TextStyle(fontSize: 20.0)),
+              labelText: 'Dirección', labelStyle: TextStyle(fontSize: 20.0)),
           validator: (value) {
             if (value.length < 1) {
               return 'Ingrese el lugar en el que se va a realizar la inspección';
@@ -253,7 +245,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
         }
       },
       decoration: InputDecoration(
-          labelText: 'Name', labelStyle: TextStyle(fontSize: 20.0)),
+          labelText: 'Nombre', labelStyle: TextStyle(fontSize: 20.0)),
     );
   }
 

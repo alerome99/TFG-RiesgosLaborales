@@ -1,24 +1,8 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/modelo/evaluacion.dart';
-import 'package:tfg/modelo/riesgo.dart';
-import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
-import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
-import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/inspector_notifier.dart';
-import 'package:tfg/notifiers/riesgo_notifier.dart';
-import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/subRiesgo_notifier.dart';
-import 'package:tfg/notifiers/usuario_notifier.dart';
-import 'package:tfg/pantallas/principal.dart';
-import 'package:tfg/pantallas/seleccionRiesgo.dart';
-import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
-import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 import 'package:tfg/widgets/menu.dart';
 

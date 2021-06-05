@@ -1,13 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
-import 'package:tfg/pantallas/perfil.dart';
 import 'package:tfg/pantallas/principal.dart';
-import 'package:tfg/widgets/foto.dart';
-import 'package:tfg/widgets/fotoCargada.dart';
 import 'package:tfg/widgets/menu.dart';
 
 import '../providers/db.dart';
@@ -36,6 +32,7 @@ class _CambiarPassState extends State<CambiarPass> {
         _contraNuevaController.text) {
       return "Este campo debe coincidir con el anterior";
     }
+    return null;
   }
 
   String validatePass(value) {
@@ -48,6 +45,7 @@ class _CambiarPassState extends State<CambiarPass> {
     } else if(_contraNuevaController.text == userNotifier.currentUsuario.password){
       return "La contraseña nueva debe ser diferente a la anterior";
     }
+    return null;
   }
 
   String validatePassAntigua(value) {
@@ -59,14 +57,11 @@ class _CambiarPassState extends State<CambiarPass> {
         userNotifier.currentUsuario.password) {
       return "La contraseña introducida no es correcta";
     } 
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    AuthNotifier authNotifier =
-        Provider.of<AuthNotifier>(context, listen: false);
-    UsuarioNotifier userNotifier =
-        Provider.of<UsuarioNotifier>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,

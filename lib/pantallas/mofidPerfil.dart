@@ -33,7 +33,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
 
     if (userNotifier.currentUsuario != null) {
       _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
-      _numeroController.text = userNotifier.currentUsuario.phone;
+      _numeroController.text = userNotifier.currentUsuario.telefono;
       _emailController.text = userNotifier.currentUsuario.email;
     }
   }
@@ -49,7 +49,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
       _emailController.text = userNotifier.currentUsuario.email;
     }
     if (_numeroController.text == "") {
-      _numeroController.text = userNotifier.currentUsuario.phone;
+      _numeroController.text = userNotifier.currentUsuario.telefono;
     }
     u.setEmail(_emailController.text);
     u.setNumero(_numeroController.text);
@@ -61,8 +61,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
   @override
   Widget build(BuildContext context) {
     UsuarioNotifier userNotifier = Provider.of<UsuarioNotifier>(context);
-    //cargarUsuario();
-    //print(usuario.getPhone());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -89,11 +87,11 @@ class _ModifPerfilState extends State<ModifPerfil> {
               child: ListView(
                 children: [
                   Text(
-                    "Edit Profile",
+                    "Editar Perfil",
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                   ),
                   SizedBox(
-                    height: 15,
+                    height: 35,
                   ),
                   Align(
                     alignment: Alignment(0, 1),
@@ -107,7 +105,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                     ),
                   ),
                   SizedBox(
-                    height: 35,
+                    height: 45,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
@@ -140,16 +138,16 @@ class _ModifPerfilState extends State<ModifPerfil> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       OutlineButton(
-                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        padding: EdgeInsets.symmetric(horizontal: 47),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (BuildContext context) => Perfil()));
                         },
-                        child: Text("CANCEL",
+                        child: Text("CANCELAR",
                             style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
                                 letterSpacing: 2.2,
                                 color: Colors.black)),
                       ),
@@ -158,14 +156,14 @@ class _ModifPerfilState extends State<ModifPerfil> {
                           actualizarDatos();
                         },
                         color: Colors.green,
-                        padding: EdgeInsets.symmetric(horizontal: 50),
+                        padding: EdgeInsets.symmetric(horizontal: 47),
                         elevation: 2,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
-                          "SAVE",
+                          "GUARDAR",
                           style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               letterSpacing: 2.2,
                               color: Colors.white),
                         ),
@@ -177,49 +175,6 @@ class _ModifPerfilState extends State<ModifPerfil> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildList(QuerySnapshot snapshot) {
-    return ListView.builder(
-        itemCount: snapshot.docs.length,
-        itemBuilder: (context, index) {
-          final doc = snapshot.docs[index];
-
-          return ListTile(title: Text("hahaha"));
-        });
-  }
-
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        obscureText: isPasswordTextField ? showPassword : false,
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.grey,
-                    ),
-                  )
-                : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
-            labelText: labelText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
-            hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            )),
       ),
     );
   }

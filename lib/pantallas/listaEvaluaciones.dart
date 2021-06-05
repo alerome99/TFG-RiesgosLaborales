@@ -1,23 +1,14 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tfg/modelo/evaluacion.dart';
-import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
-import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
-import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
-
 import 'evaluacion.dart';
 
 class ListaRiesgosPorEvaluar extends StatefulWidget {
@@ -59,7 +50,6 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
               child: Column(
                 children: <Widget>[
                   _titulos(),
-                  //_botonesRedondeados(),
                   _listaRiesgos(),
                 ],
               ),
@@ -73,8 +63,6 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                   children: <Widget>[
                     FloatingActionButton.extended(
                       heroTag: UniqueKey(),
-                      //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
-                      //icon: Icon(Icons., size: 30.0),
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
@@ -96,8 +84,6 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                   children: <Widget>[
                     FloatingActionButton.extended(
                       heroTag: UniqueKey(),
-                      //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
-                      //icon: Icon(Icons., size: 30.0),
                       icon: Icon(Icons.add_box_outlined, size: 30.0),
                       onPressed: () {
                         evaluacionRiesgoNotifier.currentEvaluacion = null;
@@ -239,7 +225,6 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
               ),
             );
-
           return ListView.builder(
               physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
