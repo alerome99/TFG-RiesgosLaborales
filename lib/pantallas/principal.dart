@@ -120,7 +120,7 @@ class _MainPageState extends State<MainPage> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 130, 24, 0),
               child: Text(
-                "Welcome to ORI",
+                "Bienvenido a PRL",
                 style: TextStyle(
                   fontSize: 38.0,
                   color: Colors.blue,
@@ -183,9 +183,9 @@ class _MainPageState extends State<MainPage> {
       child: Row(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 8.0, top: 15.0, bottom: 15.0),
             height: 200,
-            width: 188,
+            width: 194,
             child: Card(
               color: Colors.grey,
               child: InkWell(
@@ -199,7 +199,7 @@ class _MainPageState extends State<MainPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(Icons.list_alt, size: 70.0),
+                        Icon(Icons.list_alt, size: 80.0),
                         Text('Inspecciones',
                             style: new TextStyle(fontSize: 22.0)),
                       ],
@@ -208,9 +208,9 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+            padding: EdgeInsets.only(left: 8.0, top: 15.0, bottom: 15.0),
             height: 200,
-            width: 188,
+            width: 194,
             child: Card(
               color: Colors.grey,
               child: InkWell(
@@ -226,9 +226,9 @@ class _MainPageState extends State<MainPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Icon(Icons.add_circle_rounded, size: 70.0),
-                        Text('Add Inspection',
-                            style: new TextStyle(fontSize: 22.0)),
+                        Icon(Icons.add_circle_rounded, size: 80.0),
+                        Text('Añadir Inspección',
+                            style: new TextStyle(fontSize: 20.0)),
                       ],
                     ),
                   )),

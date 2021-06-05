@@ -22,6 +22,7 @@ class Usuario {
     url = data['url'];
     nombreCompleto = data['nombre'];
     tipo = data['tipo'];
+    password = data['contraseña'];
   }
 
   String getNumero(){
@@ -30,6 +31,10 @@ class Usuario {
 
   void setNumero(String p){
     phone = p;
+  }
+
+  void setPass(String p){
+    password = p;
   }
   
   String getEmail(){

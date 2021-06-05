@@ -10,6 +10,7 @@ import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
@@ -107,8 +108,8 @@ class _ListaInspectoresState extends State<ListaInspectores> {
   }
 
   Widget _crearBotonRedondeado(Usuario u) {
-    UsuarioNotifier usuarioNotifier =
-        Provider.of<UsuarioNotifier>(context, listen: false);
+    InspectorNotifier inspectorNotifier =
+        Provider.of<InspectorNotifier>(context, listen: false);
     final card = Container(
       child: Row(
         children: [
@@ -146,7 +147,7 @@ class _ListaInspectoresState extends State<ListaInspectores> {
 
     return GestureDetector(
       onTap: () {
-        usuarioNotifier.currentUser = u;
+        inspectorNotifier.currentInspector = u;
         Navigator.of(context).push(MaterialPageRoute(
             builder: (BuildContext context) => EvaluacionRiesgo()));
       },
