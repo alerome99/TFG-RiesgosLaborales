@@ -1,8 +1,7 @@
 class Riesgo {
 
   int id;
-  String nombre;
-  String icono;
+  String nombre, icono;
 
   Riesgo(int id, String nombre, String icono){
     this.id = id;

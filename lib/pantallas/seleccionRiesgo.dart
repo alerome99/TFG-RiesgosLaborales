@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
-import 'package:tfg/notifiers/inspeccion_notifier.dart';
-import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
-import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
-import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
@@ -35,28 +30,6 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
                   _titulos(),
                   _botonesRedondeados(),
                 ],
-              ),
-            ),
-            Positioned(
-              bottom: 0.0,
-              right: 0.0,
-              child: Container(
-                padding: EdgeInsets.all(12.0),
-                child: Row(
-                  children: <Widget>[
-                    FloatingActionButton.extended(
-                      heroTag: UniqueKey(),
-                      //icon: Icon(Icons.add_alert, size: 30.0),archive_outlined
-                      icon: Icon(Icons.archive_outlined, size: 30.0),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                ListaRiesgosPorEvaluar()));
-                      },
-                      label: Text('Evaluar'),
-                    ),
-                  ],
-                ),
               ),
             ),
           ],

@@ -1,8 +1,7 @@
 class SubRiesgo {
 
   int id, idUnica;
-  String nombre, idDocumento;
-  String icono;
+  String nombre, idDocumento, icono;
   int idRiesgoPadre;
   bool eliminado, evaluado;
 

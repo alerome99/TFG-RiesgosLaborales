@@ -19,7 +19,7 @@ class _PerfilState extends State<Perfil> {
   
   @override
   Widget build(BuildContext context) {
-    final cajaAzul2 = Container(
+    Container(
         height: 220.0,
         width: 500.0,
         decoration: BoxDecoration(
@@ -65,9 +65,9 @@ class _PerfilState extends State<Perfil> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               child: Text(
-                "MODIFY PROFILE",
+                "MODIFICAR PERFIL",
                 style: TextStyle(
-                    fontSize: 14, letterSpacing: 2.2, color: Colors.white),
+                    fontSize: 16, letterSpacing: 2.2, color: Colors.white),
               ),
             ),
           ],

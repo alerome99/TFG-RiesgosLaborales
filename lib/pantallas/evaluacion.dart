@@ -3,22 +3,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as Path;
-
 import 'dart:io';
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/pantallas/listaEvaluaciones.dart';
-import 'package:tfg/pantallas/seleccionRiesgo.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
-import 'package:tfg/widgets/foto.dart';
-import 'package:tfg/widgets/imageModal.dart';
 
 class EvaluacionRiesgo extends StatefulWidget {
   @override
@@ -29,24 +22,21 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   static final _formKey = GlobalKey<FormState>();
   File foto;
-  double _valueDeficiencia = 0.0;
-  double _valueExposicion = 1.0;
-  double _valueConsecuencias = 10.0;
+  double _valorDeficiencia = 0.0;
+  double _valorExposicion = 1.0;
+  double _valorConsecuencias = 10.0;
   int _deficiencia = 0;
   int _exposicion = 1;
   int _consecuencias = 10;
-  File _foto;
   PickedFile _imageFile;
   List<String> fotos = new List<String>();
   String imagePath;
   final ImagePicker _picker = ImagePicker();
 
-  final TextEditingController _latitudController = TextEditingController();
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _accionCorrectoraController =
       TextEditingController();
   String _tipoFactorController;
-  final TextEditingController _longitudController = TextEditingController();
 
   final TextEditingController c1 = new TextEditingController();
   @override
@@ -62,14 +52,13 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         _tipoFactorController = "Potencial";
       }
       _accionCorrectoraController.text = evaluacionRiesgoNotifier.currentEvaluacion.accionCorrectora;
-      _valueDeficiencia = evaluacionRiesgoNotifier.currentEvaluacion.nivelDeficiencia.toDouble();
-      _valueExposicion = evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
-      _valueConsecuencias = evaluacionRiesgoNotifier.currentEvaluacion.nivelConsecuencias.toDouble();
+      _valorDeficiencia = evaluacionRiesgoNotifier.currentEvaluacion.nivelDeficiencia.toDouble();
+      _valorExposicion = evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
+      _valorConsecuencias = evaluacionRiesgoNotifier.currentEvaluacion.nivelConsecuencias.toDouble();
     }
   }
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: _onWillPopScope,
       child: Scaffold(
@@ -94,11 +83,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             ),
           ),
         ),
-        /*
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: _tomarForo,
-      ),*/
       ),
     );
   }
@@ -188,27 +172,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     );
   }
 
-/*
-  Widget mapa() {
-    return AddressSearchTextField(
-      controller: TextEditingController(),
-      decoration: InputDecoration(),
-      style: TextStyle(),
-      barrierDismissible: true,
-      country: "España",
-      city: "Valladolid",
-      onDone: (AddressPoint point) {
-        print(point.latitude);
-        print(point.longitude);
-      },
-      onCleaned: () {},
-      hintText: '',
-      noResultsText: '',
-    );
-  }
-*/
-
-
   Widget _crearSeleccion() {
     return DropdownButtonFormField(
       decoration: InputDecoration(
@@ -228,7 +191,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   Widget _crearSliderNDeficiencia() {
     final _size = MediaQuery.of(context).size;
-
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Column(
@@ -279,12 +241,12 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 showValueIndicator: ShowValueIndicator.always,
               ),
               child: Slider(
-                value: _valueDeficiencia,
+                value: _valorDeficiencia,
                 min: 0,
                 max: 10,
                 divisions: 3,
                 onChanged: (value) {
-                  _valueDeficiencia = value;
+                  _valorDeficiencia = value;
                   switch (value.ceil()) {
                     case 0:
                       _deficiencia = 0;
@@ -323,7 +285,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   Widget _crearSliderNExposicion() {
     final _size = MediaQuery.of(context).size;
-
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Column(
@@ -374,12 +335,12 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 showValueIndicator: ShowValueIndicator.always,
               ),
               child: Slider(
-                value: _valueExposicion,
+                value: _valorExposicion,
                 min: 1,
                 max: 4,
                 divisions: 3,
                 onChanged: (value) {
-                  _valueExposicion = value;
+                  _valorExposicion = value;
                   switch (value.ceil()) {
                     case 0:
                       _exposicion = 1;
@@ -444,7 +405,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
                 List<TableRow> rows = [];
-                //return Container(child : Text(snapshot.data.docs[index]['url']));
                 if (index % 2 == 0) {
                   if (index + 1 != snapshot.data.docs.length) {
                     f1 = new FotoRiesgo(snapshot.data.docs[index]['url'],
@@ -573,9 +533,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
           imageUrl.toString(), riesgoInspeccionNotifier.currentRiesgo.idUnica);
       try {
         await addFotoRiesgo(f);
-        //Navigator.of(context).pop();
       } catch (e) {
-        //error en la operacion de BD
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir la foto"),
         ));
@@ -651,12 +609,12 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 showValueIndicator: ShowValueIndicator.always,
               ),
               child: Slider(
-                value: _valueConsecuencias,
+                value: _valorConsecuencias,
                 min: 10,
                 max: 100,
                 divisions: 3,
                 onChanged: (value) {
-                  _valueConsecuencias = value;
+                  _valorConsecuencias = value;
                   switch (value.ceil()) {
                     case 0:
                       _consecuencias = 10;
@@ -820,7 +778,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         }
         Navigator.pop(context, true);
       } catch (e) {
-        //error en la operacion de BD
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir evaluación"),
         ));

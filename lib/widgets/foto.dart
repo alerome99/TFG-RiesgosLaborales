@@ -13,7 +13,6 @@ class Foto extends StatefulWidget {
 class _FotoState extends State<Foto> {
   PickedFile _imageFile;
   String imagePath;
-  final ImagePicker _picker = ImagePicker();
   @override
   Widget build(BuildContext context) {
     return Container(

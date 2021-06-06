@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
-import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
-import 'package:tfg/notifiers/riesgo_notifier.dart';
-import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
-import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
-import 'package:tfg/pantallas/seleccionRiesgo.dart';
-import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
-import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class ListaInspecciones extends StatefulWidget {

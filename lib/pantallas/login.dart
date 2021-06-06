@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,11 +21,9 @@ class _LoginState extends State<Login> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> _formKey2 = GlobalKey<FormState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _emailRecController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  //final Db database = new Db();
 
   @override
   void initState() {
@@ -44,7 +40,7 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  BoxDecoration myBoxDecoration() {
+  BoxDecoration boxDecoraccionCustom() {
     return BoxDecoration(
       boxShadow: [
         BoxShadow(
@@ -63,7 +59,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildEmail() {
+  Widget email() {
     return Form(
       key: _formKey1,
       child: Column(
@@ -81,52 +77,7 @@ class _LoginState extends State<Login> {
           SizedBox(height: 10.0),
           Container(
             alignment: Alignment.centerLeft,
-            decoration: myBoxDecoration(),
-            height: 60.0,
-            child: TextFormField(
-              key: Key("emailField"),
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(top: 14.0),
-                prefixIcon: Icon(
-                  Icons.email,
-                  color: Colors.white,
-                ),
-                hintText: 'Enter your Email',
-              ),
-              /*
-            validator: (value) {
-              if (value.isEmpty) return 'Please enter some text';
-              return null;
-            },*/
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildEmail2() {
-    return Form(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Email',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Recursive',
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 10.0),
-          Container(
-            alignment: Alignment.centerLeft,
-            decoration: myBoxDecoration(),
+            decoration: boxDecoraccionCustom(),
             height: 60.0,
             child: TextFormField(
               controller: _emailController,
@@ -139,7 +90,7 @@ class _LoginState extends State<Login> {
                   Icons.email,
                   color: Colors.white,
                 ),
-                hintText: 'Enter your Email',
+                hintText: 'Introduce tu email',
               ),
             ),
           ),
@@ -148,14 +99,14 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildPass() {
+  Widget pass() {
     return Form(
       key: _formKey2,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Password',
+            'Contraseña',
             style: TextStyle(
               color: Colors.white,
               fontFamily: 'Recursive',
@@ -166,10 +117,9 @@ class _LoginState extends State<Login> {
           SizedBox(height: 10.0),
           Container(
             alignment: Alignment.centerLeft,
-            decoration: myBoxDecoration(),
+            decoration: boxDecoraccionCustom(),
             height: 60.0,
             child: TextFormField(
-              key: Key("passField"),
               obscureText: true,
               controller: _passwordController,
               style: TextStyle(color: Colors.white),
@@ -179,9 +129,8 @@ class _LoginState extends State<Login> {
                 prefixIcon: Icon(
                   Icons.lock,
                   color: Colors.white,
-                  //size: 16
                 ),
-                hintText: 'Enter your Password',
+                hintText: 'Introduce tu contraseña',
               ),
             ),
           ),
@@ -190,16 +139,15 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildButton() {
+  Widget botonInicioSesion() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
-          key: Key('loginButton'),
           onPressed: () async {
             if (_formKey1.currentState.validate() &&
                 _formKey2.currentState.validate()) {
-              _signInWithEmailAndPassword();
+              iniciarSesionPassEmail();
             }
           },
           elevation: 5.0,
@@ -208,7 +156,7 @@ class _LoginState extends State<Login> {
             borderRadius: BorderRadius.circular(50.0),
           ),
           color: Colors.white,
-          child: Text('LOGIN',
+          child: Text('INICIO SESION',
               style: TextStyle(
                 color: Color(0xFF526AAA),
                 letterSpacing: 1.8,
@@ -219,35 +167,10 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget buildButtonEnviar() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
-      width: double.infinity,
-      child: RaisedButton(
-          onPressed: () async {
-            //AQUI IRA EL BACKEND DE RECUPERAR PASS (BUSCAR COMO HACER)
-          },
-          elevation: 5.0,
-          padding: EdgeInsets.all(15.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50.0),
-          ),
-          color: Colors.white,
-          child: Text('ENVIAR',
-              style: TextStyle(
-                color: Color(0xFF526AAA),
-                letterSpacing: 1.8,
-                fontWeight: FontWeight.bold,
-                fontSize: 18.0,
-                fontFamily: 'Open',
-              ))),
-    );
-  }
-
-  Widget buildSignUp() {
+  Widget irARegistro() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
-        'Don\'t have an Account? ',
+        'No tienes una cuenta aún? ',
         style: TextStyle(
           color: Colors.white,
           fontSize: 18.0,
@@ -255,27 +178,26 @@ class _LoginState extends State<Login> {
         ),
       ),
       InkWell(
-          key: Key('goRegister'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => Registro()));
           },
-          child: Text('Sign Up',
+          child: Text('Registrate',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18.0,
+                fontSize: 17.0,
                 fontWeight: FontWeight.bold,
               )))
     ]);
   }
 
-  Widget buildPassRec() {
+  Widget recuperacionPass() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
-        'You lost your password? ',
+        'Has olvidado tu contraseña? ',
         style: TextStyle(
           color: Colors.white,
-          fontSize: 18.0,
+          fontSize: 17.0,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -283,7 +205,7 @@ class _LoginState extends State<Login> {
           onTap: () {
             recuperarPassModal();
           },
-          child: Text('Recover it',
+          child: Text('Recuperar',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.0,
@@ -291,8 +213,6 @@ class _LoginState extends State<Login> {
               )))
     ]);
   }
-
-  Widget mostrarCamposDialog() {}
 
   Widget recuperarPassModal() {
     final size = MediaQuery.of(context).size;
@@ -339,7 +259,7 @@ class _LoginState extends State<Login> {
                         child: Form(
                           child: Column(
                             children: <Widget>[
-                              _crearFieldEmail(),
+                              _crearCampoEmail(),
                             ],
                           ),
                         ),
@@ -367,7 +287,7 @@ class _LoginState extends State<Login> {
   }
 
   @override
-  Widget _crearFieldEmail() {
+  Widget _crearCampoEmail() {
     return TextFormField(
       controller: _emailRecController,
       textCapitalization: TextCapitalization.words,
@@ -431,15 +351,15 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       SizedBox(height: 40.0),
-                      buildEmail(),
+                      email(),
                       SizedBox(height: 20.0),
-                      buildPass(),
+                      pass(),
                       SizedBox(height: 30.0),
-                      buildButton(),
+                      botonInicioSesion(),
                       SizedBox(height: 60.0),
-                      buildSignUp(),
+                      irARegistro(),
                       SizedBox(height: 10.0),
-                      buildPassRec(),
+                      recuperacionPass(),
                     ],
                   ),
                 ),
@@ -451,7 +371,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  void _signInWithEmailAndPassword() async {
+  void iniciarSesionPassEmail() async {
     AuthNotifier authNotifier =
         Provider.of<AuthNotifier>(context, listen: false);
     UsuarioNotifier userNotifier =
@@ -466,11 +386,11 @@ class _LoginState extends State<Login> {
     } catch (e) {
       if (_emailController.text == "" || _passwordController.text == "") {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("You must fill all the fields"),
+          content: Text("Debes rellenar todos los campos"),
         ));
       } else {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Wrong email or password"),
+          content: Text("Contraseña o email incorrectos"),
         ));
       }
     }

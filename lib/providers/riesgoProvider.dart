@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
