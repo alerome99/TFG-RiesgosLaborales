@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
+import 'package:tfg/pantallas/cambiarPass.dart';
 import 'package:tfg/pantallas/login.dart';
 import 'package:tfg/pantallas/perfil.dart';
 import 'package:tfg/pantallas/principal.dart';
@@ -60,7 +61,7 @@ class _MenuState extends State<Menu> {
                     irAPerfil(),
                   }),
           CustomList(
-              Icons.lock,
+              Icons.beenhere_rounded,
               'Cambiar Contraseña',
               () => {
                     cambiarContra(),

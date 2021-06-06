@@ -61,7 +61,8 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
         "email": u.getEmail(),
         "numero": u.getPhone(),
         "dni": u.getDni(),
-        "nombre": u.getNombre()
+        "nombre": u.getNombre(),
+        "contraseña": u.getPassword()
       };
       //AÑADE A LA COLECCION data UNA NUEVA INSTANCIA CON DOS DATOS UNO name Y OTRO moto CUYOS VALORES ESTAN DEFINIDOS ENCIMA
       //ESTO SE PODRIA METER EN UNA FUNCION PARA EL LOGIN POR EJEMPLO
@@ -188,6 +189,23 @@ getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier) async {
     evaluacionList.add(e);
   });
   evaluacionRiesgoNotifier.evaluacionList = evaluacionList;
+}
+
+modificarPass(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifier usuario) async {
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('usuario');
+  collectionReference
+      .doc(id)
+      .update({'contraseña': u.password});
+    User firebaseUser = await FirebaseAuth.instance.currentUser;
+    firebaseUser
+        .updatePassword(u.password).then((_){
+      print("Contraseña cambiada con exito");
+    }).catchError((error){
+      print("Error al cambiar la contraseña: " + error.toString());
+    });
+    authNotifier.setUser(firebaseUser);
+    usuario.currentUser = u;
 }
 
 modificarUsuario(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifier usuario) async {
