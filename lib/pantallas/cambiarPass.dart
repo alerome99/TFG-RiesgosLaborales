@@ -19,6 +19,7 @@ class _CambiarPassState extends State<CambiarPass> {
   String email;
   Usuario usuario;
   String id;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _contraNuevaRepetidaController =
       TextEditingController();
   final TextEditingController _contraNuevaController = TextEditingController();
@@ -42,7 +43,8 @@ class _CambiarPassState extends State<CambiarPass> {
       return "Necesario";
     } else if (_contraNuevaController.text.length < 6) {
       return "La contraseña debe de tener más de 6 caracteres";
-    } else if(_contraNuevaController.text == userNotifier.currentUsuario.password){
+    } else if (_contraNuevaController.text ==
+        userNotifier.currentUsuario.password) {
       return "La contraseña nueva debe ser diferente a la anterior";
     }
     return null;
@@ -56,13 +58,14 @@ class _CambiarPassState extends State<CambiarPass> {
     } else if (_contraActualController.text !=
         userNotifier.currentUsuario.password) {
       return "La contraseña introducida no es correcta";
-    } 
+    }
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key:_scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.blue,
       ),
@@ -90,6 +93,7 @@ class _CambiarPassState extends State<CambiarPass> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 45.0),
                       child: TextFormField(
+                        key: Key("passActual"),
                         controller: _contraActualController,
                         obscureText: true,
                         decoration: InputDecoration(
@@ -104,6 +108,7 @@ class _CambiarPassState extends State<CambiarPass> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 45.0),
                       child: TextFormField(
+                        key: Key("passNueva"),
                         controller: _contraNuevaController,
                         obscureText: true,
                         decoration: InputDecoration(
@@ -118,6 +123,7 @@ class _CambiarPassState extends State<CambiarPass> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10.0, 0, 10.0, 45.0),
                       child: TextFormField(
+                        key: Key("passNuevaRepetida"),
                         controller: _contraNuevaRepetidaController,
                         obscureText: true,
                         decoration: InputDecoration(
@@ -137,6 +143,7 @@ class _CambiarPassState extends State<CambiarPass> {
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(0, 0, 30.0, 0),
                           child: RaisedButton(
+                            key: Key('botonCambiarPass'),
                             onPressed: () {
                               actualizarContra();
                             },
@@ -175,10 +182,16 @@ class _CambiarPassState extends State<CambiarPass> {
         Provider.of<UsuarioNotifier>(context, listen: false);
     Usuario u = userNotifier.currentUsuario;
     id = userNotifier.currentUsuario.getId();
-
-    u.setPass(_contraNuevaController.text);
-    await modificarPass(u, id, authNotifier, userNotifier);
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+    try {
+      u.setPass(_contraNuevaController.text);
+      await modificarPass(u, id, authNotifier, userNotifier);
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("La contraseña ha sido cambiada con existo"),
+      ));
+    } catch (e) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Error al cambiar la contraseña"),
+      ));
+    }
   }
 }

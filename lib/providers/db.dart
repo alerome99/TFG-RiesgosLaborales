@@ -52,7 +52,9 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
         "numero": u.getPhone(),
         "dni": u.getDni(),
         "nombre": u.getNombre(),
-        "contraseña": u.getPassword()
+        "contraseña": u.getPassword(),
+        "tipo": "inspector",
+        "url": null
       };
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('usuario');

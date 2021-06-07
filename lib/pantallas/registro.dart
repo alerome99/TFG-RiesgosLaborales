@@ -76,6 +76,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerEmail'),
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -95,6 +96,7 @@ class _RegisterState extends State<Registro> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
+        key: Key('registerButton'),
           onPressed: () async => registrarCuenta(),
           elevation: 5.0,
           padding: EdgeInsets.all(15.0),
@@ -124,6 +126,7 @@ class _RegisterState extends State<Registro> {
         ),
       ),
       InkWell(
+        key: Key('goLogin'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => Login()));
@@ -156,6 +159,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPass'),
             controller: _passwordController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
@@ -189,6 +193,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPassRepeat'),
             controller: _passwordRepetidaController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
@@ -222,6 +227,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerPhone'),
             controller: _telefonoController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -255,6 +261,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerDni'),
             controller: _dniController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
@@ -288,6 +295,7 @@ class _RegisterState extends State<Registro> {
           decoration: boxDecoraccionCustom(),
           height: 60.0,
           child: TextFormField(
+            key: Key('registerName'),
             controller: _nombreController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
