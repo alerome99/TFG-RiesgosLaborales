@@ -15,7 +15,7 @@ class _MapaState extends State<Mapa> {
   GoogleMapController googleMapController;
   Map<MarkerId, Marker> marcas = <MarkerId, Marker>{};
   Position posicion;
-  String localizacion, pais, codigoPostal;
+  String localizacion;
   void getMarcas(double lat, double long) {
     MarkerId markerId = MarkerId(lat.toString() + long.toString());
     Marker _marker = Marker(
@@ -30,6 +30,7 @@ class _MapaState extends State<Mapa> {
   }
 
   void getCurrentLocation() async {
+    
     Position currentPosicion =
         await GeolocatorPlatform.instance.getCurrentPosition();
     setState(() {
@@ -65,8 +66,6 @@ class _MapaState extends State<Mapa> {
                   var direccionInicial = direccion.first;
                   getMarcas(tapped.latitude, tapped.longitude);
                   setState(() {
-                    pais = direccionInicial.countryName;
-                    codigoPostal = direccionInicial.postalCode;
                     localizacion = direccionInicial.addressLine;
                   });
                 },

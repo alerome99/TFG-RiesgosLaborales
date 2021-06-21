@@ -8,6 +8,7 @@ import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/mapa.dart';
 import 'package:tfg/providers/db.dart';
+import 'package:tfg/providers/operaciones.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class AddInspeccion extends StatefulWidget {
@@ -160,10 +161,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
         Provider.of<InspeccionNotifier>(context, listen: false);
     var _provincias = List<DropdownMenuItem>();
     List<String> listaProvincias = [];
-    inspeccionNotifier.provinciaList.forEach((provincia) {
-      listaProvincias.add(provincia.provincia);
-    });
-    listaProvincias.sort();
+    listaProvincias = ordenarProvincias(inspeccionNotifier);
     for (int i = 0; i < listaProvincias.length; i++) {
       _provincias.add(DropdownMenuItem(
         child: Text(listaProvincias[i]),
@@ -272,14 +270,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    int idNueva = 0;
-    if (inspeccionNotifier.inspeccionList.length != 0) {
-      for (int j = 0; j < inspeccionNotifier.inspeccionList.length; j++) {
-        if (idNueva <= inspeccionNotifier.inspeccionList[j].id) {
-          idNueva = inspeccionNotifier.inspeccionList[j].id + 1;
-        }
-      }
-    }
+    int idNueva = calcularIdInspeccion(inspeccionNotifier);
     Inspeccion i = Inspeccion(
         idNueva,
         Timestamp.now(),

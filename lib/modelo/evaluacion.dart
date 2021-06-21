@@ -4,8 +4,9 @@ enum TipoFactor{
 }
 
 class FotoRiesgo{
-  String path, idDocumento;
+  String path, idDocumento, url;
   int idRiesgoUnica;
+  bool eliminada;
 
   FotoRiesgo(String path, int idRiesgoUnica){
     this.path = path;
@@ -18,6 +19,12 @@ class FotoRiesgo{
 
   String getIdDocumento(){
     return idDocumento;
+  }
+
+  FotoRiesgo.fromMap(Map<String, dynamic> data) {
+    eliminada = data['eliminada'];
+    idRiesgoUnica = data['idRiesgo'];
+    url = data['url'];
   }
 }
 

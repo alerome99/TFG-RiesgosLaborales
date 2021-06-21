@@ -173,7 +173,7 @@ class _LoginState extends State<Login> {
   Widget irARegistro() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
-        'No tienes una cuenta aún? ',
+        '¿No tienes una cuenta aún? ',
         style: TextStyle(
           color: Colors.white,
           fontSize: 18.0,
@@ -198,7 +198,7 @@ class _LoginState extends State<Login> {
   Widget recuperacionPass() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Text(
-        'Has olvidado tu contraseña? ',
+        '¿Has olvidado tu contraseña? ',
         style: TextStyle(
           color: Colors.white,
           fontSize: 17.0,

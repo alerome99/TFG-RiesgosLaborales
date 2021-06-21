@@ -8,6 +8,7 @@ import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/pantallas/evaluacion.dart';
 import 'package:tfg/providers/db.dart';
+import 'package:tfg/providers/operaciones.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class SeleccionSubRiesgo extends StatefulWidget {
@@ -152,18 +153,7 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
     RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier =
         Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
     try {
-      int idNueva = 0;
-      if (riesgoInspeccionEliminadaNotifier.riesgoList.length != 0) {
-        for (int i = 0;
-            i < riesgoInspeccionEliminadaNotifier.riesgoList.length;
-            i++) {
-          if (idNueva <=
-              riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica) {
-            idNueva =
-                riesgoInspeccionEliminadaNotifier.riesgoList[i].idUnica + 1;
-          }
-        }
-      }
+      int idNueva = calcularIdRiesgo(riesgoInspeccionEliminadaNotifier);
       sr.setIdUnica(idNueva);
       RiesgoInspeccionNotifier riesgoInspeccionNotifier =
           Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
