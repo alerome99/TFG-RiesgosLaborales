@@ -11,6 +11,7 @@ import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/providers/db.dart';
+import 'package:tfg/providers/operaciones.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class EvaluacionRiesgo extends StatefulWidget {
@@ -743,14 +744,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
-    int idNueva = 0;
-    if (evaluacionRiesgoNotifier.evaluacionList.length != 0) {
-      for (int j = 0; j < evaluacionRiesgoNotifier.evaluacionList.length; j++) {
-        if (idNueva <= evaluacionRiesgoNotifier.evaluacionList[j].id) {
-          idNueva = evaluacionRiesgoNotifier.evaluacionList[j].id + 1;
-        }
-      }
-    }
+    int idNueva = calcularIdEvaluacion(evaluacionRiesgoNotifier);
     Evaluacion eval = new Evaluacion(
         idNueva,
         riesgoInspeccionNotifier.currentRiesgo.idUnica,

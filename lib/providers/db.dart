@@ -141,7 +141,7 @@ getRiesgosInspeccionNoEliminados(
       .collection('riesgo')
       .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
       .where('eliminado', isEqualTo: false)
-      .where('evaluado', isEqualTo: false)
+      .where('evaluado', isEqualTo: true)
       .get();
   List<SubRiesgo> riesgoList = [];
   snapshot.docs.forEach((document) {

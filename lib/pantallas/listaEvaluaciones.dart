@@ -212,7 +212,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
             .where('idInspeccion',
                 isEqualTo: inspeccionNotifier.currentInspeccion.id)
             .where('eliminado', isEqualTo: false)
-            .where('evaluado', isEqualTo: false)
+            .where('evaluado', isEqualTo: true)
             .snapshots(),
         builder: (
           context,
