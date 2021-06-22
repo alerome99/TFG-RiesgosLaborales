@@ -36,7 +36,8 @@ void main() {
                 "222222222A",
                 "prueba prueba",
                 "https://firebasestorage.googleapis.com/v0/b/tfg-riesgos-laborales-f85a8.appspot.com/o/3a25d5b9-9753-4705-b926-d6a2b691a6804804850712917333266.jpg?alt=media&token=d9dc2f8b-7241-4bc7-9cd4-c890817723d6",
-                "inspector");
+                "inspector", 
+                "wdqwdqwdqwd");
             userNotifier.currentUser = u;
             return CambiarPass();
           },

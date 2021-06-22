@@ -1,6 +1,8 @@
 import 'package:tfg/modelo/inspeccion.dart';
+import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 
 List<Inspeccion> ordenarInspecciones(InspeccionNotifier inspeccionNotifier) {
@@ -19,15 +21,30 @@ List<Inspeccion> ordenarInspecciones(InspeccionNotifier inspeccionNotifier) {
     }
   }
   inspecciones.sort((a, b) {
-    return a.fechaInicio.compareTo(b.fechaInicio);
+    return b.fechaInicio.compareTo(a.fechaInicio);
   });
   inspecciones2.sort((a, b) {
-    return a.fechaInicio.compareTo(b.fechaInicio);
+    return b.fechaInicio.compareTo(a.fechaInicio);
   });
   for (int i = 0; i < inspecciones2.length; i++) {
     inspecciones.add(inspecciones2[i]);
   }
   return inspecciones;
+}
+
+List<Usuario> ordenarInspectores(InspectorNotifier inspectorNotifier) {
+  List<Usuario> inspectores = [];
+  for (int i = 0; i < inspectorNotifier.inspectorList.length; i++) {
+    if (!inspectorNotifier.inspectorList[i].baja) {
+      inspectores.add(inspectorNotifier.inspectorList[i]);
+    }
+  }
+  for (int i = 0; i < inspectorNotifier.inspectorList.length; i++) {
+    if (inspectorNotifier.inspectorList[i].baja) {
+      inspectores.add(inspectorNotifier.inspectorList[i]);
+    }
+  }
+  return inspectores;
 }
 
 List<String> ordenarProvincias(InspeccionNotifier inspeccionNotifier) {

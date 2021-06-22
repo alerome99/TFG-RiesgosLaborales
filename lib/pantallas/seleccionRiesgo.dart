@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
+import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
@@ -38,13 +39,15 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   }
 
   Widget _titulos() {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     return SafeArea(
       child: Container(
         padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Prevención Riesgos Laborales',
+            Text(inspeccionNotifier.currentInspeccion.titulo,
                 style: TextStyle(
                     color: Colors.black87,
                     fontSize: 24.0,

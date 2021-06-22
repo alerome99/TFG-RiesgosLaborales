@@ -16,15 +16,13 @@ class Inspeccion {
   EstadoInspeccion estado;
   List<SubRiesgo> subRiesgos;
 
-  Inspeccion(int id, Timestamp fechaInicio, Timestamp fechaFin, String lugar, String provincia, double latitud, double longitud, String descripcion, String titulo, String nombreEmpresa){
+  Inspeccion(int id, Timestamp fechaInicio, Timestamp fechaFin, String lugar, String provincia, String descripcion, String titulo, String nombreEmpresa){
     this.id = id;
     estado = EstadoInspeccion.enRealizacion;
     this.fechaInicio = fechaInicio;
     this.fechaFin = fechaFin;
     this.lugar = lugar;
     this.provincia = provincia;
-    this.latitud = latitud;
-    this.longitud = longitud;
     this.descripcion = descripcion;
     subRiesgos = [];
     this.titulo = titulo;
@@ -47,8 +45,6 @@ class Inspeccion {
     fechaFin = data['fechaFin'];
     lugar = data['lugar'];
     provincia = data['provincia'];
-    latitud = data['latitud'];
-    longitud = data['longitud'];
     descripcion = data['descripcion'];
     titulo = data['titulo'];
     nombreEmpresa = data['nombreEmpresa'];
@@ -184,14 +180,12 @@ class Provincia {
 
     String id;
     String provincia;
-
+    Provincia(String provincia){
+      this.provincia = provincia;
+    }
+    
     Provincia.fromMap(Map<String, dynamic> data) {
       id = data['id'];
       provincia = data['provincia'];
     }
-
-    Map<String, dynamic> toJson() => {
-      "id": id,
-      "provincia": provincia,
-    };
 }

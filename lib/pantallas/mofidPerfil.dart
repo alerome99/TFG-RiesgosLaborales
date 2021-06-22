@@ -71,8 +71,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
             color: Colors.green,
           ),
           onPressed: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (BuildContext context) => Perfil()));
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -98,7 +97,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        userNotifier.currentUsuario.url == null
+                        userNotifier.currentUsuario.url == "a"
                             ? Foto()
                             : FotoCargada(),
                       ],

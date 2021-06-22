@@ -3,14 +3,15 @@ enum TipoFactor{
   Existente,
 }
 
-class FotoRiesgo{
+class FotoEvaluacion{
   String path, idDocumento, url;
-  int idRiesgoUnica;
+  int idEvaluacionUnica;
   bool eliminada;
 
-  FotoRiesgo(String path, int idRiesgoUnica){
+  FotoEvaluacion(String path, int idEvaluacionUnica){
     this.path = path;
-    this.idRiesgoUnica = idRiesgoUnica;
+    this.idEvaluacionUnica = idEvaluacionUnica;
+    this.eliminada = false;
   }
 
   void setIdDocumento(String id){
@@ -21,9 +22,9 @@ class FotoRiesgo{
     return idDocumento;
   }
 
-  FotoRiesgo.fromMap(Map<String, dynamic> data) {
+  FotoEvaluacion.fromMap(Map<String, dynamic> data) {
     eliminada = data['eliminada'];
-    idRiesgoUnica = data['idRiesgo'];
+    idEvaluacionUnica = data['idEvaluacion'];
     url = data['url'];
   }
 }

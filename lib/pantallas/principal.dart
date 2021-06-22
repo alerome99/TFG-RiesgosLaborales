@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/modelo/inspeccion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
 import 'package:tfg/notifiers/subRiesgo_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
@@ -85,6 +86,8 @@ class _MainPageState extends State<MainPage> {
         Provider.of<RiesgoNotifier>(context, listen: false);
     SubRiesgoNotifier subRiesgoNotifier =
         Provider.of<SubRiesgoNotifier>(context, listen: false);
+    InspectorNotifier inspectorNotifier = Provider.of<InspectorNotifier>(context, listen: false);
+    getInspectores(inspectorNotifier);
     if (riesgoNotifier.bandera != 1) {
       inicializarRiesgos(riesgoNotifier);
     }
@@ -206,7 +209,7 @@ class _MainPageState extends State<MainPage> {
               child: InkWell(
                   onTap: () {
                     Inspeccion i = new Inspeccion(null, null, null, null, null,
-                        null, null, null, null, null);
+                        null, null, null);
                     inspeccionNotifier.currentInspeccion = i;
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (BuildContext context) => AddInspeccion()));

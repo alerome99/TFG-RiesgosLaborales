@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tfg/modelo/evaluacion.dart';
@@ -6,9 +5,11 @@ import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
+import 'package:tfg/providers/operaciones.dart';
 import '../modelo/inspeccion.dart';
 import '../modelo/user.dart';
 import '../notifiers/auth_notifier.dart';
@@ -17,14 +18,26 @@ FirebaseAuth _auth; // = FirebaseAuth.instance;
 QuerySnapshot response;
 
 login(Usuario user, AuthNotifier authNotifier) async {
-  UserCredential authResult = await FirebaseAuth.instance
-      .signInWithEmailAndPassword(email: user.email, password: user.password)
-      .catchError((error) => print(error.code));
-  if (authResult != null) {
-    User firebaseUser = authResult.user;
-    if (firebaseUser != null) {
-      print("Log In: $firebaseUser");
-      authNotifier.setUser(firebaseUser);
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('usuario')
+      .where('email', isEqualTo: user.email)
+      .get();
+  Usuario userT;
+  snapshot.docs.forEach((document) {
+    Usuario user = Usuario.fromMap(document.data());
+    userT = user;
+    userT.setId(document.id);
+  });
+  if (!userT.baja) {
+    UserCredential authResult = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: user.email, password: user.password)
+        .catchError((error) => print(error.code));
+    if (authResult != null) {
+      User firebaseUser = authResult.user;
+      if (firebaseUser != null) {
+        print("Log In: $firebaseUser");
+        authNotifier.setUser(firebaseUser);
+      }
     }
   }
 }
@@ -54,7 +67,10 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
         "nombre": u.getNombre(),
         "contraseña": u.getPassword(),
         "tipo": "inspector",
-        "url": null
+        "baja": false,
+        "motivoBaja": null,
+        "url": "a",
+        "direccion": u.direccion
       };
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('usuario');
@@ -82,9 +98,10 @@ addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.currentInspeccion = i;
 }
 
-addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier, Evaluacion eval) async {
-  int nivelProbabilidad = eval.nivelDeficiencia * eval.nivelExposicion;
-  int total = nivelProbabilidad * eval.nivelConsecuencias;
+addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier,
+    Evaluacion eval) async {
+  int nivelProbabilidad = calculoNP(eval.nivelDeficiencia, eval.nivelExposicion);
+  int total = calculoNR(eval.nivelConsecuencias, nivelProbabilidad);
   Map<String, dynamic> demoData = {
     "idInspeccion": inspeccionNotifier.currentInspeccion.id,
     "icono": sr.icono,
@@ -92,7 +109,7 @@ addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier, Evaluacion eval) 
     "idUnica": sr.idUnica,
     "nombre": sr.nombre,
     "eliminado": false,
-    "evaluado": false,
+    "evaluado": true,
     "total": total,
   };
   CollectionReference collectionReference =
@@ -100,14 +117,14 @@ addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier, Evaluacion eval) 
   collectionReference.add(demoData);
 }
 
-addFotoRiesgo(FotoRiesgo f) async {
+addFotoEvaluacion(FotoEvaluacion f) async {
   Map<String, dynamic> demoData = {
-    "idRiesgo": f.idRiesgoUnica,
+    "idEvaluacion": f.idEvaluacionUnica,
     "url": f.path,
     "eliminada": false,
   };
   CollectionReference collectionReference =
-      FirebaseFirestore.instance.collection('fotoRiesgo');
+      FirebaseFirestore.instance.collection('fotoEvaluacion');
   collectionReference.add(demoData);
 }
 
@@ -158,7 +175,6 @@ getRiesgosInspeccionTodos(
   QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('riesgo')
       .where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id)
-      .where('evaluado', isEqualTo: false)
       .get();
   List<SubRiesgo> riesgoList = [];
   snapshot.docs.forEach((document) {
@@ -181,42 +197,50 @@ getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier) async {
   evaluacionRiesgoNotifier.evaluacionList = evaluacionList;
 }
 
-modificarPass(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifier usuario) async {
+modificarPass(Usuario u, String id, AuthNotifier authNotifier,
+    UsuarioNotifier usuario) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
-  collectionReference
-      .doc(id)
-      .update({'contraseña': u.password});
-    User firebaseUser = await FirebaseAuth.instance.currentUser;
-    firebaseUser
-        .updatePassword(u.password).then((_){
-      print("Contraseña cambiada con exito");
-    }).catchError((error){
-      print("Error al cambiar la contraseña: " + error.toString());
-    });
-    authNotifier.setUser(firebaseUser);
-    usuario.currentUser = u;
+  collectionReference.doc(id).update({'contraseña': u.password});
+  User firebaseUser = await FirebaseAuth.instance.currentUser;
+  firebaseUser.updatePassword(u.password).then((_) {
+    print("Contraseña cambiada con exito");
+  }).catchError((error) {
+    print("Error al cambiar la contraseña: " + error.toString());
+  });
+  authNotifier.setUser(firebaseUser);
+  usuario.currentUser = u;
 }
 
-modificarUsuario(Usuario u, String id, AuthNotifier authNotifier, UsuarioNotifier usuario) async {
+modificarUsuario(Usuario u, String id, AuthNotifier authNotifier,
+    UsuarioNotifier usuario) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
-  collectionReference
-      .doc(id)
-      .update({'email': u.email, 'numero': u.telefono});
-    User firebaseUser = await FirebaseAuth.instance.currentUser;
-    firebaseUser
-        .updateEmail(u.email);
-    authNotifier.setUser(firebaseUser);
-    usuario.currentUser = u;
+  collectionReference.doc(id).update({'email': u.email, 'numero': u.telefono});
+  User firebaseUser = await FirebaseAuth.instance.currentUser;
+  firebaseUser.updateEmail(u.email);
+  authNotifier.setUser(firebaseUser);
+  usuario.currentUser = u;
 }
 
-modificarEvaluacion(Evaluacion eval){
+modificarEvaluacion(Evaluacion eval) {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('evaluacion');
-  collectionReference
-      .doc(eval.getIdDocumento())
-      .update({'accionCorrectora': eval.accionCorrectora, 'nivelConsecuencias': eval.nivelConsecuencias, 'nivelDeficiencia': eval.nivelDeficiencia, 'nivelExposicion': eval.nivelExposicion, 'tipoFactor': eval.tipo, 'titulo': eval.titulo});
+  collectionReference.doc(eval.getIdDocumento()).update({
+    'accionCorrectora': eval.accionCorrectora,
+    'nivelConsecuencias': eval.nivelConsecuencias,
+    'nivelDeficiencia': eval.nivelDeficiencia,
+    'nivelExposicion': eval.nivelExposicion,
+    'tipoFactor': eval.tipo,
+    'titulo': eval.titulo
+  });
+}
+
+darBajaInspector(String id, String motivo, InspectorNotifier inspectorNotifier,
+    UsuarioNotifier usuarioNotifier, AuthNotifier authNotifier) async {
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('usuario');
+  collectionReference.doc(id).update({'baja': true, 'motivoBaja': motivo});
 }
 
 marcarRiesgoComoEvaluado(bool evaluado, SubRiesgo sr) async {
@@ -266,7 +290,8 @@ getProvincias(InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.provinciaList = provinciaList;
 }
 
-inicializarSubRiesgo(SubRiesgo sr, RiesgoInspeccionNotifier riesgoInspeccionNotifier){
+inicializarSubRiesgo(
+    SubRiesgo sr, RiesgoInspeccionNotifier riesgoInspeccionNotifier) {
   riesgoInspeccionNotifier.currentRiesgo = sr;
 }
 
@@ -282,6 +307,20 @@ getInspecciones(InspeccionNotifier inspeccionNotifier) async {
   inspeccionNotifier.inspeccionList = inspeccionesList;
 }
 
+getInspectores(InspectorNotifier inspectorNotifier) async {
+  QuerySnapshot snapshot = await FirebaseFirestore.instance
+      .collection('usuario')
+      .where('tipo', isEqualTo: "inspector")
+      .get();
+  List<Usuario> inspectoresList = [];
+  snapshot.docs.forEach((document) {
+    Usuario u = Usuario.fromMap(document.data());
+    u.setIdDocumento(document.id);
+    inspectoresList.add(u);
+  });
+  inspectorNotifier.inspectorList = inspectoresList;
+}
+
 getUser(UsuarioNotifier userNotifier /*, String email*/) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('usuario')
@@ -295,24 +334,23 @@ getUser(UsuarioNotifier userNotifier /*, String email*/) async {
   });
   userNotifier.currentUser = userT;
 }
-  Future resetearContra(String email) async {
-    return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-  }
 
-eliminarFoto(FotoRiesgo f ) async {
+Future resetearContra(String email) async {
+  return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+}
+
+eliminarFoto(FotoEvaluacion f) async {
   QuerySnapshot snapshot = await FirebaseFirestore.instance
-      .collection('fotoRiesgo')
+      .collection('fotoEvaluacion')
       .where('url', isEqualTo: f.path)
-      .where('idRiesgo', isEqualTo: f.idRiesgoUnica)
+      .where('idEvaluacion', isEqualTo: f.idEvaluacionUnica)
       .get();
   snapshot.docs.forEach((document) {
     f.setIdDocumento(document.id);
   });
-    CollectionReference collectionReference =
-      FirebaseFirestore.instance.collection('fotoRiesgo');
-  collectionReference
-      .doc(f.getIdDocumento())
-      .update({'eliminada': true});
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('fotoEvaluacion');
+  collectionReference.doc(f.getIdDocumento()).update({'eliminada': true});
 }
 
 setUserInic(Usuario u, UsuarioNotifier userNotifier) async {

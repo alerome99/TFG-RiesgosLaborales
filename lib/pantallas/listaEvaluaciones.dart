@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
+import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
 import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/pantallas/seleccionRiesgo.dart';
@@ -24,6 +25,8 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
   }
 
   Future _actualizarLista() async {
+    RiesgoInspeccionEliminadaNotifier riesgoInspeccionEliminadaNotifier =
+        Provider.of<RiesgoInspeccionEliminadaNotifier>(context, listen: false);
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
@@ -32,12 +35,14 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         Provider.of<InspeccionNotifier>(context, listen: false);
     getRiesgosInspeccionNoEliminados(
         riesgoInspeccionNotifier, inspeccionNotifier);
+    getRiesgosInspeccionTodos(
+        riesgoInspeccionEliminadaNotifier, inspeccionNotifier);
     getEvaluaciones(evaluacionRiesgoNotifier);
   }
 
   @override
   Widget build(BuildContext context) {
-        EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
+    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
     return WillPopScope(
       onWillPop: _onWillPopScope,
@@ -183,13 +188,15 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
   }
 
   Widget _titulos() {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     return SafeArea(
       child: Container(
         padding: EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Prevención Riesgos Laborales',
+            Text(inspeccionNotifier.currentInspeccion.titulo,
                 style: TextStyle(
                     color: Colors.black87,
                     fontSize: 24.0,
@@ -231,17 +238,22 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) {
                 Color col;
-                if(snapshot.data.docs[index]['total'] <= 20){
+                if (snapshot.data.docs[index]['total'] <= 20) {
                   col = Colors.green;
                 }
-                if(snapshot.data.docs[index]['id'] > 20 && snapshot.data.docs[index]['id']<=120){
+                if (snapshot.data.docs[index]['total'] > 20 &&
+                    snapshot.data.docs[index]['total'] <= 120) {
                   col = Colors.yellow;
                 }
-                if(snapshot.data.docs[index]['id'] > 120 && snapshot.data.docs[index]['id']<=500){
+                if (snapshot.data.docs[index]['total'] > 120 &&
+                    snapshot.data.docs[index]['total'] <= 600) {
                   col = Colors.orange;
                 }
-                if(snapshot.data.docs[index]['id'] > 500){
+                if (snapshot.data.docs[index]['total'] > 600) {
                   col = Colors.red;
+                }
+                if (!snapshot.data.docs[index]['evaluado']) {
+                  col = Colors.grey;
                 }
                 SubRiesgo r = new SubRiesgo(
                     snapshot.data.docs[index]['id'],
@@ -281,15 +293,14 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                     alignment: Alignment.bottomLeft,
                     child: Container(
                       height: 40.0,
-                      decoration: BoxDecoration(
-                          color: Colors.blue,
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10.0,
-                                spreadRadius: 2.0,
-                                offset: Offset(2.0, 10.0))
-                          ]),
+                      decoration:
+                          BoxDecoration(color: col, boxShadow: <BoxShadow>[
+                        BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 10.0,
+                            spreadRadius: 2.0,
+                            offset: Offset(2.0, 10.0))
+                      ]),
                     ),
                   ),
                 ],
@@ -310,9 +321,13 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
 
     return GestureDetector(
       onTap: () {
-        for(int i = 0; i < evaluacionRiesgoNotifier.evaluacionList.length ; i++){
-          if(evaluacionRiesgoNotifier.evaluacionList[i].idRiesgo == sr.idUnica){
-            evaluacionRiesgoNotifier.currentEvaluacion = evaluacionRiesgoNotifier.evaluacionList[i];
+        for (int i = 0;
+            i < evaluacionRiesgoNotifier.evaluacionList.length;
+            i++) {
+          if (evaluacionRiesgoNotifier.evaluacionList[i].idRiesgo ==
+              sr.idUnica) {
+            evaluacionRiesgoNotifier.currentEvaluacion =
+                evaluacionRiesgoNotifier.evaluacionList[i];
           }
         }
         riesgoInspeccionNotifier.currentRiesgo = sr;
@@ -365,6 +380,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
   void eliminarRiesgoInspeccion(SubRiesgo sr) async {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
+    print(sr.idUnica);
     SubRiesgo sr2;
     for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++) {
       if (riesgoInspeccionNotifier.riesgoList[i].idUnica == sr.idUnica) {
@@ -374,6 +390,8 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     }
     try {
       await actualizarRiesgo(true, sr2);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
       //Navigator.pop(context);
     } catch (e) {}
   }

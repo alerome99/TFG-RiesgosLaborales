@@ -22,6 +22,7 @@ class _RegisterState extends State<Registro> {
   final TextEditingController _telefonoController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
+  final TextEditingController _direccionController = TextEditingController();
 
   @override
   void initState() {
@@ -310,6 +311,40 @@ class _RegisterState extends State<Registro> {
     );
   }
 
+  Widget direccion() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Dirección',
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Recursive',
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: boxDecoraccionCustom(),
+          height: 60.0,
+          child: TextFormField(
+            key: Key('registerDireccion'),
+            controller: _direccionController,
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 3.0, left: 20.0),
+              hintText: 'Introduce tu direccion',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -368,6 +403,8 @@ class _RegisterState extends State<Registro> {
                       dni(),
                       SizedBox(height: 20.0),
                       nombre(),
+                      SizedBox(height: 20.0),
+                      direccion(),
                       SizedBox(height: 25.0),
                       botonRegistro(),
                       SizedBox(height: 10.0),
@@ -402,7 +439,8 @@ class _RegisterState extends State<Registro> {
             _dniController.text,
             _nombreController.text,
             "",
-            "inspector");
+            "inspector",
+            _direccionController.text);
         AuthNotifier authNotifier =
             Provider.of<AuthNotifier>(context, listen: false);
         try {

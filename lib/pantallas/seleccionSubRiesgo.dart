@@ -44,13 +44,15 @@ class _SeleccionSubRiesgoState extends State<SeleccionSubRiesgo> {
   }
 
   Widget _titulos() {
+    InspeccionNotifier inspeccionNotifier =
+        Provider.of<InspeccionNotifier>(context, listen: false);
     return SafeArea(
       child: Container(
         padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Prevención Riesgos Laborales',
+            Text(inspeccionNotifier.currentInspeccion.titulo,
                 style: TextStyle(
                     color: Colors.black87,
                     fontSize: 24.0,
