@@ -277,8 +277,6 @@ class _AddInspeccionState extends State<AddInspeccion> {
         null,
         _direccionController.text,
         "Valladolid",
-        null,
-        null,
         _descripcionController.text,
         _tituloController.text,
         _nombreEmpresaController.text);

@@ -101,7 +101,7 @@ class _PerfilState extends State<Perfil> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                userNotifier.currentUsuario.url == null
+                userNotifier.currentUsuario.url == "a"
                     ? Foto()
                     : FotoCargada(),
               ],

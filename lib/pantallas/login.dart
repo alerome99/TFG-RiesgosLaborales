@@ -382,7 +382,7 @@ class _LoginState extends State<Login> {
     UsuarioNotifier userNotifier =
         Provider.of<UsuarioNotifier>(context, listen: false);
     Usuario u = Usuario(_emailController.text, _passwordController.text, null,
-        null, null, null, null);
+        null, null, null, null, null);
     try {
       await login(u, authNotifier);
       await getUser(userNotifier);

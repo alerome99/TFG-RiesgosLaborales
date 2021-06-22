@@ -85,7 +85,7 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
     return Container(
       width: 180,
           child: Text(
-            i.lugar,
+            i.titulo,
             maxLines: 2,
             textAlign: TextAlign.center,
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
@@ -130,8 +130,10 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _crearAcciones(Icons.edit, 'Inspeccionar', Colors.green, _inspeccionar, i),
-            SizedBox(width: 5.0,),
+            i.estado == EstadoInspeccion.enRealizacion
+                    ? _crearAcciones(Icons.edit, 'Inspeccionar', Colors.green, _inspeccionar, i)
+                    : 
+            SizedBox(width: 5.0,),         
             _crearAcciones(Icons.insert_drive_file, 'Informe', Colors.blueAccent, _crearInforme, i),
             SizedBox(width: 5.0,),
           ],

@@ -10,6 +10,7 @@ import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgosInspeccion_notifier.dart';
+import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/providers/db.dart';
 import 'package:tfg/providers/operaciones.dart';
 import 'package:tfg/widgets/fondo.dart';
@@ -38,28 +39,40 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   final TextEditingController _accionCorrectoraController =
       TextEditingController();
   String _tipoFactorController;
-
+  int idNueva = 0;
   final TextEditingController c1 = new TextEditingController();
   @override
   void initState() {
     super.initState();
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
-    if(evaluacionRiesgoNotifier.currentEvaluacion!=null){
-      _tituloController.text = evaluacionRiesgoNotifier.currentEvaluacion.titulo;
-      if(evaluacionRiesgoNotifier.currentEvaluacion.tipo == TipoFactor.Existente){
+    if (evaluacionRiesgoNotifier.currentEvaluacion != null) {
+      _tituloController.text =
+          evaluacionRiesgoNotifier.currentEvaluacion.titulo;
+      if (evaluacionRiesgoNotifier.currentEvaluacion.tipo ==
+          TipoFactor.Existente) {
         _tipoFactorController = "Existente";
-      }else{
+      } else {
         _tipoFactorController = "Potencial";
       }
-      _accionCorrectoraController.text = evaluacionRiesgoNotifier.currentEvaluacion.accionCorrectora;
-      _valorDeficiencia = evaluacionRiesgoNotifier.currentEvaluacion.nivelDeficiencia.toDouble();
-      _valorExposicion = evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
-      _valorConsecuencias = evaluacionRiesgoNotifier.currentEvaluacion.nivelConsecuencias.toDouble();
+      _accionCorrectoraController.text =
+          evaluacionRiesgoNotifier.currentEvaluacion.accionCorrectora;
+      _valorDeficiencia = evaluacionRiesgoNotifier
+          .currentEvaluacion.nivelDeficiencia
+          .toDouble();
+      _valorExposicion =
+          evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
+      _valorConsecuencias = evaluacionRiesgoNotifier
+          .currentEvaluacion.nivelConsecuencias
+          .toDouble();
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
+        Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
+    idNueva = calcularIdEvaluacion(evaluacionRiesgoNotifier);
     return WillPopScope(
       onWillPop: _onWillPopScope,
       child: Scaffold(
@@ -249,16 +262,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 onChanged: (value) {
                   _valorDeficiencia = value;
                   switch (value.ceil()) {
-                    case 0:
+                    case 1:
                       _deficiencia = 0;
                       break;
-                    case 1:
+                    case 2:
                       _deficiencia = 2;
                       break;
-                    case 2:
+                    case 3:
                       _deficiencia = 6;
                       break;
-                    case 3:
+                    case 4:
                       _deficiencia = 10;
                       break;
                   }
@@ -343,16 +356,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 onChanged: (value) {
                   _valorExposicion = value;
                   switch (value.ceil()) {
-                    case 0:
+                    case 1:
                       _exposicion = 1;
                       break;
-                    case 1:
+                    case 2:
                       _exposicion = 2;
                       break;
-                    case 2:
+                    case 3:
                       _exposicion = 3;
                       break;
-                    case 3:
+                    case 4:
                       _exposicion = 4;
                       break;
                   }
@@ -381,12 +394,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   Widget _listaFotos() {
     RiesgoInspeccionNotifier riesgoInspeccionNotifier =
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
-    FotoRiesgo f1, f2;
+    FotoEvaluacion f1, f2;
     return StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection('fotoRiesgo')
-            .where('idRiesgo',
-                isEqualTo: riesgoInspeccionNotifier.currentRiesgo.idUnica)
+            .collection('fotoEvaluacion')
+            .where('idEvaluacion', isEqualTo: idNueva)
             .where('eliminada', isEqualTo: false)
             .snapshots(),
         builder: (
@@ -408,17 +420,18 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 List<TableRow> rows = [];
                 if (index % 2 == 0) {
                   if (index + 1 != snapshot.data.docs.length) {
-                    f1 = new FotoRiesgo(snapshot.data.docs[index]['url'],
-                        snapshot.data.docs[index]['idRiesgo']);
-                    f2 = new FotoRiesgo(snapshot.data.docs[index + 1]['url'],
-                        snapshot.data.docs[index + 1]['idRiesgo']);
+                    f1 = new FotoEvaluacion(snapshot.data.docs[index]['url'],
+                        snapshot.data.docs[index]['idEvaluacion']);
+                    f2 = new FotoEvaluacion(
+                        snapshot.data.docs[index + 1]['url'],
+                        snapshot.data.docs[index + 1]['idEvaluacion']);
                     rows.add(TableRow(children: [
                       _tarjeta(context, f1),
                       _tarjeta(context, f2),
                     ]));
                   } else {
-                    f1 = new FotoRiesgo(snapshot.data.docs[index]['url'],
-                        snapshot.data.docs[index]['idRiesgo']);
+                    f1 = new FotoEvaluacion(snapshot.data.docs[index]['url'],
+                        snapshot.data.docs[index]['idEvaluacion']);
                     rows.add(TableRow(children: [
                       _tarjeta(context, f1),
                     ]));
@@ -429,7 +442,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         });
   }
 
-  Widget _tarjeta(BuildContext context, FotoRiesgo foto) {
+  Widget _tarjeta(BuildContext context, FotoEvaluacion foto) {
     return Container(
       margin: EdgeInsets.only(top: 10.0),
       child: Column(
@@ -530,10 +543,9 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
       uploadTask.then((res) {});
       imagePath = imageUrl.toString();
-      FotoRiesgo f = new FotoRiesgo(
-          imageUrl.toString(), riesgoInspeccionNotifier.currentRiesgo.idUnica);
+      FotoEvaluacion f = new FotoEvaluacion(imageUrl.toString(), idNueva);
       try {
-        await addFotoRiesgo(f);
+        await addFotoEvaluacion(f);
       } catch (e) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir la foto"),
@@ -617,16 +629,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
                 onChanged: (value) {
                   _valorConsecuencias = value;
                   switch (value.ceil()) {
-                    case 0:
+                    case 1:
                       _consecuencias = 10;
                       break;
-                    case 1:
+                    case 2:
                       _consecuencias = 25;
                       break;
-                    case 2:
+                    case 3:
                       _consecuencias = 60;
                       break;
-                    case 3:
+                    case 4:
                       _consecuencias = 100;
                       break;
                   }
@@ -744,7 +756,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
-    int idNueva = calcularIdEvaluacion(evaluacionRiesgoNotifier);
     Evaluacion eval = new Evaluacion(
         idNueva,
         riesgoInspeccionNotifier.currentRiesgo.idUnica,
@@ -752,25 +763,26 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         _tituloController.text,
         _accionCorrectoraController.text,
         _tipoFactorController,
-        _deficiencia,
-        _exposicion,
-        _consecuencias);
+        _valorDeficiencia.round(),
+        _valorExposicion.round(),
+        _valorConsecuencias.round());
     if (_tipoFactorController == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Debes seleccionar un tipo de factor"),
       ));
     } else {
       try {
-
-        if(evaluacionRiesgoNotifier.currentEvaluacion != null){
-            eval.setIdDocumento(evaluacionRiesgoNotifier.currentEvaluacion.getIdDocumento());
-            await modificarEvaluacion(eval);
-        }else{
-            await addRiesgo(riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier, eval);
-            await addEvaluacion(eval);
-            await marcarRiesgoComoEvaluado(true, riesgoInspeccionNotifier.currentRiesgo);
+        if (evaluacionRiesgoNotifier.currentEvaluacion != null) {
+          eval.setIdDocumento(
+              evaluacionRiesgoNotifier.currentEvaluacion.getIdDocumento());
+          await modificarEvaluacion(eval);
+        } else {
+          await addRiesgo(
+              riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier, eval);
+          await addEvaluacion(eval);
         }
-        Navigator.pop(context, true);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
       } catch (e) {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
           content: Text("Error al añadir evaluación"),
@@ -779,7 +791,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
     }
   }
 
-  void eliminarFotoRiesgo(FotoRiesgo f) async {
+  void eliminarFotoRiesgo(FotoEvaluacion f) async {
     try {
       await eliminarFoto(f);
     } catch (e) {}
