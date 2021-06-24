@@ -339,7 +339,7 @@ class _LoginState extends State<Login> {
                 child: SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(
-                    horizontal: 40.0,
+                    horizontal: 20.0,
                     vertical: 120.0,
                   ),
                   child: Column(

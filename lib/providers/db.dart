@@ -185,9 +185,9 @@ getRiesgosInspeccionTodos(
   riesgoInspeccionEliminadaNotifier.riesgoList = riesgoList;
 }
 
-getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier) async {
+getEvaluaciones(EvaluacionRiesgoNotifier evaluacionRiesgoNotifier ,InspeccionNotifier inspeccionNotifier) async {
   QuerySnapshot snapshot =
-      await FirebaseFirestore.instance.collection('evaluacion').get();
+      await FirebaseFirestore.instance.collection('evaluacion').where('idInspeccion', isEqualTo: inspeccionNotifier.currentInspeccion.id).get();
   List<Evaluacion> evaluacionList = [];
   snapshot.docs.forEach((document) {
     Evaluacion e = Evaluacion.fromMap(document.data());

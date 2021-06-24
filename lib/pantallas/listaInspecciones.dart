@@ -55,14 +55,14 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
   Widget _titulos() {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 10.0),
+        padding: EdgeInsets.fromLTRB(20.0, 25.0, 20.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Prevención Riesgos Laborales',
                 style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 24.0,
+                    fontSize: 22.0,
                     fontWeight: FontWeight.w700)),
             SizedBox(height: 7.0),
             Text('Lista de inspecciones',
