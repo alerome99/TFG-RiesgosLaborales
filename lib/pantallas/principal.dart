@@ -177,8 +177,8 @@ class _MainPageState extends State<MainPage> {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
-            height: 200,
-            width: 194,
+            height: 185,
+            width: 176,
             child: Card(
               color: Colors.grey,
               child: InkWell(
@@ -202,8 +202,8 @@ class _MainPageState extends State<MainPage> {
           ),
           Container(
             padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
-            height: 200,
-            width: 194,
+            height: 185,
+            width: 176,
             child: Card(
               color: Colors.grey,
               child: InkWell(

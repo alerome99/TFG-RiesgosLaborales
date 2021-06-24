@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart' as geoCo;
@@ -34,8 +36,9 @@ class _MapaState extends State<Mapa> {
     Position currentPosicion =
         await GeolocatorPlatform.instance.getCurrentPosition();
     setState(() {
-      posicion = currentPosicion;
-    });
+        
+        posicion = currentPosicion;
+    }); 
   }
 
   @override
@@ -48,6 +51,7 @@ class _MapaState extends State<Mapa> {
   Widget build(BuildContext context) {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
+    sleep(Duration(seconds: 1));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -55,8 +59,36 @@ class _MapaState extends State<Mapa> {
       body: Container(
         child: Column(
           children: [
-            SizedBox(
-              height: 570.0,
+            mapa(),
+            SizedBox(height: 10),
+            Text('Dirección: $localizacion',
+            maxLines: 2,),
+            SizedBox(height: 10),
+            MaterialButton(
+              minWidth: 140.0,
+              height: 30.0,
+              onPressed: () {
+                inspeccionNotifier.currentInspeccion.lugar = localizacion;
+                Navigator.pop(context, localizacion);
+              },
+              color: Colors.blue,
+              child: Text('Confirmar', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget mapa(){
+    double long = 0.0;
+    double lat = 0.0;
+    while(long == 0.0){
+        lat = posicion.latitude.toDouble();
+        long = posicion.longitude.toDouble();
+    }
+    return SizedBox(
+              height: 550.0,
               child: GoogleMap(
                 onTap: (tapped) async {
                   final coordenadas =
@@ -76,30 +108,14 @@ class _MapaState extends State<Mapa> {
                   setState(() {
                     googleMapController = controller;
                   });
-                },
+                },                      
                 initialCameraPosition: CameraPosition(
-                    target: LatLng(posicion.latitude.toDouble(),
-                        posicion.longitude.toDouble()),
+                    target: LatLng(lat,
+                        long),
                     zoom: 15.0),
                 markers: Set<Marker>.of(marcas.values),
               ),
-            ),
-            SizedBox(height: 10),
-            Text('Dirección: $localizacion'),
-            MaterialButton(
-              minWidth: 140.0,
-              height: 30.0,
-              onPressed: () {
-                inspeccionNotifier.currentInspeccion.lugar = localizacion;
-                Navigator.pop(context, localizacion);
-              },
-              color: Colors.blue,
-              child: Text('Confirmar', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
-      ),
-    );
+            );
   }
 
   @override

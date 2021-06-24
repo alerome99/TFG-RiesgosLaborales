@@ -19,7 +19,6 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   Widget build(BuildContext context) {
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
-    getEvaluaciones(evaluacionRiesgoNotifier);
     return Scaffold(
         body: Stack(
           children: <Widget>[
@@ -50,7 +49,7 @@ class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
             Text(inspeccionNotifier.currentInspeccion.titulo,
                 style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 24.0,
+                    fontSize: 22.0,
                     fontWeight: FontWeight.w700)),
             SizedBox(height: 7.0),
             Text('Selecciona el riesgo laboral encontrado:',

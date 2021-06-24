@@ -37,7 +37,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         riesgoInspeccionNotifier, inspeccionNotifier);
     getRiesgosInspeccionTodos(
         riesgoInspeccionEliminadaNotifier, inspeccionNotifier);
-    getEvaluaciones(evaluacionRiesgoNotifier);
+    getEvaluaciones(evaluacionRiesgoNotifier, inspeccionNotifier);
   }
 
   @override
@@ -192,14 +192,14 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
         Provider.of<InspeccionNotifier>(context, listen: false);
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 10.0),
+        padding: EdgeInsets.fromLTRB(20.0, 35.0, 20.0, 0.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(inspeccionNotifier.currentInspeccion.titulo,
                 style: TextStyle(
                     color: Colors.black87,
-                    fontSize: 24.0,
+                    fontSize: 22.0,
                     fontWeight: FontWeight.w700)),
             SizedBox(height: 7.0),
             Text('Selecciona el riesgo que quiere evaluar:',
