@@ -276,45 +276,43 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
     final card = Container(
+      
       child: Row(
         children: [
+          Expanded(
+            flex: 3,
+            child: Container(
+              child: Container(
+                decoration:
+                    BoxDecoration(color: col, borderRadius: BorderRadius.circular(18.0), boxShadow: <BoxShadow>[
+                ]),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(44.0),
+                  child: FadeInImage(
+                    placeholder: AssetImage('assets/images/original.gif'),
+                    image: AssetImage('assets/icons/${sr.icono}_V-01.png'),
+                    fadeInDuration: Duration(milliseconds: 200),
+                    width: 110.0,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
           Expanded(
               flex: 7,
               child: Stack(
                 children: [
                   Container(
-                      alignment: Alignment.topLeft,
-                      padding: EdgeInsets.fromLTRB(10.0, 14.0, 10.0, 10.0),
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
                       child: Text(sr.nombre,
                           maxLines: 2,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 16))),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Container(
-                      height: 40.0,
-                      decoration:
-                          BoxDecoration(color: col, boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 10.0,
-                            spreadRadius: 2.0,
-                            offset: Offset(2.0, 10.0))
-                      ]),
-                    ),
-                  ),
+
                 ],
               )),
-          Expanded(
-            flex: 3,
-            child: FadeInImage(
-              placeholder: AssetImage('assets/images/original.gif'),
-              image: AssetImage('assets/icons/${sr.icono}_V-01.png'),
-              fadeInDuration: Duration(milliseconds: 200),
-              width: 110.0,
-              fit: BoxFit.cover,
-            ),
-          ),
         ],
       ),
     );
@@ -341,7 +339,7 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
             Container(
               height: 100.0,
               decoration:
-                  BoxDecoration(color: Colors.white, boxShadow: <BoxShadow>[
+                  BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(24.0), boxShadow: <BoxShadow>[
                 BoxShadow(
                     color: Colors.black26,
                     blurRadius: 10.0,

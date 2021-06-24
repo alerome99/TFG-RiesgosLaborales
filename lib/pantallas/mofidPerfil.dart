@@ -24,6 +24,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
+  final TextEditingController _direccionController = TextEditingController();
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
       _nombreController.text = userNotifier.currentUsuario.nombreCompleto;
       _numeroController.text = userNotifier.currentUsuario.telefono;
       _emailController.text = userNotifier.currentUsuario.email;
+      _direccionController.text = userNotifier.currentUsuario.direccion;
     }
   }
 
@@ -126,6 +128,18 @@ class _ModifPerfilState extends State<ModifPerfil> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(bottom: 3),
                         labelText: "Email",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 35.0),
+                    child: TextFormField(
+                      controller: _direccionController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(bottom: 3),
+                        labelText: "Dirección",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
                     ),
