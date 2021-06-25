@@ -179,6 +179,8 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
 
       List<Informacion> informacion = [];
       Evaluacion e;
+      FotoEvaluacion fe;
+      String urls = "";
       for (var i = 0; i < subRiesgos.length; i++) {
         QuerySnapshot snapshot = await FirebaseFirestore.instance
             .collection('evaluacion')
@@ -188,6 +190,19 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
           e = Evaluacion.fromMap(document.data());
           e.setIdDocumento(document.id);
           evaluaciones.add(e);
+        });
+        
+        int ind = 0;
+
+        QuerySnapshot snapshot2 = await FirebaseFirestore.instance
+            .collection('fotoEvaluacion')
+            .where('idEvaluacion', isEqualTo: e.id)
+            .where('eliminada', isEqualTo: false)
+            .get();
+        snapshot2.docs.forEach((document) {
+          fe = FotoEvaluacion.fromMap(document.data());
+          urls = urls + "foto " + ind.toString() + ":" + fe.url + " - ";
+          ind++;
         });
         String tipoF = "";
         if(e.tipo == TipoFactor.Potencial){
@@ -207,7 +222,8 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
               e.latitud,
               e.longitud,
               e.altitud,
-              e.accionCorrectora);
+              e.accionCorrectora,
+              urls);
         informacion.add(inf);
       }
       String lugar = "";
