@@ -78,7 +78,7 @@ class _ImageModalState extends State<ImageModal> {
       CollectionReference collectionReference =
           FirebaseFirestore.instance.collection('usuario');
       collectionReference
-          .doc(userNotifier.currentUsuario.getId())
+          .doc(userNotifier.currentUsuario.id)
           .update({'url': imageUrl.toString()});
     }
   }

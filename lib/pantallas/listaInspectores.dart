@@ -7,8 +7,6 @@ import 'package:tfg/pantallas/informacionInspector.dart';
 import 'package:tfg/widgets/fondo.dart';
 import 'package:tfg/widgets/menu.dart';
 
-import 'evaluacion.dart';
-
 class ListaInspectores extends StatefulWidget {
   @override
   _ListaInspectoresState createState() => _ListaInspectoresState();
@@ -60,7 +58,6 @@ class _ListaInspectoresState extends State<ListaInspectores> {
   }
 
   Widget _listaInspectores() {
-    InspectorNotifier inspectorNotifier = Provider.of<InspectorNotifier>(context, listen: false);
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('usuario')

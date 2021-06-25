@@ -30,84 +30,11 @@ class Usuario {
     direccion = data['direccion'];
   }
 
-
-  String getDireccion(){
-    return direccion;
-  }
-
-  void setDireccion(String d){
-    direccion = d;
-  }
-
-  String getNumero(){
-    return telefono;
-  }
-
-  String getMotivo(){
-    return motivo;
-  }
-
-  bool getBaja(){
-    return baja;
-  }
-
-  void setBaja(bool b){
-    baja = b;
-  }
-
-  void setMotivo(String m){
-    motivo = m;
-  }
-
   void setIdDocumento(String i){
     idDocumento = i;
   }
 
   String getIdDocumento(){
     return idDocumento;
-  }
-
-  void setNumero(String p){
-    telefono = p;
-  }
-
-  void setPass(String p){
-    password = p;
-  }
-  
-  String getEmail(){
-    return email;
-  }
-
-  String getId(){
-    return id;
-  }
-
-  String getNombre(){
-    return nombreCompleto;
-  }
-
-  String getPassword(){
-    return password;
-  }
-
-  String getPhone(){
-    return telefono;
-  }
-
-  String getDni(){
-    return dni;
-  }
-
-  void setNombre(String nombre) {
-    nombreCompleto = nombre;
-  }
-
-  void setEmail(String em) {
-    email = em;
-  }
-
-  void setId(String i) {
-    id = i;
   }
 }

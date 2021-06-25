@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:location/location.dart';
 import 'package:path/path.dart' as Path;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -31,13 +32,16 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   int _exposicion = 1;
   int _consecuencias = 10;
   PickedFile _imageFile;
-  List<String> fotos = new List<String>();
+  List<String> fotos = [];
   String imagePath;
   final ImagePicker _picker = ImagePicker();
 
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _accionCorrectoraController =
       TextEditingController();
+  final TextEditingController _longitudController = TextEditingController();
+  final TextEditingController _latitudController = TextEditingController();    
+  final TextEditingController _altitudController = TextEditingController();
   String _tipoFactorController;
   int idNueva = 0;
   final TextEditingController c1 = new TextEditingController();
@@ -60,6 +64,9 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       _valorDeficiencia = evaluacionRiesgoNotifier
           .currentEvaluacion.nivelDeficiencia
           .toDouble();
+      _altitudController.text = evaluacionRiesgoNotifier.currentEvaluacion.altitud.toString();
+      _longitudController.text = evaluacionRiesgoNotifier.currentEvaluacion.longitud.toString();
+      _latitudController.text = evaluacionRiesgoNotifier.currentEvaluacion.latitud.toString();
       _valorExposicion =
           evaluacionRiesgoNotifier.currentEvaluacion.nivelExposicion.toDouble();
       _valorConsecuencias = evaluacionRiesgoNotifier
@@ -173,6 +180,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             _crearSliderNDeficiencia(),
             _crearSliderNExposicion(),
             _crearSliderNConsecuencias(),
+            _crearFieldCoordenadas(),
             _crearTextFieldAccionCorrectora(),
             Container(
               height: 20,
@@ -183,6 +191,137 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _crearFieldCoordenadas() {
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                _crearTextFieldLatitud(),
+                _crearTextFieldLongitud(),
+                _crearTextFieldAltitud()
+              ],
+            ),
+          ),
+          IconButton(
+            iconSize: 30.0,
+            icon: Icon(Icons.location_searching),
+            color: Theme.of(context).primaryColor,
+            onPressed: _getLocation
+          ),
+        ],
+      ),
+    );
+  }
+
+  _getLocation() async {
+
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+    LocationData _locationData;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    _locationData = await location.getLocation();
+
+    setState(() {
+      _longitudController.text = _locationData.latitude.toString();
+      _latitudController.text = _locationData.longitude.toString();
+      _altitudController.text = _locationData.altitude.toString();
+    });
+
+    _formKey.currentState.save();
+
+  }
+
+  Widget _crearTextFieldLatitud() {
+    return TextFormField(
+      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+      controller: _latitudController,
+      enabled: false,
+      decoration: InputDecoration(
+        labelText: 'Latitud',
+        labelStyle: TextStyle(fontSize: 20.0),
+      ),
+      readOnly: true,
+      validator: (value) {
+        bool flag;
+        if ( value.isEmpty) flag = false;
+        (num.tryParse(value) == null ) ? flag = false : flag = true;
+
+        if ( flag ){
+          return null;
+        } else {
+          return 'Solo números';
+        }  
+      },
+    );
+  }
+
+  Widget _crearTextFieldAltitud() {
+    return TextFormField(
+      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+      controller: _altitudController,
+      enabled: false,
+      decoration: InputDecoration(
+        labelText: 'Altitud',
+        labelStyle: TextStyle(fontSize: 20.0),
+      ),
+      readOnly: true,
+      validator: (value) {
+        bool flag;
+        if ( value.isEmpty) flag = false;
+        (num.tryParse(value) == null ) ? flag = false : flag = true;
+        if ( flag ){
+          return null;
+        } else {
+          return 'Solo números';
+        }  
+      },
+    );
+  }
+
+  Widget _crearTextFieldLongitud() {
+    return TextFormField(
+      keyboardType: TextInputType.numberWithOptions(decimal: true, signed: true),
+      controller: _longitudController,
+      enabled: false,
+      decoration: InputDecoration(
+        labelText: 'Longitud',
+        labelStyle: TextStyle(fontSize: 20.0)
+      ),
+      validator: (value) {
+        bool flag;
+        if ( value.isEmpty) flag = false;
+        (num.tryParse(value) == null ) ? flag = false : flag = true;
+
+        if ( flag ){
+          return null;
+        } else {
+          return 'Solo numeros';
+        }  
+      },
     );
   }
 
@@ -392,8 +531,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   }
 
   Widget _listaFotos() {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     FotoEvaluacion f1, f2;
     return StreamBuilder(
         stream: FirebaseFirestore.instance
@@ -526,8 +663,6 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   }
 
   void takePhoto(ImageSource source) async {
-    RiesgoInspeccionNotifier riesgoInspeccionNotifier =
-        Provider.of<RiesgoInspeccionNotifier>(context, listen: false);
     final pickedFile = await _picker.getImage(
       source: source,
     );
@@ -765,7 +900,10 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         _tipoFactorController,
         _valorDeficiencia.round(),
         _valorExposicion.round(),
-        _valorConsecuencias.round());
+        _valorConsecuencias.round(),
+        _longitudController.text,
+        _latitudController.text,
+        _altitudController.text);
     if (_tipoFactorController == null) {
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Debes seleccionar un tipo de factor"),

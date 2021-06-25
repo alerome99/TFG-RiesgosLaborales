@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
-import 'package:tfg/pantallas/principal.dart';
 import 'package:tfg/widgets/menu.dart';
 
 import '../providers/db.dart';
@@ -181,9 +180,9 @@ class _CambiarPassState extends State<CambiarPass> {
     UsuarioNotifier userNotifier =
         Provider.of<UsuarioNotifier>(context, listen: false);
     Usuario u = userNotifier.currentUsuario;
-    id = userNotifier.currentUsuario.getId();
+    id = userNotifier.currentUsuario.id;
     try {
-      u.setPass(_contraNuevaController.text);
+      u.password = _contraNuevaController.text;
       await modificarPass(u, id, authNotifier, userNotifier);
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("La contraseña ha sido cambiada con existo"),

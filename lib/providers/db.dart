@@ -26,7 +26,7 @@ login(Usuario user, AuthNotifier authNotifier) async {
   snapshot.docs.forEach((document) {
     Usuario user = Usuario.fromMap(document.data());
     userT = user;
-    userT.setId(document.id);
+    userT.id = document.id;
   });
   if (!userT.baja) {
     UserCredential authResult = await FirebaseAuth.instance
@@ -52,8 +52,8 @@ initializeCurrentUser(AuthNotifier authNotifier) async {
 registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
   UserCredential authResult = await FirebaseAuth.instance
       .createUserWithEmailAndPassword(
-        email: u.getEmail(),
-        password: u.getPassword(),
+        email: u.email,
+        password: u.password,
       )
       .catchError((error) => print(error.code));
   if (authResult != null) {
@@ -61,11 +61,11 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
     if (firebaseUser != null) {
       print("Registered: $firebaseUser");
       Map<String, dynamic> demoData = {
-        "email": u.getEmail(),
-        "numero": u.getPhone(),
-        "dni": u.getDni(),
-        "nombre": u.getNombre(),
-        "contraseña": u.getPassword(),
+        "email": u.email,
+        "numero": u.telefono,
+        "dni": u.dni,
+        "nombre": u.nombreCompleto,
+        "contraseña": u.password,
         "tipo": "inspector",
         "baja": false,
         "motivoBaja": null,
@@ -82,15 +82,15 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
 
 addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
   Map<String, dynamic> demoData = {
-    "id": i.getId(),
-    "descripcion": i.getDescripcion(),
-    "titulo": i.getTitulo(),
-    "fechaFin": i.getFechaFin(),
-    "fechaInicio": i.getFechaInicio(),
-    "provincia": i.getProvincia(),
-    "lugar": i.getLugar(),
-    "estado": i.getEstado(),
-    "nombreEmpresa": i.getNombreEmpresa(),
+    "id": i.id,
+    "descripcion": i.descripcion,
+    "titulo": i.titulo,
+    "fechaFin": i.fechaFin,
+    "fechaInicio": i.fechaInicio,
+    "provincia": i.provincia,
+    "lugar": i.lugar,
+    "estado": i.estado,
+    "nombreEmpresa": i.nombreEmpresa,
   };
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('inspeccion');
@@ -111,6 +111,7 @@ addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier,
     "eliminado": false,
     "evaluado": true,
     "total": total,
+    "idRiesgoPadre": sr.idRiesgoPadre,
   };
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('riesgo');
@@ -145,6 +146,9 @@ addEvaluacion(Evaluacion evaluacion) async {
     "nivelConsecuencias": evaluacion.nivelConsecuencias,
     "nivelDeficiencia": evaluacion.nivelDeficiencia,
     "nivelExposicion": evaluacion.nivelExposicion,
+    "latitud": evaluacion.latitud,
+    "longitud": evaluacion.longitud,
+    "altitud": evaluacion.altitud
   };
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('evaluacion');
@@ -330,7 +334,7 @@ getUser(UsuarioNotifier userNotifier /*, String email*/) async {
   snapshot.docs.forEach((document) {
     Usuario user = Usuario.fromMap(document.data());
     userT = user;
-    userT.setId(document.id);
+    userT.id = document.id;
   });
   userNotifier.currentUser = userT;
 }

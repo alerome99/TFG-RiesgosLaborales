@@ -121,11 +121,11 @@ class _AddInspeccionState extends State<AddInspeccion> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        FlatButton(
+                        TextButton(
                           child: Text('Cancelar'),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
-                        FlatButton(
+                        TextButton(
                           child: Text('Confirmar'),
                           onPressed: () {
                             agregarInspeccion();
@@ -159,7 +159,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
   Widget _crearSelectorProvincia() {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
-    var _provincias = List<DropdownMenuItem>();
+    var _provincias = [];
     List<String> listaProvincias = [];
     listaProvincias = ordenarProvincias(inspeccionNotifier);
     for (int i = 0; i < listaProvincias.length; i++) {
