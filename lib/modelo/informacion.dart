@@ -10,7 +10,8 @@ class Informacion {
       latitud,
       longitud,
       altitud,
-      accionCorrectora;
+      accionCorrectora,
+      url;
   Informacion(
       String idRiesgoPadre,
       String idRiesgo,
@@ -23,7 +24,8 @@ class Informacion {
       String latitud,
       String longitud,
       String altitud,
-      String accionCorrectora) {
+      String accionCorrectora,
+      String url) {
         this.idRiesgoPadre = idRiesgoPadre;
         this.idRiesgo = idRiesgo;
         this.nombreRiesgo = nombreRiesgo;
@@ -36,5 +38,6 @@ class Informacion {
         this.longitud = longitud;
         this.altitud = altitud;
         this.accionCorrectora = accionCorrectora;
+        this.url = url;
       }
 }

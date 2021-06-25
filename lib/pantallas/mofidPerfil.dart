@@ -52,11 +52,14 @@ class _ModifPerfilState extends State<ModifPerfil> {
     if (_numeroController.text == "") {
       _numeroController.text = userNotifier.currentUsuario.telefono;
     }
+    if (_direccionController.text == "") {
+      _direccionController.text = userNotifier.currentUsuario.direccion;
+    }
     u.email = _emailController.text;
     u.telefono = _numeroController.text;
     await modificarUsuario(u, id, authNotifier, userNotifier);
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
   }
 
   @override
@@ -154,7 +157,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
                               builder: (BuildContext context) => Perfil()));
                         },
                         child: Text("CANCELAR",
