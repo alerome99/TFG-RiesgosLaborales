@@ -4,9 +4,7 @@ import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgo_notifier.dart';
-import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:tfg/pantallas/seleccionSubRiesgo.dart';
-import 'package:tfg/providers/db.dart';
 import 'package:tfg/widgets/fondo.dart';
 
 class SeleccionRiesgo extends StatefulWidget {
@@ -17,8 +15,6 @@ class SeleccionRiesgo extends StatefulWidget {
 class _SeleccionRiesgoState extends State<SeleccionRiesgo> {
   @override
   Widget build(BuildContext context) {
-    EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
-        Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
     return Scaffold(
         body: Stack(
           children: <Widget>[

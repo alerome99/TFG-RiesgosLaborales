@@ -30,11 +30,13 @@ class FotoEvaluacion{
 }
 
 class Evaluacion {
-  String titulo, accionCorrectora, tp, idDocumento;
+  String titulo, accionCorrectora, tp, idDocumento, longitud, latitud, altitud;
   TipoFactor tipo;
   int id, idRiesgo, idInspeccion, nivelExposicion, nivelDeficiencia, nivelConsecuencias;
-  Evaluacion(int id, int idRiesgo, int idInspeccion, String titulo, String accionCorrectora, String tp, int nivelDeficiencia, int nivelExposicion, int nivelConsecuencias){
+  Evaluacion(int id, int idRiesgo, int idInspeccion, String titulo, String accionCorrectora, String tp, int nivelDeficiencia, int nivelExposicion, int nivelConsecuencias, String longitud , String latitud, String altitud){
     this.id = id;
+    this.latitud = latitud;
+    this.longitud = longitud;
     this.idRiesgo = idRiesgo;
     this.idInspeccion = idInspeccion;
     this.accionCorrectora = accionCorrectora;
@@ -47,6 +49,7 @@ class Evaluacion {
     this.nivelConsecuencias = nivelConsecuencias;
     this.nivelDeficiencia = nivelDeficiencia;
     this.nivelExposicion = nivelExposicion;
+    this.altitud = altitud;
   }
 
   Evaluacion.fromMap(Map<String, dynamic> data) {
@@ -58,6 +61,7 @@ class Evaluacion {
     if(tp == "Existente"){
       tipo = TipoFactor.Existente;
     }
+    altitud = data['altitud'];
     titulo = data['titulo'];
     idInspeccion = data['idInspeccion'];
     idRiesgo = data['idRiesgo'];
@@ -65,6 +69,9 @@ class Evaluacion {
     nivelConsecuencias = data['nivelConsecuencias'];
     nivelDeficiencia = data['nivelDeficiencia'];
     nivelExposicion = data['nivelExposicion'];
+    longitud = data['longitud'];
+    latitud = data['latitud'];
+    altitud = data['altitud'];
   }
 
   void setIdDocumento(String id){

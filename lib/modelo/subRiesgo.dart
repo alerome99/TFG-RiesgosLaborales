@@ -2,11 +2,12 @@ class SubRiesgo {
 
   int id, idUnica;
   String nombre, idDocumento, icono;
-  int idRiesgoPadre;
+  int idRiesgoPadre, total;
   bool eliminado, evaluado;
 
   SubRiesgo(int id, String nombre, String icono, int idRiesgoPadre, int idUnica){
     this.id = id;
+    total = 0;
     this.idUnica = idUnica;
     this.nombre = nombre;
     this.icono = icono;
@@ -22,36 +23,18 @@ class SubRiesgo {
     icono = data['icono'];
     eliminado = data['eliminado'];
     id = data['id'];
+    idRiesgoPadre = data['idRiesgoPadre'];
     idUnica = data['idUnica'];
     evaluado = data['evaluado'];
-  }
-
-  int getIdUnica(){
-    return idUnica;
+    total = data['total'];
   }
 
   void setIdUnica(int id){
     idUnica = id;
   }
 
-  bool getEliminado(){
-    return eliminado;
-  }
-
   void setEliminado(){
     eliminado = true;
-  }
-
-  bool getEvaluado(){
-    return evaluado;
-  }
-
-  void setEvaluado(){
-    evaluado = true;
-  }
-
-  void setIdRiesgoPadre(int irp){
-    idRiesgoPadre = irp;
   }
 
   String getIdDocumento(){
@@ -60,32 +43,5 @@ class SubRiesgo {
 
   void setIdDocumento(String id){
     idDocumento = id;
-  }
-  int getIdRiesgoPadre(){
-    return idRiesgoPadre;
-  }
-  
-  void setId(int i){
-    id = i;
-  }
-
-  int getId(){
-    return id;
-  }
-
-  void setNombre(String n){
-    nombre = n;
-  }
-
-  String getNombre(){
-    return nombre;
-  }
-
-  void setIcono(String ic){
-    icono = ic;
-  }
-
-  String getIcono(){
-    return icono;
   }
 }

@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:csv/csv.dart';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
 import 'package:provider/provider.dart';
+import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/modelo/inspeccion.dart';
+import 'package:tfg/modelo/subRiesgo.dart';
+import 'package:tfg/modelo/informacion.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/pantallas/listaEvaluaciones.dart';
 import 'package:permission_handler/permission_handler.dart' as permission;
@@ -14,7 +22,6 @@ class ListaInspecciones extends StatefulWidget {
 }
 
 class MyObject implements Comparable<MyObject> {
-
   Timestamp fecha;
 
   Timestamp getFecha() {
@@ -31,10 +38,13 @@ class MyObject implements Comparable<MyObject> {
   }
 }
 
+final scaffoldKey = new GlobalKey<ScaffoldState>();
+
 class _ListaInspeccionesState extends State<ListaInspecciones> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: Stack(
         children: <Widget>[
           Fondo(),
@@ -73,172 +83,213 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
     );
   }
 
-  Widget _recuadro(Color c){
+  Widget _recuadro(Color c) {
     return Container(
-              width: 65,
-              height: 65,
-              color: c,
-            );
-  }
-
-  Widget _texto( Inspeccion i ) {
-    return Container(
-      width: 180,
-          child: Text(
-            i.titulo,
-            maxLines: 2,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
-          ),
+      width: 65,
+      height: 65,
+      color: c,
     );
   }
 
-  Widget _tarjeta( Color color, Inspeccion i ) {
+  Widget _texto(Inspeccion i) {
+    return Container(
+      width: 180,
+      child: Text(
+        i.titulo,
+        maxLines: 2,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.0),
+      ),
+    );
+  }
+
+  Widget _tarjeta(Color color, Inspeccion i) {
     return Container(
       height: 70.0,
       margin: EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 10.0,
-            spreadRadius: 0.5,
-            offset: Offset(-8.0, 10.0)
-          )
+              color: Colors.black26,
+              blurRadius: 10.0,
+              spreadRadius: 0.5,
+              offset: Offset(-8.0, 10.0))
         ],
       ),
       child: Card(
         elevation: 20.0,
         shadowColor: Colors.black,
-        shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(20.0) ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-              _texto(i),
-              _recuadro(color),
-              _acciones(i),
+            _texto(i),
+            _recuadro(color),
+            _acciones(i),
           ],
         ),
       ),
     );
   }
 
-  _acciones( Inspeccion i ) {
-    return  Container(
-        padding: EdgeInsets.symmetric(vertical: 9.0),
-        alignment: Alignment.centerLeft,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            i.estado == EstadoInspeccion.enRealizacion
-                    ? _crearAcciones(Icons.edit, 'Inspeccionar', Colors.green, _inspeccionar, i)
-                    : 
-            SizedBox(width: 5.0,),         
-            _crearAcciones(Icons.insert_drive_file, 'Informe', Colors.blueAccent, _crearInforme, i),
-            SizedBox(width: 5.0,),
-          ],
-        ),
+  _acciones(Inspeccion i) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 9.0),
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          i.estado == EstadoInspeccion.enRealizacion
+              ? _crearAcciones(
+                  Icons.edit, 'Inspeccionar', Colors.green, _inspeccionar, i)
+              : SizedBox(
+                  width: 5.0,
+                ),
+          _crearAcciones(Icons.insert_drive_file, 'Informe', Colors.blueAccent,
+              _crearInforme, i),
+          SizedBox(
+            width: 5.0,
+          ),
+        ],
+      ),
     );
   }
 
-  _crearInforme( Inspeccion i ) async {
-    
-    /*
+  _crearInforme(Inspeccion i) async {
     if (await permission.Permission.storage.request().isGranted) {
+      InspeccionNotifier inspeccionNotifier =
+          Provider.of<InspeccionNotifier>(context, listen: false);
+      inspeccionNotifier.currentInspeccion = i;
 
-      Map<String, List<s>> riesgosAgrupados = agruparRiesgos(inspeccion);
-
-      List<String> linea;
-      List<List<String>> datos = [];
-      int index = 0;
-      String tipoFactor;
-
-      riesgosAgrupados.forEach((riesgo, deficiencias) {
-        for (var i = 0; i < deficiencias.length; i++) {
-          
-          if ( deficiencias[i].evaluacion.tipoFactor == "Potencial" ) {
-            tipoFactor = 'P';
-          } else {
-            tipoFactor = 'E';
-          }
-
-          if ( i == (deficiencias.length % 2) || deficiencias.length == 1 ) {
-            linea = ["0${index+1}", "0${index+1}", "($tipoFactor)${deficiencias[i].evaluacion.riesgo}", "", "", "$riesgo", "", "", "${maxND(deficiencias)}", "${maxNE(deficiencias)}", "${_calculoNP(deficiencias)}", "${maxNC(deficiencias)}", "${_calculoNR(deficiencias)}", "${_calculoNI(deficiencias)}"];
-            index++;
-          } else {
-            linea = ["", "", "($tipoFactor)${deficiencias[i].evaluacion.riesgo}", "", "", "", "", "", "", "", "", "", "", ""];
-          }
-
-          datos.add(linea);
-          
-        }
+      List<SubRiesgo> subRiesgos = [];
+      List<Evaluacion> evaluaciones = [];
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('riesgo')
+          .where('idInspeccion',
+              isEqualTo: inspeccionNotifier.currentInspeccion.id)
+          .where('eliminado', isEqualTo: false)
+          .where('evaluado', isEqualTo: true)
+          .get();
+      snapshot.docs.forEach((document) {
+        SubRiesgo r = SubRiesgo.fromMap(document.data());
+        r.setIdDocumento(document.id);
+        subRiesgos.add(r);
       });
 
+      List<Informacion> informacion = [];
+      Evaluacion e;
+      for (var i = 0; i < subRiesgos.length; i++) {
+        QuerySnapshot snapshot = await FirebaseFirestore.instance
+            .collection('evaluacion')
+            .where('idRiesgo', isEqualTo: subRiesgos[i].idUnica)
+            .get();
+        snapshot.docs.forEach((document) {
+          e = Evaluacion.fromMap(document.data());
+          e.setIdDocumento(document.id);
+          evaluaciones.add(e);
+        });
+        String tipoF = "";
+        if(e.tipo == TipoFactor.Potencial){
+          tipoF = "Potencial";
+        }else{
+          tipoF = "Existente";
+        }
+        Informacion inf = new Informacion(
+              subRiesgos[i].idRiesgoPadre.toString(),
+              subRiesgos[i].id.toString(),
+              subRiesgos[i].nombre,
+              tipoF,
+              e.nivelDeficiencia.toString(),
+              e.nivelExposicion.toString(),
+              e.nivelConsecuencias.toString(),
+              subRiesgos[i].total.toString(),
+              e.latitud,
+              e.longitud,
+              e.altitud,
+              e.accionCorrectora);
+        informacion.add(inf);
+      }
+      String lugar = "";
+      String lugarTemp = i.lugar;
+      for (int i = 0; i < lugarTemp.length; i++) {
+        if (lugarTemp[i] != ',') {
+          lugar = lugar + lugarTemp[i];
+        }
+      }
       List<List<dynamic>> csvData = [
-        <String>["Inspeccion","Pais", "Provincia", "Direccion", "Latitud", "Longitud"],
-        [inspeccion.id, inspeccion.pais, inspeccion.provincia, inspeccion.direccion, inspeccion.latitud, inspeccion.longitud],
+        <String>["Inspección", "Provincia", "Dirección", "Empresa"],
+        [i.id, i.provincia, lugar, i.nombreEmpresa],
         [],
-        <String>["FACTORES"],
-        <String>["Codigo", "Nombre"], 
-        ...inspeccion.deficiencias.map((item) => 
-                [item.factorRiesgo.idPadre.toString()+item.factorRiesgo.codigo,
-                item.factorRiesgo.nombre]),
-        [],
-        <String>["", "", "", "", "", "", "", "", "", "", "EVALUACION"],
-        <String>["", "", "FACTOR RIESGO", "", "", "", "RIESGO", "", "", "PROBABILIDAD"],
-        <String>["N", "ID", "FACTOR(POTENCIAL (P)/ EXISTENTE(E))", "", "", "", "RIESGO", "", "ND", "NE", "NP", "NC", "NR", "NI"],
-        ...datos
+        <String>[
+          "FACTORES"
+        ], //hacer lista que convine evaluacion y riesgo en plan list<total> total.codigo total.nombre total.nd total.tr ...
+        <String>[
+          "Código",
+          "Nombre",
+          "Tipo",
+          "NivelDeficiencia",
+          "NivelExposicion",
+          "NivelConsecuencias",
+          "NivelRiesgo",
+          "Latitud",
+          "Longitud",
+          "Altitud",
+          "AccionCorrectora"
+        ],
+        ...informacion.map((item) => [
+              item.idRiesgoPadre + " - " + item.idRiesgo,
+              item.nombreRiesgo, item.nivelDeficiencia, item.nivelExposicion, item.nivelConsecuencia, item.total, item.latitud, item.longitud, item.altitud, item.accionCorrectora
+            ]),
       ];
 
       String csv = ListToCsvConverter(fieldDelimiter: ';').convert(csvData);
 
-      Directory downloadsDirectory = await DownloadsPathProvider.downloadsDirectory;
+      Directory downloadsDirectory =
+          await DownloadsPathProvider.downloadsDirectory;
 
-      final String path = '${downloadsDirectory.path}/lugar_inspeccion${inspeccion.id}.csv';
+      final String path =
+          '${downloadsDirectory.path}/lugar_inspeccion${i.id}.csv';
       final File file = File(path);
 
       await file.writeAsString(csv, mode: FileMode.write, encoding: utf8);
-
-      _showSnackBar('Se ha creado el archivo CSV en Download');
-      
-    }*/
+      scaffoldKey.currentState.showSnackBar(new SnackBar(
+        content: new Text('Se ha creado el archivo CSV en Download'),
+      ));
+    }
   }
 
-  _inspeccionar( Inspeccion i ){
+  _inspeccionar(Inspeccion i) {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     inspeccionNotifier.currentInspeccion = i;
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+        builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
   }
 
-  Widget _crearAcciones(IconData icono, String texto, Color color, Function f, Inspeccion inspeccion) {
-
-      return GestureDetector(
+  Widget _crearAcciones(IconData icono, String texto, Color color, Function f,
+      Inspeccion inspeccion) {
+    return GestureDetector(
       child: Column(
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40.0),
-              gradient: LinearGradient(
-                begin: FractionalOffset(-0.93, -0.25),
-                end: FractionalOffset.bottomRight,
-                colors: [
-                  Colors.white,
-                  color.withOpacity(1.0)
-                ],
-              )
-            ),
+                borderRadius: BorderRadius.circular(40.0),
+                gradient: LinearGradient(
+                  begin: FractionalOffset(-0.93, -0.25),
+                  end: FractionalOffset.bottomRight,
+                  colors: [Colors.white, color.withOpacity(1.0)],
+                )),
             child: CircleAvatar(
               backgroundColor: Colors.transparent,
               radius: 16.0,
-              child: Icon( icono, color: Colors.white, size: 20.0 ),
+              child: Icon(icono, color: Colors.white, size: 20.0),
             ),
           ),
-          Text(texto, style: TextStyle( color: color, fontSize: 10.0)),
+          Text(texto, style: TextStyle(color: color, fontSize: 10.0)),
         ],
       ),
-      onTap: () => f(inspeccion), 
+      onTap: () => f(inspeccion),
     );
   }
 
@@ -252,25 +303,14 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
       itemCount: inspecciones.length,
       itemBuilder: (BuildContext context, int index) {
         List<TableRow> rows = [];
-        if (inspecciones[index].estado ==
-            EstadoInspeccion.enRealizacion) {
+        if (inspecciones[index].estado == EstadoInspeccion.enRealizacion) {
           rows.add(TableRow(children: [
-            _tarjeta(
-                Colors.blue, inspecciones[index]),
+            _tarjeta(Colors.blue, inspecciones[index]),
           ]));
         }
-        if (inspecciones[index].estado ==
-            EstadoInspeccion.pendiente) {
+        if (inspecciones[index].estado == EstadoInspeccion.cerrada) {
           rows.add(TableRow(children: [
-            _tarjeta(
-                Colors.grey, inspecciones[index]),
-          ]));
-        }
-        if (inspecciones[index].estado ==
-            EstadoInspeccion.cerrada) {
-          rows.add(TableRow(children: [
-            _tarjeta(
-                Colors.red, inspecciones[index]),
+            _tarjeta(Colors.grey, inspecciones[index]),
           ]));
         }
 

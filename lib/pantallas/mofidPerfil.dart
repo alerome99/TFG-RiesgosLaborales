@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -46,15 +45,15 @@ class _ModifPerfilState extends State<ModifPerfil> {
     UsuarioNotifier userNotifier =
         Provider.of<UsuarioNotifier>(context, listen: false);
     Usuario u = userNotifier.currentUsuario;
-    id = userNotifier.currentUsuario.getId();
+    id = userNotifier.currentUsuario.id;
     if (_emailController.text == "") {
       _emailController.text = userNotifier.currentUsuario.email;
     }
     if (_numeroController.text == "") {
       _numeroController.text = userNotifier.currentUsuario.telefono;
     }
-    u.setEmail(_emailController.text);
-    u.setNumero(_numeroController.text);
+    u.email = _emailController.text;
+    u.telefono = _numeroController.text;
     await modificarUsuario(u, id, authNotifier, userNotifier);
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (BuildContext context) => Perfil()));

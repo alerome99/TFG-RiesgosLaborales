@@ -11,7 +11,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="PRL"
-        android:icon="@mipmap/icon">
+        android:icon="@mipmap/icon"
+        android:requestLegacyExternalStorage="true">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDaGfXgJe0jLlQ6na8XrLRMCLmJJNBsFQ8"/>
         <activity

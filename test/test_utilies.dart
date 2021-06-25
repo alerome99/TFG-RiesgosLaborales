@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test/test.dart';
 import 'package:tfg/modelo/evaluacion.dart';
 import 'package:tfg/modelo/inspeccion.dart';
-import 'package:tfg/modelo/riesgo.dart';
 import 'package:tfg/modelo/subRiesgo.dart';
-import 'package:tfg/modelo/user.dart';
 import 'package:tfg/notifiers/evaluacionRiesgo_notifier.dart';
 import 'package:tfg/notifiers/inspeccion_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
@@ -44,7 +42,7 @@ void main() {
       DateTime date = DateTime.parse("1969-07-20 20:18:04Z"); 
       Timestamp fechaInicio = new Timestamp.fromDate(date);
       Inspeccion i = new Inspeccion(1, fechaInicio, null, null, null, null, null, null);
-      i.setEstado(EstadoInspeccion.pendiente);
+      i.setEstado(EstadoInspeccion.cerrada);
       inspecciones.add(i);
       i = new Inspeccion(2, fechaInicio, null, null, null, null, null, null);
       i.setEstado(EstadoInspeccion.enRealizacion);
@@ -90,10 +88,10 @@ void main() {
 
     test('calcular id evaluacion', () async {
       List<Evaluacion> evaluaciones = [];
-      evaluaciones.add(new Evaluacion(1, 0, 0, "a", "a", "Potencial", 0, 0, 0));
-      evaluaciones.add(new Evaluacion(2, 0, 0, "a", "a", "Potencial", 0, 0, 0));
-      evaluaciones.add(new Evaluacion(3, 0, 0, "a", "a", "Potencial", 0, 0, 0));
-      evaluaciones.add(new Evaluacion(4, 0, 0, "a", "a", "Potencial", 0, 0, 0));
+      evaluaciones.add(new Evaluacion(1, 0, 0, "a", "a", "Potencial", 0, 0, 0, "a", "a", "a"));
+      evaluaciones.add(new Evaluacion(2, 0, 0, "a", "a", "Potencial", 0, 0, 0, "a", "a", "a"));
+      evaluaciones.add(new Evaluacion(3, 0, 0, "a", "a", "Potencial", 0, 0, 0, "a", "a", "a"));
+      evaluaciones.add(new Evaluacion(4, 0, 0, "a", "a", "Potencial", 0, 0, 0, "a", "a", "a"));
       EvaluacionRiesgoNotifier evaluacionRiesgoNotifier = EvaluacionRiesgoNotifier();
       evaluacionRiesgoNotifier.evaluacionList = evaluaciones;
       int id = calcularIdEvaluacion(evaluacionRiesgoNotifier);

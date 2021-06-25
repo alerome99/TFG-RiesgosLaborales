@@ -6,8 +6,8 @@ import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/riesgoInspeccionEliminada_notifier.dart';
 
 List<Inspeccion> ordenarInspecciones(InspeccionNotifier inspeccionNotifier) {
-  List<Inspeccion> inspecciones = new List<Inspeccion>();
-  List<Inspeccion> inspecciones2 = new List<Inspeccion>();
+  List<Inspeccion> inspecciones = [];
+  List<Inspeccion> inspecciones2 = [];
   for (int i = 0; i < inspeccionNotifier.inspeccionList.length; i++) {
     if (inspeccionNotifier.inspeccionList[i].estado ==
         EstadoInspeccion.enRealizacion) {
@@ -16,7 +16,7 @@ List<Inspeccion> ordenarInspecciones(InspeccionNotifier inspeccionNotifier) {
   }
   for (int i = 0; i < inspeccionNotifier.inspeccionList.length; i++) {
     if (inspeccionNotifier.inspeccionList[i].estado ==
-        EstadoInspeccion.pendiente) {
+        EstadoInspeccion.cerrada) {
       inspecciones2.add(inspeccionNotifier.inspeccionList[i]);
     }
   }
@@ -102,3 +102,4 @@ int calculoNP(int nivelDeficiencia, int nivelExposicion) {
 int calculoNR(int nivelConsecuencias, int nivelP) {
   return nivelConsecuencias * nivelP;
 }
+

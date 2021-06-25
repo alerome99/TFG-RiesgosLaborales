@@ -4,7 +4,6 @@ import 'package:tfg/modelo/subRiesgo.dart';
 
 enum EstadoInspeccion { 
    enRealizacion, 
-   pendiente, 
    cerrada
 }
 
@@ -38,9 +37,6 @@ class Inspeccion {
     if(estadoTem == "enRealizacion"){
       estado = EstadoInspeccion.enRealizacion;
     }
-    if(estadoTem == "pendiente"){
-      estado = EstadoInspeccion.pendiente;
-    }
     fechaInicio = data['fechaInicio'];
     fechaFin = data['fechaFin'];
     lugar = data['lugar'];
@@ -50,129 +46,16 @@ class Inspeccion {
     nombreEmpresa = data['nombreEmpresa'];
   }
 
-  List<SubRiesgo> getRiesgos(){
-    return subRiesgos;
-  }
-
-  void addRiesgo(SubRiesgo sr){
-    subRiesgos.add(sr);
-  }
-
-  void delRiesgo(int id){
-    for (int i = 0; i < subRiesgos.length; i++){
-      if(subRiesgos[i].id == id){
-        subRiesgos.remove(i);
-      }
-    }
-  }
-
   String getIdDocumento(){
     return idDocumento;
-  }
-
-  void setIdDocumento(String id){
-    idDocumento = id;
-  }
-
-  String getNombreEmpresa(){
-    return nombreEmpresa;
-  }
-
-  void setNombreEmpresa(String nP){
-    nombreEmpresa = nP;
-  }
-
-  int getNumeroRiesgos(){
-    return subRiesgos.length;
-  }
-
-  int getId(){
-    return id;
-  }
-
-  void setId(int id){
-    this.id = id;
-  }
-
-  String getEstado(){
-    if(estado == EstadoInspeccion.cerrada){
-      return "cerrada";
-    }
-    if(estado == EstadoInspeccion.enRealizacion){
-      return "enRealizacion";
-    }
-    if(estado == EstadoInspeccion.pendiente){
-      return "pendiente";
-    }
-    return null;
   }
 
   void setEstado(EstadoInspeccion ei){
     estado = ei;
   }
 
-  Timestamp getFechaInicio(){
-    return fechaInicio;
-  } 
-
-  void setFechaInicio(Timestamp fi){
-    fechaInicio = fi;
-  }
-
-  Timestamp getFechaFin(){
-    return fechaFin;
-  }
-
-  void setFechaFin(Timestamp ff){
-    fechaFin = ff;
-  }
-
-  String getLugar(){
-    return lugar;
-  }
-
-  void setLugar(String l){
-    lugar = l;
-  }
-  
-  String getProvincia(){
-    return provincia;
-  }
-
-  void setProvincia(String p){
-    provincia = p;
-  }
-
-  double getLatitud(){
-    return latitud;
-  }
-
-  void setLatitud(double lat){
-    latitud = lat;
-  }
-
-  double getLongitud(){
-    return longitud;
-  }
-
-  void setLongitud(double lon){
-    longitud = lon;
-  }
-
-  String getDescripcion(){
-    return descripcion;
-  }
-
-  void setDescripcion(String d){
-    descripcion = d;
-  }
-
-  String getTitulo(){
-    return titulo;
-  }
-
-  void setTitulo(String t){
-    titulo = t;
+  void setIdDocumento(String id){
+    idDocumento = id;
   }
 }
 

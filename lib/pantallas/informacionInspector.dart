@@ -1,16 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tfg/notifiers/auth_notifier.dart';
 import 'package:tfg/notifiers/inspector_notifier.dart';
 import 'package:tfg/notifiers/usuario_notifier.dart';
-import 'package:tfg/pantallas/mofidPerfil.dart';
 import 'package:tfg/providers/db.dart';
-import 'package:tfg/widgets/foto.dart';
-import 'package:tfg/widgets/fotoCargada.dart';
-import 'package:tfg/widgets/menu.dart';
 
 import '../customClipper.dart';
 
@@ -22,7 +16,6 @@ class InformacionInspector extends StatefulWidget {
 class _InformacionInspectorState extends State<InformacionInspector> {
   String imagePath;
   bool showPassword = false;
-  PickedFile _imageFile;
   final TextEditingController _razonController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -236,8 +229,6 @@ class _InformacionInspectorState extends State<InformacionInspector> {
   }
 
   Widget FotoNull() {
-    InspectorNotifier inspectorNotifier =
-        Provider.of<InspectorNotifier>(context, listen: false);
     return Container(
       width: 150,
       height: 150,
@@ -278,7 +269,7 @@ class _InformacionInspectorState extends State<InformacionInspector> {
     AuthNotifier authNotifier =
         Provider.of<AuthNotifier>(context, listen: false);
     try {
-      String idDoc = null;
+      String idDoc = "";
       for (int i = 0; i < inspectorNotifier.inspectorList.length; i++){
         if(inspectorNotifier.inspectorList[i].email == inspectorNotifier.currentInspector.email){
           idDoc = inspectorNotifier.inspectorList[i].getIdDocumento();
