@@ -81,6 +81,12 @@ registrarUsuario(Usuario u, AuthNotifier authNotifier) async {
 }
 
 addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
+  String estado = "";
+  if(i.estado == EstadoInspeccion.cerrada){
+    estado = "cerrada";
+  }else{
+    estado = "enRealizacion";
+  }
   Map<String, dynamic> demoData = {
     "id": i.id,
     "descripcion": i.descripcion,
@@ -89,9 +95,10 @@ addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
     "fechaInicio": i.fechaInicio,
     "provincia": i.provincia,
     "lugar": i.lugar,
-    "estado": i.estado,
+    "estado": estado,
     "nombreEmpresa": i.nombreEmpresa,
   };
+  print("hola");
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('inspeccion');
   collectionReference.add(demoData);

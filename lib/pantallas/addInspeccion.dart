@@ -271,6 +271,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     int idNueva = calcularIdInspeccion(inspeccionNotifier);
+    print(idNueva);
     Inspeccion i = Inspeccion(
         idNueva,
         Timestamp.now(),

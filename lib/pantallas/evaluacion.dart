@@ -834,13 +834,13 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       textCapitalization: TextCapitalization.sentences,
       validator: (value) {
         if (value.length < 1) {
-          return 'Ingrese un titulo para esta evaluación';
+          return 'Ingrese una descripción para esta evaluación';
         } else {
           return null;
         }
       },
       decoration: InputDecoration(
-          labelText: 'Titulo evaluación',
+          labelText: 'Descripción evaluación',
           labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
     );
   }
