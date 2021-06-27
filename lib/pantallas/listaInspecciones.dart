@@ -251,11 +251,12 @@ class _ListaInspeccionesState extends State<ListaInspecciones> {
           "Latitud",
           "Longitud",
           "Altitud",
-          "AccionCorrectora"
+          "AccionCorrectora",
+          "Url"
         ],
         ...informacion.map((item) => [
-              item.idRiesgoPadre + " - " + item.idRiesgo,
-              item.nombreRiesgo, item.nivelDeficiencia, item.nivelExposicion, item.nivelConsecuencia, item.total, item.latitud, item.longitud, item.altitud, item.accionCorrectora
+              item.idRiesgoPadre + " - " + item.idRiesgo, item.tipoFactor,
+              item.nombreRiesgo, item.nivelDeficiencia, item.nivelExposicion, item.nivelConsecuencia, item.total, item.latitud, item.longitud, item.altitud, item.accionCorrectora, item.url
             ]),
       ];
 

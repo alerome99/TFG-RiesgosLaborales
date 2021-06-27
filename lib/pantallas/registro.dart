@@ -421,6 +421,7 @@ class _RegisterState extends State<Registro> {
   }
 
   void registrarCuenta() async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     if (_emailController.text == "" ||
         _passwordController.text == "" ||
         _passwordRepetidaController.text == "" ||

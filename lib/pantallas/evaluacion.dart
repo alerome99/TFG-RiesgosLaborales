@@ -881,6 +881,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   }
 
   void guardar() async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     if (!_formKey.currentState.validate()) return;
 
     _formKey.currentState.save();

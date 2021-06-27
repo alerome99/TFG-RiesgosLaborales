@@ -377,6 +377,7 @@ class _LoginState extends State<Login> {
   }
 
   void iniciarSesionPassEmail() async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     AuthNotifier authNotifier =
         Provider.of<AuthNotifier>(context, listen: false);
     UsuarioNotifier userNotifier =
@@ -403,5 +404,9 @@ class _LoginState extends State<Login> {
 
   void resetearPass() async {
     await resetearContra(_emailRecController.text);
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text("Se ha enviado el mensaje a tu correo"),
+    ));
   }
 }

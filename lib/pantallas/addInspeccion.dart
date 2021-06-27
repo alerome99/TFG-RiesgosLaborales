@@ -264,6 +264,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
   }
 
   void agregarInspeccion() async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     if (!_formKey.currentState.validate()) return;
 
     _formKey.currentState.save();
