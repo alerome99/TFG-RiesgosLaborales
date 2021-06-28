@@ -234,10 +234,18 @@ modificarUsuario(Usuario u, String id, AuthNotifier authNotifier,
     UsuarioNotifier usuario) async {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('usuario');
-  collectionReference.doc(id).update({'email': u.email, 'numero': u.telefono});
+  collectionReference.doc(id).update({'email': u.email, 'numero': u.telefono, 'direccion': u.direccion});
   User firebaseUser = await FirebaseAuth.instance.currentUser;
   firebaseUser.updateEmail(u.email);
   authNotifier.setUser(firebaseUser);
+  usuario.currentUser = u;
+}
+
+modificarUsuario2(Usuario u, String id,
+    UsuarioNotifier usuario) async {
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('usuario');
+  collectionReference.doc(id).update({'email': u.email, 'numero': u.telefono, 'direccion': u.direccion});
   usuario.currentUser = u;
 }
 
