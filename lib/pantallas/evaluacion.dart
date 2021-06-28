@@ -801,8 +801,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         actions: [
           new ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
+              Navigator.pop(context, true);
             },
             style: ElevatedButton.styleFrom(
                 primary: Colors.blue, onPrimary: Colors.black, elevation: 5),

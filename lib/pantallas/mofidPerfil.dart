@@ -45,19 +45,15 @@ class _ModifPerfilState extends State<ModifPerfil> {
     UsuarioNotifier userNotifier =
         Provider.of<UsuarioNotifier>(context, listen: false);
     Usuario u = userNotifier.currentUsuario;
-    id = userNotifier.currentUsuario.id;
-    if (_emailController.text == "") {
-      _emailController.text = userNotifier.currentUsuario.email;
-    }
-    if (_numeroController.text == "") {
-      _numeroController.text = userNotifier.currentUsuario.telefono;
-    }
-    if (_direccionController.text == "") {
-      _direccionController.text = userNotifier.currentUsuario.direccion;
-    }
-    u.email = _emailController.text;
     u.telefono = _numeroController.text;
-    await modificarUsuario(u, id, authNotifier, userNotifier);
+    u.direccion = _direccionController.text;
+    id = userNotifier.currentUsuario.id;
+    if(u.email == _emailController.text){
+      await modificarUsuario2(u, id, userNotifier);
+    }else{
+      u.email = _emailController.text;
+      await modificarUsuario(u, id, authNotifier, userNotifier);
+    }
     Navigator.of(context)
         .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Perfil()));
   }
@@ -113,6 +109,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
+                      key: Key('campoTextoTelefonoModificarPerfil'),
                       controller: _numeroController,
                       obscureText: false,
                       decoration: InputDecoration(
@@ -125,6 +122,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
+                      key: Key('campoTextoEmailModificarPerfil'),
                       controller: _emailController,
                       obscureText: false,
                       decoration: InputDecoration(
@@ -137,6 +135,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 35.0),
                     child: TextFormField(
+                      key: Key('campoTextoDireccionModificarPerfil'),
                       controller: _direccionController,
                       obscureText: false,
                       decoration: InputDecoration(
@@ -167,6 +166,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                                 color: Colors.black)),
                       ),
                       RaisedButton(
+                        key: Key('confirmarModificarPerfil'),
                         onPressed: () {
                           actualizarDatos();
                         },

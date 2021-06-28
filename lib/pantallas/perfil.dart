@@ -55,6 +55,7 @@ class _PerfilState extends State<Perfil> {
             ),
             SizedBox(height: 50.0),
             RaisedButton(
+              key: Key('botonIrAModificarPerfil'),
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => ModifPerfil()));
