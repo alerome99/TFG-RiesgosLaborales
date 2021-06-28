@@ -276,16 +276,16 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
     final card = Container(
-      
       child: Row(
         children: [
           Expanded(
             flex: 3,
             child: Container(
               child: Container(
-                decoration:
-                    BoxDecoration(color: col, borderRadius: BorderRadius.circular(18.0), boxShadow: <BoxShadow>[
-                ]),
+                decoration: BoxDecoration(
+                    color: col,
+                    borderRadius: BorderRadius.circular(18.0),
+                    boxShadow: <BoxShadow>[]),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(44.0),
                   child: FadeInImage(
@@ -310,7 +310,6 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
                           maxLines: 2,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 16))),
-
                 ],
               )),
         ],
@@ -338,14 +337,16 @@ class _ListaRiesgosPorEvaluarState extends State<ListaRiesgosPorEvaluar> {
           children: <Widget>[
             Container(
               height: 100.0,
-              decoration:
-                  BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(24.0), boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10.0,
-                    spreadRadius: 2.0,
-                    offset: Offset(2.0, 10.0))
-              ]),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24.0),
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10.0,
+                        spreadRadius: 2.0,
+                        offset: Offset(2.0, 10.0))
+                  ]),
               child: ClipRRect(
                 child: card,
               ),

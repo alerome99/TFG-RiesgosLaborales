@@ -43,7 +43,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   final TextEditingController _latitudController = TextEditingController();    
   final TextEditingController _altitudController = TextEditingController();
   String _tipoFactorController;
-  int idNueva = 0;
+  int idNueva = -1;
   final TextEditingController c1 = new TextEditingController();
   @override
   void initState() {
@@ -72,6 +72,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       _valorConsecuencias = evaluacionRiesgoNotifier
           .currentEvaluacion.nivelConsecuencias
           .toDouble();
+      idNueva = evaluacionRiesgoNotifier.currentEvaluacion.id;
     }
   }
 
@@ -79,7 +80,9 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   Widget build(BuildContext context) {
     EvaluacionRiesgoNotifier evaluacionRiesgoNotifier =
         Provider.of<EvaluacionRiesgoNotifier>(context, listen: false);
-    idNueva = calcularIdEvaluacion(evaluacionRiesgoNotifier);
+    if(idNueva == -1){
+      idNueva = calcularIdEvaluacion(evaluacionRiesgoNotifier);
+    }
     return WillPopScope(
       onWillPop: _onWillPopScope,
       child: Scaffold(
@@ -266,15 +269,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       ),
       readOnly: true,
       validator: (value) {
-        bool flag;
-        if ( value.isEmpty) flag = false;
-        (num.tryParse(value) == null ) ? flag = false : flag = true;
-
-        if ( flag ){
-          return null;
+        if (value.length < 1) {
+          return 'Pulse el botón del gps para rellenar el campo';
         } else {
-          return 'Solo números';
-        }  
+          return null;
+        }
       },
     );
   }
@@ -290,14 +289,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
       ),
       readOnly: true,
       validator: (value) {
-        bool flag;
-        if ( value.isEmpty) flag = false;
-        (num.tryParse(value) == null ) ? flag = false : flag = true;
-        if ( flag ){
-          return null;
+        if (value.length < 1) {
+          return 'Pulse el botón del gps para rellenar el campo';
         } else {
-          return 'Solo números';
-        }  
+          return null;
+        }
       },
     );
   }
@@ -312,15 +308,11 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         labelStyle: TextStyle(fontSize: 20.0)
       ),
       validator: (value) {
-        bool flag;
-        if ( value.isEmpty) flag = false;
-        (num.tryParse(value) == null ) ? flag = false : flag = true;
-
-        if ( flag ){
-          return null;
+        if (value.length < 1) {
+          return 'Pulse el botón del gps para rellenar el campo';
         } else {
-          return 'Solo numeros';
-        }  
+          return null;
+        }
       },
     );
   }
@@ -808,7 +800,8 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
         actions: [
           new ElevatedButton(
             onPressed: () {
-              Navigator.pop(context, true);
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => ListaRiesgosPorEvaluar()));
             },
             style: ElevatedButton.styleFrom(
                 primary: Colors.blue, onPrimary: Colors.black, elevation: 5),
@@ -915,6 +908,13 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
           eval.setIdDocumento(
               evaluacionRiesgoNotifier.currentEvaluacion.getIdDocumento());
           await modificarEvaluacion(eval);
+          String idDoc = "";
+          for (int i = 0; i < riesgoInspeccionNotifier.riesgoList.length; i++){
+            if(riesgoInspeccionNotifier.riesgoList[i].idUnica == riesgoInspeccionNotifier.currentRiesgo.idUnica){
+                idDoc = riesgoInspeccionNotifier.riesgoList[i].idDocumento;
+            }
+          }
+          await modificarCalculoRiesgo(idDoc, eval);
         } else {
           await addRiesgo(
               riesgoInspeccionNotifier.currentRiesgo, inspeccionNotifier, eval);

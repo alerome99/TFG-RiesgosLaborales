@@ -104,6 +104,13 @@ addInspeccion(Inspeccion i, InspeccionNotifier inspeccionNotifier) async {
   collectionReference.add(demoData);
   inspeccionNotifier.currentInspeccion = i;
 }
+modificarCalculoRiesgo(String id, Evaluacion eval){
+  int nivelProbabilidad = calculoNP(eval.nivelDeficiencia, eval.nivelExposicion);
+  int total = calculoNR(eval.nivelConsecuencias, nivelProbabilidad);
+  CollectionReference collectionReference =
+      FirebaseFirestore.instance.collection('riesgo');
+  collectionReference.doc(id).update({'total': total});
+}
 
 addRiesgo(SubRiesgo sr, InspeccionNotifier inspeccionNotifier,
     Evaluacion eval) async {
@@ -242,8 +249,11 @@ modificarEvaluacion(Evaluacion eval) {
     'nivelConsecuencias': eval.nivelConsecuencias,
     'nivelDeficiencia': eval.nivelDeficiencia,
     'nivelExposicion': eval.nivelExposicion,
-    'tipoFactor': eval.tipo,
-    'titulo': eval.titulo
+    'tipoFactor': eval.tipo.toString(),
+    'titulo': eval.titulo,
+    'altitud': eval.altitud,
+    'latitud': eval.latitud,
+    'longitud': eval.longitud,
   });
 }
 
