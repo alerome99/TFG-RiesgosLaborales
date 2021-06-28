@@ -112,6 +112,7 @@ class _InformacionInspectorState extends State<InformacionInspector> {
                   padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                   child: Text(
                     inspectorNotifier.currentInspector.telefono,
+                    key: Key('campoTextoTelefonoInformacionInspector'),
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: 'Recursive',
@@ -155,11 +156,12 @@ class _InformacionInspectorState extends State<InformacionInspector> {
             Padding(
               padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
               child: TextFormField(
+                key: Key('campoTextoRazonDarDeBaja'),
                 controller: _razonController,
                 maxLines: 4,
                 validator: (value) {
                   if (value.length < 1) {
-                    return 'Ingrese una descripción para la inspección';
+                    return 'Ingrese un motivo para dar de baja';
                   } else {
                     return null;
                   }
@@ -172,6 +174,7 @@ class _InformacionInspectorState extends State<InformacionInspector> {
             ),
             SizedBox(height: 20.0),
             RaisedButton(
+              key: Key('botonDarDeBaja'),
               onPressed: () {
                 darDeBaja();
               },
