@@ -46,6 +46,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                 child: Row(
                   children: <Widget>[
                     FloatingActionButton.extended(
+                      key: Key('addInspeccion'),
                       heroTag: UniqueKey(),
                       onPressed: () {
                         _mostrarAlertaInspeccion(context);
@@ -126,6 +127,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         FlatButton(
+                          key: Key('botonConfirmarAddInspeccion'),
                           child: Text('Confirmar'),
                           onPressed: () {
                             agregarInspeccion();
@@ -141,6 +143,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
   Widget _crearTextFieldDescripcion() {
     return TextFormField(
+      key: Key('campoDescripcionAddInspeccion'),
       controller: _descripcionController,
       maxLines: 4,
       validator: (value) {
@@ -170,6 +173,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
     }
 
     return DropdownButtonFormField(
+      key: Key('campoProvinciaAddInspeccion'),
       decoration: InputDecoration(
           labelText: 'Provincia', labelStyle: TextStyle(fontSize: 20.0)),
       value: _provinciaController,
@@ -192,6 +196,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
     return Stack(
       children: [
         TextFormField(
+          key: Key('campoLugarAddInspeccion'),
           controller: _direccionController,
           maxLines: 2,
           textCapitalization: TextCapitalization.words,
@@ -233,6 +238,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
   Widget _crearTextFieldTitulo() {
     return TextFormField(
+      key: Key('campoTituloAddInspeccion'),
       controller: _tituloController,
       textCapitalization: TextCapitalization.words,
       validator: (value) {
@@ -249,6 +255,7 @@ class _AddInspeccionState extends State<AddInspeccion> {
 
   Widget _crearTextNombreEmpresa() {
     return TextFormField(
+      key: Key('campoNombreEmpresaAddInspeccion'),
       controller: _nombreEmpresaController,
       validator: (value) {
         if (value.length < 1) {

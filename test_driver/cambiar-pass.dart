@@ -8,11 +8,7 @@ import 'package:tfg/notifiers/usuario_notifier.dart';
 import 'package:tfg/pantallas/cambiarPass.dart';
 
 void main() {
-  // This line enables the extension.
   enableFlutterDriverExtension();
-
-  // Call the `main()` function of the app, or call `runApp` with
-  // any widget you are interested in testing.
 
   runApp(
     MultiProvider(
@@ -29,6 +25,8 @@ void main() {
           builder: (context) {
             UsuarioNotifier userNotifier =
                 Provider.of<UsuarioNotifier>(context, listen: false);
+            AuthNotifier authNotifier =
+                Provider.of<AuthNotifier>(context, listen: false);
             Usuario u = new Usuario(
                 "a2@gmail.com",
                 "654321",

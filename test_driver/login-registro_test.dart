@@ -1,22 +1,15 @@
-// Imports the Flutter Driver API.
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('TFG App', () {
-    // First, define the Finders and use them to locate widgets from the
-    // test suite. Note: the Strings provided to the `byValueKey` method must
-    // be the same as the Strings we used for the Keys in step 1.
-    // var emailField = find.byKey(Key("email-field"));
 
     FlutterDriver driver;
 
-    // Connect to the Flutter driver before running any tests.
     setUpAll(() async {
       driver = await FlutterDriver.connect();
     });
 
-    // Close the connection to the driver after the tests have completed.
     tearDownAll(() async {
       if (driver != null) {
         driver.close();
@@ -67,11 +60,9 @@ void main() {
 
       await driver.tap(passwordField);
       await driver.enterText('Hello2');   
+      expect(await driver.getText(passwordField), "Hello2");
       await driver.tap(signInButton);
-      await driver.waitUntilNoTransientCallbacks();
-
-      await delay(750);
-      expect( find.text('Hello2') is ByText, equals(true) );
+      
       expect(find.text('Debes rellenar todos los campos') is ByText, equals(true) );
     });
 
@@ -82,30 +73,34 @@ void main() {
       final phoneField = find.byValueKey('registerPhone');
       final dniField = find.byValueKey('registerDni');
       final nameField = find.byValueKey('registerName');
+      final direccionField = find.byValueKey('registerDireccion');
       final goRegister = find.byValueKey('goRegister');
 
       await driver.tap(goRegister);
       await driver.tap(emailField);
-      await driver.enterText('Hello');
+      await driver.enterText('test@gmail.com');
+      expect(await driver.getText(emailField), "test@gmail.com");
       await driver.tap(passField);
-      await driver.enterText('Hello2');
+      await driver.enterText('123456');
+      expect(await driver.getText(passField), "123456");
       await driver.tap(passRepeatField);
-      await driver.enterText('Hello3');
+      await driver.enterText('123456');
+      expect(await driver.getText(passRepeatField), "123456");
       await driver.tap(phoneField);
-      await driver.enterText('Hello4');
+      await driver.enterText('666666666');
+      expect(await driver.getText(phoneField), "666666666");
       await driver.tap(dniField);
       await driver.enterText('Hello5');
+      expect(await driver.getText(dniField), "Hello5");
       await driver.scrollIntoView(nameField);
       await driver.tap(nameField);
       await driver.enterText('Hello6');
+      expect(await driver.getText(nameField), "Hello6");
+      await driver.tap(direccionField);
+      await driver.enterText('Hello7');
+      expect(await driver.getText(direccionField), "Hello7");
       await driver.waitUntilNoTransientCallbacks();
       
-      expect( find.text('Hello') is ByText, equals(true) );
-      expect( find.text('Hello2') is ByText, equals(true) );
-      expect( find.text('Hello3') is ByText, equals(true) );
-      expect( find.text('Hello4') is ByText, equals(true) );
-      expect( find.text('Hello5') is ByText, equals(true) );
-      expect( find.text('Hello6') is ByText, equals(true) );    
     });
 
     test('rellenar todos los campos registro', () async {
@@ -115,10 +110,10 @@ void main() {
       await driver.scrollIntoView(emailField);
       await driver.tap(emailField);
       await driver.enterText('Hello2');
+      expect(await driver.getText(emailField), "Hello2");
       await driver.tap(registerButton);
       await driver.waitUntilNoTransientCallbacks();   
 
-      expect( find.text('Hello2') is ByText, equals(true) );
       expect(find.text('Debes rellenar todos los campos') is ByText, equals(true) );
     });
 
@@ -129,25 +124,32 @@ void main() {
       final phoneField = find.byValueKey('registerPhone');
       final dniField = find.byValueKey('registerDni');
       final nameField = find.byValueKey('registerName');
-      final goRegister = find.byValueKey('goRegister');
+      final direccionField = find.byValueKey('registerDireccion');
+      final botonRegistro = find.byValueKey('registerButton');
 
-      await driver.tap(goRegister);
       await driver.tap(emailField);
       await driver.enterText('test@gmail.com');
+      expect(await driver.getText(emailField), "test@gmail.com");
       await driver.tap(passField);
       await driver.enterText('123456');
+      expect(await driver.getText(passField), "123456");
       await driver.tap(passRepeatField);
       await driver.enterText('123456');
+      expect(await driver.getText(passRepeatField), "123456");
       await driver.tap(phoneField);
       await driver.enterText('666666666');
+      expect(await driver.getText(phoneField), "666666666");
       await driver.tap(dniField);
       await driver.enterText('Hello5');
+      expect(await driver.getText(dniField), "Hello5");
       await driver.scrollIntoView(nameField);
       await driver.tap(nameField);
       await driver.enterText('Hello6');
-      await driver.waitUntilNoTransientCallbacks();
-      expect( find.text('Hello2') is ByText, equals(true) );
-      expect( find.text('You must fill all the fields') is ByText, equals(true) );
+      expect(await driver.getText(nameField), "Hello6");
+      await driver.tap(direccionField);
+      await driver.enterText('Hello7');
+      expect(await driver.getText(direccionField), "Hello7");
+      await driver.tap(botonRegistro);
     });
   });
 }
