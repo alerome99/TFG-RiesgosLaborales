@@ -42,7 +42,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
   final TextEditingController _longitudController = TextEditingController();
   final TextEditingController _latitudController = TextEditingController();    
   final TextEditingController _altitudController = TextEditingController();
-  String _tipoFactorController;
+  String _tipoFactorController = "Existente";
   int idNueva = -1;
   final TextEditingController c1 = new TextEditingController();
   @override
@@ -212,6 +212,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
             ),
           ),
           IconButton(
+            key: Key('botonCoordenadasEvaluacion'),
             iconSize: 30.0,
             icon: Icon(Icons.location_searching),
             color: Theme.of(context).primaryColor,
@@ -822,6 +823,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   Widget _crearTextFieldRiesgo() {
     return TextFormField(
+      key: Key('campoDescripcionEvaluacion'),
       controller: _tituloController,
       style: TextStyle(fontSize: 18.0),
       textCapitalization: TextCapitalization.sentences,
@@ -840,6 +842,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   Widget _crearTextFieldAccionCorrectora() {
     return TextFormField(
+      key: Key('campoAccionCorrectoraEvaluacion'),
       controller: _accionCorrectoraController,
       style: TextStyle(fontSize: 18),
       textCapitalization: TextCapitalization.sentences,
@@ -848,7 +851,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
           labelStyle: TextStyle(fontSize: 22.0, color: Colors.pinkAccent)),
       validator: (value) {
         if (value.length < 1) {
-          return 'Ingrese un titulo para esta evaluación';
+          return 'Ingrese una acción correctora para esta evaluación';
         } else {
           return null;
         }
@@ -858,6 +861,7 @@ class _EvaluacionState extends State<EvaluacionRiesgo> {
 
   Widget _crearBoton() {
     return Container(
+      key: Key('botonGuardarEvaluacion'),
       padding: EdgeInsets.symmetric(vertical: 10),
       child: RaisedButton.icon(
         shape:

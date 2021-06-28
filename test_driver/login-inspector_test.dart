@@ -25,21 +25,21 @@ void main() {
       expect(health.status, HealthStatus.ok);
     });
 
-    test('inicio sesion administrador', () async {
+    test('inicio sesion inspector', () async {
       final passwordField = find.byValueKey('passField');
       final emailField = find.byValueKey('emailField');
       final signInButton = find.byValueKey("loginButton");
 
       await driver.tap(emailField);
-      await driver.enterText('super@gmail.com');
-      expect(await driver.getText(emailField), "super@gmail.com");
+      await driver.enterText('a@gmail.com');
+      expect(await driver.getText(emailField), "a@gmail.com");
       await driver.tap(passwordField);
       await driver.enterText('123456');
       expect(await driver.getText(passwordField), "123456");
       await driver.tap(signInButton);
       await driver.waitUntilNoTransientCallbacks();
       
-      expect( find.text('Inspectores') is ByText, equals(true) );
+      expect( find.text('Inspecciones') is ByText, equals(true) );
     });
   });
 }
