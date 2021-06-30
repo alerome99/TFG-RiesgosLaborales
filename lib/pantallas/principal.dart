@@ -136,7 +136,7 @@ class _MainPageState extends State<MainPage> {
   Widget cartasAdministrador() {
     final size = MediaQuery.of(context).size;
     String sizeW = size.width.toString();
-    double ancho = double.parse(sizeW) / 2.5;
+    double ancho = double.parse(sizeW) / 2.05;
     return Positioned(
       bottom: 40.0,
         child: Row(
@@ -174,7 +174,7 @@ class _MainPageState extends State<MainPage> {
   Widget cartasInspector() {
     final size = MediaQuery.of(context).size;
     String sizeW = size.width.toString();
-    double ancho = double.parse(sizeW) / 2.5;
+    double ancho = double.parse(sizeW) / 2.05;
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     return Positioned(
