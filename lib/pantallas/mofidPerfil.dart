@@ -152,6 +152,7 @@ class _ModifPerfilState extends State<ModifPerfil> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       OutlineButton(
+                        key: Key('cancelarModificarPerfil'),
                         padding: EdgeInsets.symmetric(horizontal: 27),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),

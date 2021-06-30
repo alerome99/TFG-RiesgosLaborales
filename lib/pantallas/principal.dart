@@ -134,6 +134,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget cartasAdministrador() {
+    final size = MediaQuery.of(context).size;
+    String sizeW = size.width.toString();
+    double ancho = double.parse(sizeW) / 2.5;
     return Positioned(
       bottom: 40.0,
         child: Row(
@@ -141,7 +144,7 @@ class _MainPageState extends State<MainPage> {
             Container(
               padding: EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
               height: 200,
-              width: 188,
+              width: ancho,
               child: Card(
                 color: Colors.grey,
                 child: InkWell(
@@ -169,6 +172,9 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget cartasInspector() {
+    final size = MediaQuery.of(context).size;
+    String sizeW = size.width.toString();
+    double ancho = double.parse(sizeW) / 2.5;
     InspeccionNotifier inspeccionNotifier =
         Provider.of<InspeccionNotifier>(context, listen: false);
     return Positioned(
@@ -178,7 +184,7 @@ class _MainPageState extends State<MainPage> {
           Container(
             padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
             height: 185,
-            width: 176,
+            width: ancho,
             child: Card(
               color: Colors.grey,
               child: InkWell(
@@ -203,7 +209,7 @@ class _MainPageState extends State<MainPage> {
           Container(
             padding: EdgeInsets.only(left: 7.0, top: 15.0, bottom: 15.0),
             height: 185,
-            width: 176,
+            width: ancho,
             child: Card(
               color: Colors.grey,
               child: InkWell(
