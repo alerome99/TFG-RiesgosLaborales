@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -146,7 +147,7 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: RaisedButton(
-        key: Key('loginButton'),
+          key: Key('loginButton'),
           onPressed: () async {
             if (_formKey1.currentState.validate() &&
                 _formKey2.currentState.validate()) {
@@ -181,7 +182,7 @@ class _LoginState extends State<Login> {
         ),
       ),
       InkWell(
-        key: Key('goRegister'),
+          key: Key('goRegister'),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => Registro()));
@@ -290,6 +291,72 @@ class _LoginState extends State<Login> {
         });
   }
 
+  Widget modalBaja(String motivo) {
+    final size = MediaQuery.of(context).size;
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 35.0),
+              child: Container(
+                width: size.width * 0.80,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5.0),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 3.0,
+                          offset: Offset(0.0, 5.0),
+                          spreadRadius: 3.0)
+                    ]),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.0),
+                        gradient: LinearGradient(
+                            colors: [Colors.lightGreen, Colors.greenAccent]),
+                      ),
+                      alignment: Alignment.center,
+                      height: size.height * 0.1,
+                      width: double.infinity,
+                      child: Text(
+                        'Usuario dado de baja',
+                        style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontSize: 20.0,
+                            color: Colors.white),
+                      ),
+                    ),
+                    Material(
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(14.0, 14.0, 28.0, 14.0),
+                        child: Text(
+                          motivo,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        FlatButton(
+                          child: Text('Aceptar'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        FlatButton(
+                          child: Text('Salir'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ));
+        });
+  }
+
   @override
   Widget _crearCampoEmail() {
     return TextFormField(
@@ -386,9 +453,22 @@ class _LoginState extends State<Login> {
         null, null, null, null, null);
     try {
       await login(u, authNotifier);
-      await getUser(userNotifier);
-      Navigator.of(context).push(
-          MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('usuario')
+          .where('email', isEqualTo: u.email)
+          .get();
+      Usuario userT;
+      snapshot.docs.forEach((document) {
+        Usuario user = Usuario.fromMap(document.data());
+        userT = user;
+      });
+      if (userT.baja) {
+        modalBaja(userT.motivo);
+      } else {
+        await getUser(userNotifier);
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (BuildContext context) => MainPage()));
+      }
     } catch (e) {
       if (_emailController.text == "" || _passwordController.text == "") {
         _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -406,7 +486,7 @@ class _LoginState extends State<Login> {
     await resetearContra(_emailRecController.text);
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text("Se ha enviado el mensaje a tu correo"),
+      content: Text("Se ha enviado el mensaje a tu correo"),
     ));
   }
 }
