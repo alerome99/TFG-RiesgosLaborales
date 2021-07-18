@@ -177,7 +177,7 @@ class _LoginState extends State<Login> {
         '¿No tienes una cuenta aún? ',
         style: TextStyle(
           color: Colors.white,
-          fontSize: 18.0,
+          fontSize: 17.0,
           fontWeight: FontWeight.w400,
         ),
       ),
@@ -190,7 +190,7 @@ class _LoginState extends State<Login> {
           child: Text('Registrate',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 17.0,
+                fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               )))
     ]);
